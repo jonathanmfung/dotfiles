@@ -1,0 +1,390 @@
+;==========================================================
+;
+;
+;   ██████╗  ██████╗ ██╗  ██╗   ██╗██████╗  █████╗ ██████╗
+;   ██╔══██╗██╔═══██╗██║  ╚██╗ ██╔╝██╔══██╗██╔══██╗██╔══██╗
+;   ██████╔╝██║   ██║██║   ╚████╔╝ ██████╔╝███████║██████╔╝
+;   ██╔═══╝ ██║   ██║██║    ╚██╔╝  ██╔══██╗██╔══██║██╔══██╗
+;   ██║     ╚██████╔╝███████╗██║   ██████╔╝██║  ██║██║  ██║
+;   ╚═╝      ╚═════╝ ╚══════╝╚═╝   ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝
+;
+;
+;   To learn more about how to configure Polybar
+;   go to https://github.com/polybar/polybar
+;
+;   The README contains a lot of information
+;
+;==========================================================
+
+[colors]
+;background = ${xrdb:color0:#222}
+background = #fff
+background-alt = #707070
+;foreground = ${xrdb:color7:#222}
+foreground = #000
+foreground-alt = #fff
+primary = #FF7C00
+secondary = #e60053
+alert = #bd2c40
+
+[bar/laptop]
+monitor = eDP1
+width = 85%
+height = 20
+override-redirect = true
+offset-x = 7.5%
+;offset-y = 1%
+radius = 0
+fixed-center = true
+
+bottom = true
+
+background = ${colors.background}
+foreground = ${colors.foreground}
+
+line-size = 3
+line-color = #f00
+
+border-size = 3
+border-color = #707070
+
+padding-left = 2
+padding-right = 2
+
+module-margin-left = 1
+module-margin-right = 2
+
+font-0 = SourceSansPro:size=10;2
+
+modules-left = i3 backlight spotify mpd
+modules-center = date
+modules-right = pulseaudio battery memory cpu wlan powermenu
+
+;tray-position = right
+;tray-padding = 2
+;tray-background = #0063ff
+
+wm-restack = i3
+
+scroll-up = i3wm-wsnext
+scroll-down = i3wm-wsprev
+
+cursor-click = pointer
+cursor-scroll = ns-resize
+
+[bar/HDMI1]
+monitor = HDMI1
+width = 85%
+height = 30
+override-redirect = true
+offset-x = 7.5%
+;offset-y = 1%
+radius = 0
+fixed-center = true
+
+bottom = true
+
+background = ${colors.background}
+foreground = ${colors.foreground}
+
+line-size = 3
+line-color = #f00
+
+border-size = 3
+border-color = #707070
+
+padding-left = 2
+padding-right = 2
+
+module-margin-left = 1
+module-margin-right = 2
+
+font-0 = SourceSansPro:size=16;2
+
+modules-left = i3 spotify mpd
+modules-center = date
+modules-right = pulseaudio battery memory cpu wlan powermenu
+
+;tray-position = right
+;tray-padding = 2
+;tray-background = #0063ff
+
+wm-restack = i3
+
+scroll-up = i3wm-wsnext
+scroll-down = i3wm-wsprev
+
+cursor-click = pointer
+cursor-scroll = ns-resize
+
+[bar/DP1]
+monitor = DP1
+width = 85%
+height = 20
+override-redirect = true
+offset-x = 7.5%
+;offset-y = 1%
+radius = 0
+fixed-center = true
+
+bottom = true
+
+background = ${colors.background}
+foreground = ${colors.foreground}
+
+line-size = 3
+line-color = #f00
+
+border-size = 3
+border-color = #707070
+
+padding-left = 2
+padding-right = 2
+
+module-margin-left = 1
+module-margin-right = 2
+
+font-0 = SourceSansPro:size=10;2
+
+modules-left = i3 spotify mpd
+modules-center = date
+modules-right = pulseaudio battery memory cpu wlan powermenu
+
+;tray-position = right
+;tray-padding = 2
+;tray-background = #0063ff
+
+wm-restack = i3
+
+scroll-up = i3wm-wsnext
+scroll-down = i3wm-wsprev
+
+cursor-click = pointer
+cursor-scroll = ns-resize
+
+[module/i3]
+type = internal/i3
+format = <label-state> <label-mode>
+index-sort = true
+wrapping-scroll = false
+
+; Only show workspaces on the same output as the bar
+pin-workspaces = true
+
+;ws-icon-0 = 1;Ρ
+;ws-icon-1 = 2;Σ
+;ws-icon-2 = 3;Τ
+;ws-icon-3 = 4;ΡΣΤ
+;ws-icon-4 = 5;ΡΣΤ
+ws-icon-default = Θ
+;ΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩ
+;αβγδεζηθικλμνξοπρσςτυφχψω
+
+label-mode-padding = 2
+label-mode-foreground = #000
+label-mode-background = ${colors.primary}
+
+; focused = Active workspace on focused monitor
+label-focused = %index%
+label-focused-foreground = #000
+label-focused-background = ${colors.background}
+label-focused-underline= ${colors.primary}
+label-focused-padding = 2
+
+; unfocused = Inactive workspace on any monitor
+label-unfocused = %index%
+label-unfocused-padding = 2
+
+; visible = Active workspace on unfocused monitor
+label-visible = %index%
+label-visible-foreground = #707070
+label-visible-background = ${self.label-focused-background}
+label-visible-underline = ${self.label-focused-underline}
+label-visible-padding = ${self.label-focused-padding}
+
+; urgent = Workspace with urgency hint set
+label-urgent = %index%
+label-urgent-background = ${colors.alert}
+label-urgent-padding = 2
+
+; Separator in between workspaces
+ label-separator = |
+; ⋮‡
+
+[module/spotify]
+type = custom/script
+;exec = python .config/polybar/spotify_status.py -f '{icon} {artist} - {title}'
+exec = echo "$(playerctl -p spotify metadata --format "{{ artist }}"| sed -e "s/[[(]....*[])]*//g" | sed "s/ *$//"| sed "s/^\(.\{20\}[^ ]*\)\(.*\)$/\1[\2]/"| sed "s/\[ *\]$//"| sed "s/\[.*\]$/.../")" "- $(playerctl -p spotify metadata --format "{{title}}" | sed 's/'\''/\\'\''/g')"
+; tail = true
+interval = 3
+format-underline = #1db954
+
+[module/cpu]
+type = internal/cpu
+interval = 2
+format-prefix = "C: "
+format-prefix-foreground =
+format-underline = #e02200
+label = %percentage:2%%
+
+[module/memory]
+type = internal/memory
+interval = 2
+format-prefix = "M: "
+# format-prefix-foreground = ${colors.foreground-alt}
+format-underline = #00bee0
+label = %percentage_used%%
+
+[module/wlan]
+type = internal/network
+interface = wlp2s0
+interval = 10.0
+
+format-connected-underline = #9b6cf8
+label-connected = %essid%
+
+format-disconnected = DC
+
+[module/date]
+type = internal/date
+interval = 5
+
+date = %a %b %d
+date-alt = " %Y-%m-%d"
+
+time = %l:%M %P
+time-alt = %H:%M:%S
+
+format-prefix = 
+format-prefix-foreground = ${colors.foreground-alt}
+format-underline = #00bee0
+
+label = %date%  Ξ %time%
+
+[module/pulseaudio]
+type = internal/pulseaudio
+
+format-volume = <label-volume> <bar-volume>
+label-volume = V: %percentage%%
+label-volume-foreground = ${root.foreground}
+
+label-muted = muted
+label-muted-foreground = ${root.foreground}
+format-underline = #00e092
+
+bar-volume-width = 10
+bar-volume-foreground-0 = #55aa55
+bar-volume-foreground-1 = #55aa55
+
+bar-volume-gradient = false
+bar-volume-indicator = |
+bar-volume-indicator-font = 2
+bar-volume-fill = ‡
+bar-volume-fill-font = 2
+bar-volume-empty = †
+bar-volume-empty-font = 2
+bar-volume-empty-foreground = ${colors.foreground}
+
+tail = true
+
+[module/battery]
+type = internal/battery
+battery = CMB0
+adapter = ADP1
+full-at = 100
+time-format = %k:%M
+
+;format-charging = <ramp-capacity> <label-discharging>
+;format-discharging = <ramp-capacity> <label-discharging>
+;ramp-capacity-0 = 0
+;ramp-capacity-1 = 1
+;ramp-capacity-2 = 2
+
+label-charging = B: %percentage%% ▷ %time% left
+label-discharging = B: %percentage%% ◁ %time% left
+label-full = Fully charged %percentage%%
+format-underline = #e000be
+
+[module/backlight]
+type = internal/backlight
+
+; Use the following command to list available cards:
+; $ ls -1 /sys/class/backlight/
+card = intel_backlight
+label = %percentage%%
+
+[module/powermenu]
+type = custom/menu
+
+expand-right = true
+
+format-spacing = 1
+
+label-open = 
+label-open-foreground = ${colors.secondary}
+label-close =  cancel
+label-close-foreground = ${colors.secondary}
+label-separator = |
+label-separator-foreground = ${colors.foreground-alt}
+
+menu-0-0 = reboot
+menu-0-0-exec = menu-open-1
+menu-0-1 = power off
+menu-0-1-exec = menu-open-2
+
+menu-1-0 = cancel
+menu-1-0-exec = menu-open-0
+menu-1-1 = reboot
+menu-1-1-exec = sudo reboot
+
+menu-2-0 = power off
+menu-2-0-exec = sudo poweroff
+menu-2-1 = cancel
+menu-2-1-exec = menu-open-0
+
+
+[module/timer]
+
+type = custom/script
+
+exec = .config/polybar/polybar-timer.sh tail 'TIMER' 5
+tail = true
+
+click-left = .config/polybar/polybar-timer.sh new 25 'Pomo session' 'notify-send "Session finished"' ; /path/to/polybar-timer.sh update %pid%
+click-middle = .config/polybar/polybar-timer.sh kill ; /path/to/polybar-timer.sh update %pid%
+click-right = .config/polybar/polybar-timer.sh new 5 'Pomo break' 'notify-send "Break finished"' ; /path/to/polybar-timer.sh update %pid%
+scroll-up = .config/polybar/polybar-timer.sh inc 60 || /path/to/polybar-timer.sh new 1 'TIMER:' 'notify-send -u critical "Timer expired."' ; /path/to/polybar-timer.sh update %pid%
+scroll-down = .config/polybar/polybar-timer.sh inc -60 ; /path/to/polybar-timer.sh update %pid%
+
+[module/mpd]
+type = internal/mpd
+host = 127.0.0.1
+port = 6605
+interval = 2
+
+format-online = <bar-progress> <label-song>
+format-paused = <toggle>
+label-song = %title%
+
+icon-play = >
+icon-pause = #
+
+bar-progress-width = 10
+bar-progress-indicator = |
+bar-progress-fill = =
+bar-progress-empty = -
+
+
+[settings]
+screenchange-reload = true
+;compositing-background = xor
+;compositing-background = screen
+;compositing-foreground = source
+;compositing-border = over
+pseudo-transparency = true
+
+[global/wm]
+margin-top = 5
+margin-bottom = 5
+
+; vim:ft=dosini

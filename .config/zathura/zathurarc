@@ -1,0 +1,36 @@
+set window-title-basename	"true"
+# set window-title-home-tilde     "true"
+
+set recolor                     "false"
+set recolor-keephue             "true"
+set recolor-lightcolor          "#505050" # Background
+set recolor-darkcolor           "#ffffff" # Foreground
+
+set font                        "Source Code Pro 10"
+set default-bg                  "#707070"
+set default-fg                  "#ffffff" 
+
+set statusbar-fg                "#00bee0" 
+set statusbar-bg                "#ffffff" 
+set inputbar-bg                 "#ffffff" 
+set inputbar-fg                 "#000000" 
+
+set notification-bg             "#707070" 
+set notification-fg             "#ffffff"
+set notification-error-bg       "#00bee0" 
+set notification-error-fg       "#ffffff" 
+set notification-warning-bg     "#00bee0" 
+set notification-warning-fg     "#ffffff" 
+
+set highlight-color             "#ffc8b8" 
+set highlight-active-color      "#e02200" 
+
+set completion-highlight-fg     "#ffffff" 
+set completion-highlight-bg     "#00bee0" 
+set completion-bg               "#ffffff" 
+set completion-fg               "#707070" 
+ 
+set page-padding 		3
+set first-page-column		1:1:3
+
+set smooth-scroll		"true" 

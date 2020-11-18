@@ -1,0 +1,7 @@
+[Unit]
+Description=Mailbox synchronization service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/mbsync -Va
+ExecStartPost=/usr/bin/dunstify "$(echo "$(notmuch new | tail -n 1)")" $(/usr/bin/date "+%I:%M")
