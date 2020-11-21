@@ -29,7 +29,7 @@
 (package! modus-vivendi-theme)
 (package! modus-operandi-theme)
 (package! mixed-pitch)
-;; (package! olivetti-mode)
+(package! olivetti-mode)
 (package! heaven-and-hell)
 (package! org-ql)
 (package! cdlatex)

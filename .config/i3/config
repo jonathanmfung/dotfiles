@@ -60,7 +60,7 @@ bindsym $mod+Shift+Return exec --no-startup-id alacritty --class floating -d 80 
 #i3-sensible-terminal
 
 # start a floating emacsclient
-bindsym $mod+ctrl+Return exec emacsclient -c -F '((width . 200) (height . 60))'
+bindsym $mod+ctrl+Return exec emacsclient -c -F '((name . "floating")(width . 200) (height . 60))'
 #--class floating
 
 # kill focused window
@@ -201,10 +201,10 @@ bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcu
 
 # Pulls up floating terminals: file manager, calender, networkmanager
 #bindsym $mod+i exec --no-startup-id alacritty --class floating -d 120 40 --hold -e ranger
-bindsym $mod+i exec emacsclient -c -e "(dired nil)"
+bindsym $mod+i exec emacsclient -c -F '((name . "floating"))' -e "(dired nil)"
 # --position 2800 400 
 #bindsym $mod+o exec --no-startup-id alacritty --class floating -d 22 25 --hold -e cal -3
-bindsym $mod+o exec emacsclient -c -e "(calendar)"
+bindsym $mod+o exec emacsclient -c -F '((name . "floating"))' -e "(calendar)"
 # --position 3500 400 
 bindsym $mod+p exec --no-startup-id alacritty --class floating -d 80 40 --hold -e nmtui
 # --position 3200 400 
@@ -214,7 +214,8 @@ bindsym $mod+u exec --no-startup-id pavucontrol --class floating
 
 for_window [class="Alacritty" instance="floating"] floating enable border pixel 3
 for_window [class="floating"] floating enable border pixel 3
-for_window [class="Emacs"] floating enable border pixel 3
+# Used for emacsclient keybind
+for_window [title="floating"] floating enable border pixel 3
 
 # resize window (you can also use the mouse for that)
 mode "resize" {

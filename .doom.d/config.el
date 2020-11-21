@@ -302,6 +302,7 @@ Saves to a temp file and puts the filename in the kill ring."
 
 (setq notmuch-saved-searches '((:name "Personal" :query "tag:inbox AND to:jonathanfung2000@gmail.com AND date:nov_3_2020..today AND NOT tag:delete")
                                (:name "UCI" :query "tag:inbox AND to:fungjm@uci.edu AND date:nov_3_2020..today AND NOT tag:delete")
+                               (:name "Clean Inbox" :query "tag:inbox AND date:nov_3_2020..today")
                                (:name "Flagged" :query "tag:inbox AND tag:flagged")
                                (:name "Inbox" :query "tag:inbox")))
 
