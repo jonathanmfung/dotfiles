@@ -60,7 +60,8 @@ bindsym $mod+Shift+Return exec --no-startup-id alacritty --class floating -d 80 
 #i3-sensible-terminal
 
 # start a floating emacsclient
-bindsym $mod+ctrl+Return exec emacsclient -c -F '((name . "floating")(width . 200) (height . 60))'
+bindsym $mod+ctrl+Return exec emacsclient -c -F '((width . 200) (height . 60))'
+bindsym $mod+ctrl+Shift+Return exec emacsclient -c -F '((name . "floating")(width . 200) (height . 60))'
 #--class floating
 
 # kill focused window

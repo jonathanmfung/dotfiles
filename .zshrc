@@ -120,6 +120,7 @@ alias gmpv4k="mpv --hwdec=vaapi --vo=gpu --ytdl-format=315+249"
 alias tuir1="tuir -s linuxquestions+linux4noobs"
 
 alias config='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
+alias configp='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME push git@github.com:jonathanmfung/dotfiles.git'
 
 alias ee='emacsclient -nw -c'
 alias tt="grep -v '^#' $HOME/.config/dracula_theme.vt | setvtrgb -"
