@@ -1,123 +1,101 @@
 (setq user-full-name  "Jonathan Fung"
       user-mail-address "jonathanfung2000@gmail.com")
 
-;; Here are some additional functions/macros that could help you configure Doom:
-;;
-;; - `load!' for loading external *.el files relative to this one
-;; - `use-package' for configuring packages
-;; - `after!' for running code after a package has loaded
-;; - `add-load-path!' for adding directories to the `load-path', relative to
-;;   this file. Emacs searches the `load-path' when you load packages with
-;;   `require' or `use-package'.
-;; - `map!' for binding new keys
-;;
-;; To get information about any of these functions/macros, move the cursor over
-;; the highlighted symbol at press 'K' (non-evil users must press 'C-c g k').
-;; This will open documentation for it, including demos of how they are used.
-;;
-;; You can also try 'gd' (or 'C-c g d') to jump to their definition and see how
-;; they are implemented.
-
-;(setq doom-font (font-spec :family "Jet Brains Mono" :weight 'light :height 100))
-(setq doom-font (font-spec :family "Source Code Pro" :height 100))
-(setq doom-variable-pitch-font (font-spec :family "Source Sans Pro" :size 30))
+;; (setq doom-font (font-spec :family "Source Code Pro" :height 120))
+;; (setq doom-big-font (font-spec :family "Source Code Pro" :height 140))
+;; (setq doom-font (font-spec :family "JetBrains Mono" :weight 'light :height 100))
+(setq doom-font (font-spec :family "Source Code Pro" :size 24))
+(setq doom-big-font (font-spec :family "Source Code Pro" :size 36))
+(setq doom-variable-pitch-font (font-spec :family "Source Sans Pro" :size 36))
+; size 30
 
 ; idk what this line does
-(setq auto-mode-alist (cons '("\\.org$" . org-mode) auto-mode-alist))
+; maybe turns on org mode for all .org files?? probably set when facing a bug
+;; (setq auto-mode-alist (cons '("\\.org$" . org-mode) auto-mode-alist))
 
-;Ligatures for JetBrains Mono
-;; (let ((alist '((?! . "\\(?:!\\(?:==\\|[!=]\\)\\)")
-;;                (?# . "\\(?:#\\(?:###?\\|_(\\|[!#(:=?[_{]\\)\\)")
-;;                (?$ . "\\(?:\\$>\\)")
-;;                (?& . "\\(?:&&&?\\)")
-;;                (?* . "\\(?:\\*\\(?:\\*\\*\\|[/>]\\)\\)")
-;;                (?+ . "\\(?:\\+\\(?:\\+\\+\\|[+>]\\)\\)")
-;;                (?- . "\\(?:-\\(?:-[>-]\\|<<\\|>>\\|[<>|~-]\\)\\)")
-;;                (?. . "\\(?:\\.\\(?:\\.[.<]\\|[.=?-]\\)\\)")
-;;                (?/ . "\\(?:/\\(?:\\*\\*\\|//\\|==\\|[*/=>]\\)\\)")
-;;                (?: . "\\(?::\\(?:::\\|\\?>\\|[:<-?]\\)\\)")
-;;                (?\; . "\\(?:;;\\)")
-;;                (?< . "\\(?:<\\(?:!--\\|\\$>\\|\\*>\\|\\+>\\|-[<>|]\\|/>\\|<[<=-]\\|=\\(?:=>\\|[<=>|]\\)\\||\\(?:||::=\\|[>|]\\)\\|~[>~]\\|[$*+/:<=>|~-]\\)\\)")
-;;                (?= . "\\(?:=\\(?:!=\\|/=\\|:=\\|=[=>]\\|>>\\|[=>]\\)\\)")
-;;                (?> . "\\(?:>\\(?:=>\\|>[=>-]\\|[]:=-]\\)\\)")
-;;                (?? . "\\(?:\\?[.:=?]\\)")
-;;                (?\[ . "\\(?:\\[\\(?:||]\\|[<|]\\)\\)")
-;;                (?\ . "\\(?:\\\\/?\\)")
-;;                (?\] . "\\(?:]#\\)")
-;;                (?^ . "\\(?:\\^=\\)")
-;;                (?_ . "\\(?:_\\(?:|?_\\)\\)")
-;;                (?{ . "\\(?:{|\\)")
-;;                (?| . "\\(?:|\\(?:->\\|=>\\||\\(?:|>\\|[=>-]\\)\\|[]=>|}-]\\)\\)")
-;;                (?~ . "\\(?:~\\(?:~>\\|[=>@~-]\\)\\)"))))
-;;   (dolist (char-regexp alist)
-;;     (set-char-table-range composition-function-table (car char-regexp)
-;;                           `([,(cdr char-regexp) 0 font-shape-gstring]))))
+; TODO: something about source code block fonts not being small
 
-;(setq doom-theme 'doom-dracula)
+(defmacro modus-themes-format-sexp (sexp &rest objects)
+  `(eval (read (format ,(format "%S" sexp) ,@objects))))
 
-(load-theme 'modus-operandi t)
-(setq modus-operandi-theme-rainbow-headings t)
-(setq modus-operandi-theme-section-headings t )
-(setq modus-operandi-theme-scale-headings t )
-(setq modus-operandi-theme-slanted-constructs t )
-(setq modus-operandi-theme-bold-constructs t )
+(load-theme 'modus-vivendi t)           ; Dark theme
+(load-theme 'modus-operandi t)          ; Light theme
 
-;; (load-theme 'modus-vivendi t)
-;; (setq modus-vivendi-theme-rainbow-headings t)
-;; (setq modus-vivendi-theme-section-headings t )
-(setq modus-vivendi-theme-scale-headings t )
-(setq modus-vivendi-theme-slanted-constructs t )
-(setq modus-vivendi-theme-bold-constructs t )
+(dolist (theme '("operandi" "vivendi"))
+  (modus-themes-format-sexp
+   (defun modus-%1$s-theme-load ()
+     (setq modus-%1$s-theme-bold-constructs t
+           modus-%1$s-theme-slanted-constructs t
+           modus-%1$s-theme-syntax nil ; {nil,faint,'yellow-comments,'green-strings,'yellow-comments-green-strings,'alt-syntax,'alt-syntax-yellow-comments}
 
-(after! heaven-and-hell
-  (setq heaven-and-hell-themes
-        '((light . modus-operandi)
-          (dark . doom-dracula)))
-  ;; Optionall, load themes without asking for confirmation.
-  (setq heaven-and-hell-load-theme-no-confirm t)
-  (map!
-   :g "<f5>" 'heaven-and-hell-toggle-theme
-   ;; Sometimes loading default theme is broken. I couldn't figured that out yet.
-   :leader "<f5>" 'heaven-and-hell-load-default-theme))
+           ; review
+           modus-%1$s-theme-no-mixed-fonts nil
 
-(add-hook 'after-init-hook 'heaven-and-hell-init-hook)
+           modus-%1$s-theme-links nil ; {nil,'faint,'neutral-underline,'faint-neutral-underline,'no-underline}
+           modus-%1$s-theme-prompts 'subtle ; {nil,'subtle,'intense}
+           modus-%1$s-theme-mode-line nil ; {nil,'3d,'moody}
 
-(defvar *haba-theme-dark* 'doom-dracula)
-(defvar *haba-theme-light* 'modus-operandi)
-(defvar *haba-current-theme* *haba-theme-dark*)
+           ; review
+           modus-%1$s-theme-completions 'opinionated ; {nil,'moderate,'opinionated}
 
-;; disable other themes before loading new one
-(defadvice load-theme (before theme-dont-propagate activate)
-  "Disable theme before loading new one."
-  (mapcar #'disable-theme custom-enabled-themes))
+           modus-%1$s-theme-fringes 'intense ; {nil,'subtle,'intense}
+           modus-%1$s-theme-intense-hl-line t
+           modus-%1$s-theme-intense-paren-match t
+           modus-%1$s-theme-diffs nil ; {nil,'desaturated,'fg-only}
+           modus-%1$s-theme-org-blocks 'grayscale ; {nil,'grayscale,'rainbow}
+           modus-%1$s-theme-headings  ; Read further below in the manual for this one
+            '((1 . rainbow-section)
+              (2 . rainbow-line)
+              (t . rainbow-line-no-bold))
+           modus-%1$s-theme-scale-headings t
+           modus-%1$s-theme-scale-1 1.1
+           modus-%1$s-theme-scale-2 1.15
+           modus-%1$s-theme-scale-3 1.21
+           modus-%1$s-theme-scale-4 1.27
+           modus-%1$s-theme-scale-5 1.33)
+           modus-%1$s-theme-variable-pitch-headings nil
+     (load-theme 'modus-%1$s t))
+   theme))
 
-(defun haba/next-theme (theme)
-  (if (eq theme 'default)
-      (disable-theme *haba-current-theme*)
-    (progn
-      (load-theme theme t)))
-  (setq *haba-current-theme* theme))
-
-(defun haba/toggle-theme ()
+(defun modus-themes-toggle ()
+  "Toggle between `modus-operandi' and `modus-vivendi' themes."
   (interactive)
-  (cond ((eq *haba-current-theme* *haba-theme-dark*) (haba/next-theme *haba-theme-light*))
-        ((eq *haba-current-theme* *haba-theme-light*) (haba/next-theme 'default))
-        ((eq *haba-current-theme* 'default) (haba/next-theme *haba-theme-dark*))))
+  (if (eq (car custom-enabled-themes) 'modus-operandi)
+      (progn
+        (disable-theme 'modus-operandi)
+        (modus-vivendi-theme-load)
+        (doom/reset-font-size))
+    (disable-theme 'modus-vivendi)
+    (modus-operandi-theme-load)
+    (doom/reset-font-size)))
+
+(global-set-key (kbd "<f5>") 'modus-themes-toggle)
 
 ;includes part of the file's directory name at the beginning of the shared buffer name to make unique
 (setq uniquify-buffer-name-style 'forward)
-; this may do the same thing as uniquify-buffer...
+;; ; this may do the same thing as uniquify-buffer...
 (setq ivy-rich-path-style 'abbrev)
 
-; idk what these 2 lines do
+;; ; idk what these 2 lines do
 (add-to-list 'default-frame-alist '(font . "Source Code Pro-10"))
 (set-face-attribute 'default t :font "Source Code Pro-10")
+
+; CAUTION
+; This might be fatal, might turn off all keymaps
+;; (setq display-battery-mode t)
+;; (setq display-time-mode t)
+;; (setq display-time-default-load-average nil)
+;; (setq doom-modeline-buffer-encoding nil)
+
+(setq line-number-mode nil)
+(setq column-number-mode nil)
+(set-face-background 'mode-line "default")
 
 (setq org-directory "~/org/")
 (setq display-line-numbers-type 'relative)
 
 (add-hook 'org-mode-hook 'pandoc-mode)
-;(add-hook 'after-save-hook #'pandoc-convert-to-pdf)
+;; (add-hook 'after-save-hook #'pandoc-convert-to-pdf)
 
 (setq org-agenda-files '("~/org/Agenda.org"))
 (setq org-tag-faces
@@ -185,38 +163,39 @@
          "* TODO Reply: %? \n - %a" :prepend t)
       ))
 
-; Set Toggle for rot13 cipher
-(defun my-rot13-toggle ()
-    (interactive)
-    (toggle-rot13-mode)
-    (redraw-display)
-    )
+(add-to-list 'org-latex-classes
+             '("notes"
+                   "\\documentclass[8pt]{article}
+\\usepackage[letterpaper, portrait, margin=1in]{geometry}
+\\usepackage[utf8]{inputenc}
+\\usepackage[T1]{fontenc}
+\\usepackage{amsmath}
+\\usepackage{amssymb}
+\\usepackage{hyperref}
+\\usepackage{enumitem} % for below
+\\setitemize{itemsep=0.5pt} % adjusts vert space of (second?) itemize/bullet
+\\usepackage{lastpage} %For getting page x of y
+\\usepackage{fancyhdr}
+\\pagestyle{fancy}
+\\fancyhf{}
+\\usepackage{titling} % allows \thetitle \theauthor \thedate
+\\rhead{\\theauthor}
+\\lhead{\\thetitle}
+\\rfoot{\\thepage{} of \\pageref{LastPage}}
+\\linespread{1}
+\\setlength{\\parindent}{0pt}
+\\hypersetup{pdfborder=0 0 0}
+\\setcounter{secnumdepth}{0}"
+("\\section{%s}" . "\\section*{%s}")
+("\\subsection{%s}" . "\\subsection*{%s}")
+("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+("\\paragraph{%s}" . "\\paragraph*{%s}")))
 
-; define custom horizonal-vertical split switch
-(defun toggle-window-split ()
-  (interactive)
-  (if (= (count-windows) 2)
-      (let* ((this-win-buffer (window-buffer))
-             (next-win-buffer (window-buffer (next-window)))
-             (this-win-edges (window-edges (selected-window)))
-             (next-win-edges (window-edges (next-window)))
-             (this-win-2nd (not (and (<= (car this-win-edges)
-                                         (car next-win-edges))
-                                     (<= (cadr this-win-edges)
-                                         (cadr next-win-edges)))))
-             (splitter
-              (if (= (car this-win-edges)
-                     (car (window-edges (next-window))))
-                  'split-window-horizontally
-                'split-window-vertically)))
-        (delete-other-windows)
-        (let ((first-win (selected-window)))
-          (funcall splitter)
-          (if this-win-2nd (other-window 1))
-          (set-window-buffer (selected-window) this-win-buffer)
-          (set-window-buffer (next-window) next-win-buffer)
-          (select-window first-win)
-          (if this-win-2nd (other-window 1))))))
+(map! :n "SPC r r" #'org-latex-export-to-pdf)
+
+; Rust
+(setq lsp-rust-server "rust-analyzer")
+(map! :n "SPC t u" #'lsp-ui-doc-mode)
 
 (defun screenshot-svg ()
   "Save a screenshot of the current frame as an SVG image.
@@ -233,42 +212,37 @@ Saves to a temp file and puts the filename in the kill ring."
 (map! :n "C-_" #'er/contract-region
       :n "C-+" #'er/expand-region)
 
-; unbind J,K,M
+;; ; unbind J,K,M
 (map! :map evil-normal-state-map "J" nil
       "K" nil)
 (map! :map evil-motion-state-map "M" nil
       "K" nil)
 
-; rebind J,K for scrolling
+;; ; rebind J,K for scrolling
 (map! :n "J" #'evil-scroll-line-up)
 (map! :n "K" #'evil-scroll-line-down)
 
-; bind M for contexual lookup
+;; ; bind M for contexual lookup
 (map! :n "M" #'+lookup/documentation)
 
-; unbind |
-(map! :map evil-motion-state-map "|" nil)
-; bind | to custom function
-(map! :n "|" 'toggle-window-split)
-
-;; Make evil-mode up/down operate in screen lines instead of logical lines
+;; ;; Make evil-mode up/down operate in screen lines instead of actual lines
 (define-key evil-motion-state-map "j" 'evil-next-visual-line)
 (define-key evil-motion-state-map "k" 'evil-previous-visual-line)
-;; Also in visual mode
+;; ;; Also in visual mode
 (define-key evil-visual-state-map "j" 'evil-next-visual-line)
 (define-key evil-visual-state-map "k" 'evil-previous-visual-line)
 
 ; unbind SPC p F
-(map! :map doom-leader-map "p F" nil)
+;(map! :map doom-leader-map "p F" nil)
 ; rebind SPC p F to search all projects' files
-(map! :n "SPC p F" #'projectile-find-file-in-known-projects)
+;(map! :n "SPC p F" #'projectile-find-file-in-known-projects)
 
-(defun toggle-header-line-format ()
-    "Toggle buffer-local var header-line-format as pseudo-top margin"
-    (setq header-line-format (if (eq header-line-format nil) t nil))
-    (interactive)
-    (redraw-display))
-(global-set-key (kbd "<f6>") 'toggle-header-line-format)
+;; (defun toggle-header-line-format ()
+;;     "Toggle buffer-local var header-line-format as pseudo-top margin"
+;;     (setq header-line-format (if (eq header-line-format nil) t nil))
+;;     (interactive)
+;;     (redraw-display))
+;; (global-set-key (kbd "<f6>") 'toggle-header-line-format)
 ; use with set-face-font header-line
 ;(set-face-background 'header-line "white")
 
@@ -278,9 +252,9 @@ Saves to a temp file and puts the filename in the kill ring."
       treemacs-width 25
       treemacs-indentation 1)
 
-(map! :n "SPC r r" #'pandoc-convert-to-pdf)
+;(map! :n "SPC r r" #'pandoc-convert-to-pdf)
 
-; define function that syncs mbsync and refreshes notmuch
+;define function that syncs mbsync and refreshes notmuch
 (defun sync-email ()
   "Lists the contents of the current directory."
   (interactive)
@@ -303,15 +277,15 @@ Saves to a temp file and puts the filename in the kill ring."
 (setq notmuch-saved-searches '((:name "Personal" :query "tag:inbox AND to:jonathanfung2000@gmail.com AND date:nov_3_2020..today AND NOT tag:delete")
                                (:name "UCI" :query "tag:inbox AND to:fungjm@uci.edu AND date:nov_3_2020..today AND NOT tag:delete")
                                (:name "Clean Inbox" :query "tag:inbox AND date:nov_3_2020..today")
-                               (:name "Flagged" :query "tag:inbox AND tag:flagged")
+                                   (:name "Flagged" :query "tag:inbox AND tag:flagged")
                                (:name "Inbox" :query "tag:inbox")))
 
 ;; Bind toggles
 (global-set-key (kbd "<f2>") 'mixed-pitch-mode)
 (global-set-key (kbd "<f3>") 'olivetti-mode)
+(global-set-key (kbd "<f4>") 'toggle-rot13-mode)
 (setq olivetti-body-width 90)
-(global-set-key (kbd "<f4>") 'my-rot13-toggle)
-;; (global-set-key (kbd "U") 'undo-tree-redo)
+; ;; (global-set-key (kbd "U") 'undo-tree-redo)
 
 ; Unbind language input switcher
 (map! :map global-map "C-\\" nil)
@@ -319,9 +293,9 @@ Saves to a temp file and puts the filename in the kill ring."
 (map! :n "SPC t c" 'display-fill-column-indicator-mode)
 (map! :n "C-\\" 'display-fill-column-indicator-mode)
 
-; currently do not use org-roam, need to delete
-(setq org-roam-directory "~/emacs/org-roam")
-(setq org-roam-index-file "index.org")
+;; ; currently do not use org-roam, need to delete
+;; (setq org-roam-directory "~/emacs/org-roam")
+;; (setq org-roam-index-file "index.org")
 ;(define-key org-roam-mode-map (kbd "C-c n l") #'org-roam)
 ;(define-key org-roam-mode-map (kbd "C-c n f") #'org-roam-find-file)
 ;(define-key org-roam-mode-map (kbd "C-c n j") #'org-roam-jump-to-index)
@@ -334,17 +308,37 @@ Saves to a temp file and puts the filename in the kill ring."
 ;; (add-to-list 'load-path (concat user-emacs-directory "elgantt/")) ;; Or wherever it is located
 ;; (require 'elgantt)
 
-;(setq desktop-path "~/.emacs.d")
-;(desktop-save-mode 1)
-;(setq desktop-auto-save-timeout 300)
-
 (after! persp-mode
-  (setq persp-emacsclient-init-frame-behaviour-override "main"))
+(setq persp-emacsclient-init-frame-behaviour-override "main"))
 
 ; (annotate-mode)
 
 (setq hl-line-mode nil)
+(map! :n "SPC t h" #'hl-line-mode)
+
+; meant to only have hl-line highlight on end of line
+(defun my-hl-line-range-function () (cons (line-end-position) (line-beginning-position 2)))
+(setq hl-line-range-function #'my-hl-line-range-function)
 
 ;; Local Variables:
 ;; byte-compile-warnings: (not mapcar)
 ;; End:
+
+(add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e")
+;; Each path is relative to `+mu4e-mu4e-mail-path', which is ~/.mail by default
+(set-email-account! "Personal"
+  '((mu4e-sent-folder       . "/gmail/[Gmail].Sent Mail")
+    ;(mu4e-drafts-folder     . "/gmail/Drafts")
+    (mu4e-trash-folder      . "/gmail/[Gmail].Trash")
+    (mu4e-refile-folder     . "/gmail/[Gmail].All Mail")
+    (smtpmail-smtp-user     . "jonathanfung2000@gmail.com")
+    ;; (mu4e-compose-signature . "---\nHenrik Lissner"))
+  t))
+(set-email-account! "UCI"
+  '((mu4e-sent-folder       . "/uci/[Gmail].Sent Mail")
+    ;(mu4e-drafts-folder     . "/gmail/Drafts")
+    (mu4e-trash-folder      . "/uci/[Gmail].Trash")
+    (mu4e-refile-folder     . "/uci/[Gmail].All Mail")
+    (smtpmail-smtp-user     . "fungjm@uci.edu")
+    ;; (mu4e-compose-signature . "---\nHenrik Lissner"))
+  t))
