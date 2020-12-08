@@ -4,7 +4,6 @@ acpid
 alacritty
 alsa-firmware
 alsa-utils
-anbox-git
 android-tools
 android-udev
 anki
@@ -15,7 +14,6 @@ auto-cpufreq-git
 autoconf
 automake
 avahi
-awesome-git
 b43-fwcutter
 bash-completion
 bauh
@@ -190,10 +188,7 @@ mpd
 mpv
 mtpfs
 mugshot
-musixmatch-bin
 ncmpcpp
-ncspot-git
-neofetch
 neovim
 net-tools-debian-ifconfig
 network-manager-applet
@@ -259,7 +254,6 @@ rust-analyzer
 s-nail
 samba
 scrcpy
-screenfetch
 sed
 shadow
 snapd
@@ -378,12 +372,10 @@ xorg-xbacklight
 xorg-xinit
 xorg-xkill
 xsel
-yaft
 yay
 youtube-dl
 ytop
 zathura
 zathura-pdf-mupdf
-zensu
 zoom
 zsh

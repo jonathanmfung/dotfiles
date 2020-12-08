@@ -11,6 +11,10 @@
 
 set $mod Mod4
 
+# Look into using this
+# more elegant way of doing proper exec
+#set $exec exec --no-startup-id
+
 # Font for window titles. Will also be used by the bar unless a different font
 # is used in the bar {} block below.
 font pango:monospace 8
@@ -290,15 +294,17 @@ title_align center
 
 exec firefox
 exec spotify
-# exec emacs
+exec emacs --daemon
 exec emacsclient -c -F '((width . 200) (height . 60))'
 exec nitrogen --restore &
 exec sudo ntpdate -s time.nist.gov
 exec mpd
 exec anki
+exec pulseeffects --gapplication-service
 
 # class                 border  backgr. text    indicator child_border
-client.focused          #ffffff #ffffff #000000 #2e9ef4   #00BFE0
+#client.focused          #ffffff #ffffff #000000 #2e9ef4   #00BFE0
+client.focused          #ffffff #ffffff #000000 #80d2e0   #00BFE0
 client.focused_inactive #ffffff #ffffff #000000 #484e50   #5f676a
 client.unfocused        #707070 #707070 #ffffff #292d2e   #707070
 
@@ -325,7 +331,7 @@ workspace 9 output DP1
 
 # Force applications to start on desired workspaces
 assign [class="^Spotify$"] $ws4
-assign [title="Firefox$"] $ws2
+#assign [title="Firefox$"] $ws2
 # assign [class="^Emacs$"] $ws1
 
 # Custom keybindings
@@ -340,32 +346,3 @@ bindsym $mod+shift+y exec wal -n --saturate 0.8 -i ~/Downloads/walls/waitme.jpg 
 
 exec_always --no-startup-id $HOME/.config/polybar/launch.sh
 exec_always --no-startup-id picom -b 
-
-# floating()
-# {
-
-#     count=$(for w in $(xdotool search --all --onlyvisible --desktop \
-#                        "$(xprop -notype -root _NET_CURRENT_DESKTOP | \
-#                                                cut -c 24-)" "" 2>/dev/null) ; do
-#                 xdotool getwindowname "$w"; done | wc -l)
-
-#     case "${count}" in
-#         (1)
-#             cc="[workspace=\"__focused__\" instance=\"xfce4-terminal\"]"
-#             cmds="floating enable, resize set 60 ppt 60 ppt, move position center;"
-#             i3-msg "$(printf "%s %s" "${cc}" "${cmds}")"
-#             ;;
-#         (2)
-#             cc="[workspace=\"__focused__\" instance=\"xfce4-terminal\"]"
-#             cmds="floating disable;"
-#             i3-msg "$(printf "%s %s" "${cc}" "${cmds}")"
-#             ;;
-#     esac
-# }
-
-
-
-
-
-
-

@@ -291,7 +291,7 @@ tail = true
 type = internal/battery
 battery = CMB0
 adapter = ADP1
-full-at = 100
+full-at = 98
 time-format = %k:%M
 
 ;format-charging = <ramp-capacity> <label-discharging>
