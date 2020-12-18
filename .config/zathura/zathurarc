@@ -11,8 +11,8 @@ set default-bg                  "#707070"
 set default-fg                  "#ffffff" 
 
 set statusbar-fg                "#00bee0" 
-set statusbar-bg                "#ffffff" 
-set inputbar-bg                 "#ffffff" 
+set statusbar-bg                "#ffffff"
+set inputbar-bg                 "#ffffff"
 set inputbar-fg                 "#000000" 
 
 set notification-bg             "#707070" 
@@ -30,7 +30,8 @@ set completion-highlight-bg     "#00bee0"
 set completion-bg               "#ffffff" 
 set completion-fg               "#707070" 
  
-set page-padding 		3
-set first-page-column		1:1:3
+set page-padding                3
+#set first-page-column           1:1:3
+set first-page-column 1:1
 
-set smooth-scroll		"true" 
+set smooth-scroll               "true"

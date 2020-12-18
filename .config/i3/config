@@ -63,6 +63,10 @@ bindsym $mod+Shift+Return exec --no-startup-id alacritty --class floating -d 80 
 #--position 3000 450 
 #i3-sensible-terminal
 
+# open an empty window
+# This is an unsupported i3 feature, only for testing purposes
+bindsym $mod+ctrl+space open
+
 # start a floating emacsclient
 bindsym $mod+ctrl+Return exec emacsclient -c -F '((width . 200) (height . 60))'
 bindsym $mod+ctrl+Shift+Return exec emacsclient -c -F '((name . "floating")(width . 200) (height . 60))'

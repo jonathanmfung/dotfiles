@@ -4,72 +4,54 @@
 ;; (setq doom-font (font-spec :family "Source Code Pro" :height 120))
 ;; (setq doom-big-font (font-spec :family "Source Code Pro" :height 140))
 ;; (setq doom-font (font-spec :family "JetBrains Mono" :weight 'light :height 100))
-(setq doom-font (font-spec :family "Source Code Pro" :size 24))
+;; (setq doom-font (font-spec :family "Source Code Pro" :size 24))
+(setq doom-font (font-spec :family "JetBrains Mono Light" :size 24))
 (setq doom-big-font (font-spec :family "Source Code Pro" :size 36))
-(setq doom-variable-pitch-font (font-spec :family "Source Sans Pro" :size 36))
+(setq doom-variable-pitch-font (font-spec :family "Source Sans Pro" :size 24 :weight 'bold))
 ; size 30
-
-; idk what this line does
-; maybe turns on org mode for all .org files?? probably set when facing a bug
-;; (setq auto-mode-alist (cons '("\\.org$" . org-mode) auto-mode-alist))
 
 ; TODO: something about source code block fonts not being small
 
-(defmacro modus-themes-format-sexp (sexp &rest objects)
-  `(eval (read (format ,(format "%S" sexp) ,@objects))))
+(require 'modus-themes)                 ; common code
+(require 'modus-operandi-theme)         ; light theme
+(require 'modus-vivendi-theme)          ; dark theme
 
 (load-theme 'modus-vivendi t)           ; Dark theme
 (load-theme 'modus-operandi t)          ; Light theme
 
-(dolist (theme '("operandi" "vivendi"))
-  (modus-themes-format-sexp
-   (defun modus-%1$s-theme-load ()
-     (setq modus-%1$s-theme-bold-constructs t
-           modus-%1$s-theme-slanted-constructs t
-           modus-%1$s-theme-syntax nil ; {nil,faint,'yellow-comments,'green-strings,'yellow-comments-green-strings,'alt-syntax,'alt-syntax-yellow-comments}
+(global-set-key (kbd "<f5>") (lambda () (interactive) (modus-themes-toggle) (set-face-background 'mode-line "default")))
 
-           ; review
-           modus-%1$s-theme-no-mixed-fonts nil
+;; Set customization options to values of your choice
+(setq modus-themes-slanted-constructs t
+      modus-themes-bold-constructs t
+      modus-themes-fringes 'intense ; {nil,'subtle,'intense}
+      modus-themes-mode-line nil ; {nil,'3d,'moody}
+      modus-themes-syntax nil ; Lots of options---continue reading the manual
+      modus-themes-intense-hl-line t
+      modus-themes-paren-match 'intense ; {nil,'subtle-bold,'intense,'intense-bold}
+      modus-themes-links nil ; Lots of options---continue reading the manual
+      modus-themes-no-mixed-fonts nil
+      modus-themes-prompts 'subtle ; {nil,'subtle,'intense}
+      modus-themes-completions 'opinionated ; {nil,'moderate,'opinionated}
+      modus-themes-region 'bg-only-no-extend ; {nil,'no-extend,'bg-only,'bg-only-no-extend}
+      modus-themes-diffs nil ; {nil,'desaturated,'fg-only,'bg-only}
+      modus-themes-org-blocks 'grayscale ; {nil,'grayscale,'rainbow}
+      modus-themes-headings ; Lots of options---continue reading the manual
+      '((1 . rainbow-section)
+        ;; (2 . rainbow-line-no-bold)
+        ;; (3 . no-bold)
+        (t . rainbow-line))
+      modus-themes-variable-pitch-headings nil
+      modus-themes-scale-headings nil
+      modus-themes-scale-1 1.1
+      modus-themes-scale-2 1.15
+      modus-themes-scale-3 1.21
+      modus-themes-scale-4 1.27
+      modus-themes-scale-5 1.33)
 
-           modus-%1$s-theme-links nil ; {nil,'faint,'neutral-underline,'faint-neutral-underline,'no-underline}
-           modus-%1$s-theme-prompts 'subtle ; {nil,'subtle,'intense}
-           modus-%1$s-theme-mode-line nil ; {nil,'3d,'moody}
-
-           ; review
-           modus-%1$s-theme-completions 'opinionated ; {nil,'moderate,'opinionated}
-
-           modus-%1$s-theme-fringes 'intense ; {nil,'subtle,'intense}
-           modus-%1$s-theme-intense-hl-line t
-           modus-%1$s-theme-intense-paren-match t
-           modus-%1$s-theme-diffs nil ; {nil,'desaturated,'fg-only}
-           modus-%1$s-theme-org-blocks 'grayscale ; {nil,'grayscale,'rainbow}
-           modus-%1$s-theme-headings  ; Read further below in the manual for this one
-            '((1 . rainbow-section)
-              (2 . rainbow-line)
-              (t . rainbow-line-no-bold))
-           modus-%1$s-theme-scale-headings t
-           modus-%1$s-theme-scale-1 1.1
-           modus-%1$s-theme-scale-2 1.15
-           modus-%1$s-theme-scale-3 1.21
-           modus-%1$s-theme-scale-4 1.27
-           modus-%1$s-theme-scale-5 1.33)
-           modus-%1$s-theme-variable-pitch-headings nil
-     (load-theme 'modus-%1$s t))
-   theme))
-
-(defun modus-themes-toggle ()
-  "Toggle between `modus-operandi' and `modus-vivendi' themes."
-  (interactive)
-  (if (eq (car custom-enabled-themes) 'modus-operandi)
-      (progn
-        (disable-theme 'modus-operandi)
-        (modus-vivendi-theme-load)
-        (doom/reset-font-size))
-    (disable-theme 'modus-vivendi)
-    (modus-operandi-theme-load)
-    (doom/reset-font-size)))
-
-(global-set-key (kbd "<f5>") 'modus-themes-toggle)
+;; Load the light theme (`modus-operandi')
+; doesn't seem to work, function is not defined
+;(modus-themes-load-operandi)
 
 ;includes part of the file's directory name at the beginning of the shared buffer name to make unique
 (setq uniquify-buffer-name-style 'forward)
@@ -87,14 +69,19 @@
 ;; (setq display-time-default-load-average nil)
 ;; (setq doom-modeline-buffer-encoding nil)
 
-(setq line-number-mode nil)
-(setq column-number-mode nil)
+;; might mess up themes ??
+;; (setq line-number-mode nil)
+;; (setq column-number-mode nil)
 (set-face-background 'mode-line "default")
 
 (setq org-directory "~/org/")
 (setq display-line-numbers-type 'relative)
 
-(add-hook 'org-mode-hook 'pandoc-mode)
+(add-hook 'org-mode-hook (lambda () (org-superstar-mode 1)))
+(setq org-superstar-headline-bullets-list
+      '("✸" ("◉" ?◈) "○" "▷"))
+
+;; (add-hook 'org-mode-hook 'pandoc-mode)
 ;; (add-hook 'after-save-hook #'pandoc-convert-to-pdf)
 
 (setq org-agenda-files '("~/org/Agenda.org"))
@@ -104,57 +91,49 @@
 
 (setq org-agenda-start-day "+0")
 
+(setq org-super-agenda-date-format "%A, %e %b")
+(setq org-super-agenda-header-separator ?―)
+
 (org-super-agenda-mode)
-(setq org-agenda-custom-commands
-       '(("u" "Super view"
-          ((agenda "" ((org-super-agenda-groups
-                        '((:name "Next Items"
-                           :time-grid t
-                           :tag ("NEXT" "outbox"))
-                          (:name "School"
-                           :tag ("Poly" "Cer" "Xray" "Snr"))
-                          (:name "Personal"
-                           :tag "Person")
-                          )))))
-           (alltodo "" ((org-agenda-overriding-header "Projects")
-                     (org-super-agenda-groups
-                      '((:tag "Person")
-                        (:discard (:anything t)))))))))
+
 (setq org-agenda-custom-commands
       '(("z" "Super View"
-         ((agenda "" ((org-super-agenda-groups
-                       '((:name "Today"
-                                :time-grid t
-                                :date today
-                                :todo "TODAY"
-                                :scheduled today
-                                :order 1)))))
-          (alltodo "" ((org-agenda-overriding-header "")
+         (
+          ;; (agenda "" ((org-super-agenda-groups
+          ;;              '((:name "Today"
+          ;;                       :time-grid t
+          ;;                       :date today
+          ;;                       :todo "TODAY"
+          ;;                       :scheduled today
+          ;;                       :order 1)))))
+          (alltodo "" ((org-agenda-overriding-header (concat (make-string 20 ?\n) "Today is "(org-read-date nil nil "+0d")))
                        (org-super-agenda-groups
                         '(
-                          ;; (:name "Next to do"
-                          ;;        :todo "NEXT"
-                          ;;        :order 1)
-                          ;; (:name "Important"
-                          ;;        :tag "Important"
-                          ;;        :priority "A"
-                          ;;        :order 6)
-                          ;; (:name "Due Today"
-                          ;;        :deadline today
-                          ;;        :order 2)
-                          ;; (:name "Due Soon"
-                          ;;        :deadline future
-                          ;;        :order 8)
-                          ;; (:name "Overdue"
-                          ;;        :deadline past
-                          ;;        :order 7)
-                          (:name "Personal"
+                          (:name "Overdue"
+                                 :deadline past
+                                 :order 1)
+                          (:name "Scheduled"
+                                 :auto-planning t
+                                 :order 0)
+                          (:name "========\n Personal"
                                  :tag "Person"
                                  :order 10)
                           (:name "Email"
                                  :tag "Email"
                                  :order 15)
                           (:discard (:anything t))))))))))
+
+;; (org-read-date nil nil "+0d")
+(concat "Today is "(org-read-date nil nil "+0d"))
+;; (org-format-time-string "%A, %e" nil (org-read-date nil nil "+6d"))
+;; (current-time-string)
+;; (org-format-time-string "%A, %e" nil (current-time-string))
+
+;; (parse-time-string (org-read-date nil nil "+1w"))
+;; (date-to-time (org-read-date nil nil "+1w"))
+;; (org-format-time-string (org-read-date nil nil "+1w"))
+;(org-time-from-absolute (org-read-date nil nil "+1w"))
+;; (org-time-string-to-absolute (org-read-date nil nil "+1w"))
 
 (setq org-capture-templates
       '(("t" "Agenda TODO" entry (file "~/org/Agenda.org")
@@ -163,7 +142,7 @@
          "* TODO Reply: %? \n - %a" :prepend t)
       ))
 
-(add-to-list 'org-latex-classes
+(setq org-latex-classes
              '("notes"
                    "\\documentclass[8pt]{article}
 \\usepackage[letterpaper, portrait, margin=1in]{geometry}
@@ -172,9 +151,9 @@
 \\usepackage{amsmath}
 \\usepackage{amssymb}
 \\usepackage{hyperref}
-\\usepackage{enumitem} % for below
-\\setitemize{itemsep=0.5pt} % adjusts vert space of (second?) itemize/bullet
-\\usepackage{lastpage} %For getting page x of y
+\\usepackage{enumitem}
+\\setitemize{itemsep=0.5pt}
+\\usepackage{lastpage}
 \\usepackage{fancyhdr}
 \\pagestyle{fancy}
 \\fancyhf{}
@@ -184,8 +163,11 @@
 \\rfoot{\\thepage{} of \\pageref{LastPage}}
 \\linespread{1}
 \\setlength{\\parindent}{0pt}
+\\setlength{\\parskip}{0.5em plus 0.1em minus 0.2em}
 \\hypersetup{pdfborder=0 0 0}
-\\setcounter{secnumdepth}{0}"
+\\setcounter{secnumdepth}{0}
+[NO-DEFAULT-PACKAGES]
+[EXTRA]"
 ("\\section{%s}" . "\\section*{%s}")
 ("\\subsection{%s}" . "\\subsection*{%s}")
 ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
@@ -231,6 +213,11 @@ Saves to a temp file and puts the filename in the kill ring."
 ;; ;; Also in visual mode
 (define-key evil-visual-state-map "j" 'evil-next-visual-line)
 (define-key evil-visual-state-map "k" 'evil-previous-visual-line)
+
+(setq swiper-use-visual-line nil)
+(setq swiper-use-visual-line-p (lambda (a) nil))
+
+(setq dired-hide-details-mode t)
 
 ; unbind SPC p F
 ;(map! :map doom-leader-map "p F" nil)
@@ -311,34 +298,40 @@ Saves to a temp file and puts the filename in the kill ring."
 (after! persp-mode
 (setq persp-emacsclient-init-frame-behaviour-override "main"))
 
-; (annotate-mode)
+;(annotate-mode)
 
 (setq hl-line-mode nil)
 (map! :n "SPC t h" #'hl-line-mode)
 
 ; meant to only have hl-line highlight on end of line
 (defun my-hl-line-range-function () (cons (line-end-position) (line-beginning-position 2)))
-(setq hl-line-range-function #'my-hl-line-range-function)
+;(setq hl-line-range-function #'my-hl-line-range-function)
+
+(defun my-hl-line-range ()
+  "Used as value of `hl-line-range-function'."
+  (cons (line-beginning-position) (line-end-position)))
+
+(setq-default hl-line-range-function #'my-hl-line-range)
 
 ;; Local Variables:
 ;; byte-compile-warnings: (not mapcar)
 ;; End:
 
-(add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e")
-;; Each path is relative to `+mu4e-mu4e-mail-path', which is ~/.mail by default
-(set-email-account! "Personal"
-  '((mu4e-sent-folder       . "/gmail/[Gmail].Sent Mail")
-    ;(mu4e-drafts-folder     . "/gmail/Drafts")
-    (mu4e-trash-folder      . "/gmail/[Gmail].Trash")
-    (mu4e-refile-folder     . "/gmail/[Gmail].All Mail")
-    (smtpmail-smtp-user     . "jonathanfung2000@gmail.com")
-    ;; (mu4e-compose-signature . "---\nHenrik Lissner"))
-  t))
-(set-email-account! "UCI"
-  '((mu4e-sent-folder       . "/uci/[Gmail].Sent Mail")
-    ;(mu4e-drafts-folder     . "/gmail/Drafts")
-    (mu4e-trash-folder      . "/uci/[Gmail].Trash")
-    (mu4e-refile-folder     . "/uci/[Gmail].All Mail")
-    (smtpmail-smtp-user     . "fungjm@uci.edu")
-    ;; (mu4e-compose-signature . "---\nHenrik Lissner"))
-  t))
+;; (add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e")
+;; ;; Each path is relative to `+mu4e-mu4e-mail-path', which is ~/.mail by default
+;; (set-email-account! "Personal"
+;;   '((mu4e-sent-folder       . "/gmail/[Gmail].Sent Mail")
+;;     ;(mu4e-drafts-folder     . "/gmail/Drafts")
+;;     (mu4e-trash-folder      . "/gmail/[Gmail].Trash")
+;;     (mu4e-refile-folder     . "/gmail/[Gmail].All Mail")
+;;     (smtpmail-smtp-user     . "jonathanfung2000@gmail.com")
+;;     ;; (mu4e-compose-signature . "---\nHenrik Lissner"))
+;;   t))
+;; (set-email-account! "UCI"
+;;   '((mu4e-sent-folder       . "/uci/[Gmail].Sent Mail")
+;;     ;(mu4e-drafts-folder     . "/gmail/Drafts")
+;;     (mu4e-trash-folder      . "/uci/[Gmail].Trash")
+;;     (mu4e-refile-folder     . "/uci/[Gmail].All Mail")
+;;     (smtpmail-smtp-user     . "fungjm@uci.edu")
+;;     ;; (mu4e-compose-signature . "---\nHenrik Lissner"))
+;;   t))
