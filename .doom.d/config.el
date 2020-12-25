@@ -1,16 +1,11 @@
 (setq user-full-name  "Jonathan Fung"
       user-mail-address "jonathanfung2000@gmail.com")
 
-;; (setq doom-font (font-spec :family "Source Code Pro" :height 120))
-;; (setq doom-big-font (font-spec :family "Source Code Pro" :height 140))
-;; (setq doom-font (font-spec :family "JetBrains Mono" :weight 'light :height 100))
 ;; (setq doom-font (font-spec :family "Source Code Pro" :size 24))
-(setq doom-font (font-spec :family "JetBrains Mono Light" :size 24))
-(setq doom-big-font (font-spec :family "Source Code Pro" :size 36))
-(setq doom-variable-pitch-font (font-spec :family "Source Sans Pro" :size 24 :weight 'bold))
-; size 30
-
-; TODO: something about source code block fonts not being small
+;; (setq doom-big-font (font-spec :family "Source Code Pro" :size 36))
+(setq doom-font (font-spec :family "JetBrains Mono" :weight 'light ':size 24))
+(setq doom-big-font (font-spec :family "JetBrains Mono" :weight 'light :size 36))
+(setq doom-variable-pitch-font (font-spec :family "Roboto" :size 24 :weight 'bold))
 
 (require 'modus-themes)                 ; common code
 (require 'modus-operandi-theme)         ; light theme
@@ -55,27 +50,105 @@
 
 ;includes part of the file's directory name at the beginning of the shared buffer name to make unique
 (setq uniquify-buffer-name-style 'forward)
-;; ; this may do the same thing as uniquify-buffer...
+;; this may do the same thing as uniquify-buffer...
 (setq ivy-rich-path-style 'abbrev)
 
-;; ; idk what these 2 lines do
-(add-to-list 'default-frame-alist '(font . "Source Code Pro-10"))
-(set-face-attribute 'default t :font "Source Code Pro-10")
+; just editted these line 12/24
+;; idk what these 2 lines do
+;; (add-to-list 'default-frame-alist '(font . "Source Code Pro-10"))
+;; (set-face-attribute 'default t :font "Source Code Pro-10")
 
 ; CAUTION
 ; This might be fatal, might turn off all keymaps
-;; (setq display-battery-mode t)
-;; (setq display-time-mode t)
-;; (setq display-time-default-load-average nil)
-;; (setq doom-modeline-buffer-encoding nil)
+; (setq display-battery-mode t)
 
-;; might mess up themes ??
-;; (setq line-number-mode nil)
-;; (setq column-number-mode nil)
+(setq display-time-mode t)
+(setq display-time-default-load-average nil)
+(setq line-number-mode nil)
+(setq column-number-mode nil)
 (set-face-background 'mode-line "default")
+
+(setq doom-modeline-buffer-encoding nil)
+(setq doom-modeline-buffer-file-name-style 'relative-from-project)
+
+(setq hl-line-mode nil)
+(map! :n "SPC t h" #'hl-line-mode)
+
+; meant to only have hl-line highlight on end of line
+(defun my-hl-line-range-function () (cons (line-end-position) (line-beginning-position 2)))
+;(setq hl-line-range-function #'my-hl-line-range-function)
+
+; standard full-width
+(defun my-hl-line-range ()
+  "Used as value of `hl-line-range-function'."
+  (cons (line-beginning-position) (line-end-position)))
+
+(setq-default hl-line-range-function #'my-hl-line-range)
+
+; Bind Zooms??
+(map! :n "C-_" #'er/contract-region
+      :n "C-+" #'er/expand-region)
+
+;; ; unbind J,K,M
+(map! :map evil-normal-state-map "J" nil
+      "K" nil)
+(map! :map evil-motion-state-map "M" nil
+      "K" nil)
+
+;; ; rebind J,K for scrolling
+(map! :n "J" #'evil-scroll-line-up)
+(map! :n "K" #'evil-scroll-line-down)
+
+;; ; bind M for contexual lookup
+(map! :n "M" #'+lookup/documentation)
+
+;; ;; Make evil-mode up/down operate in screen lines instead of actual lines
+(define-key evil-motion-state-map "j" 'evil-next-visual-line)
+(define-key evil-motion-state-map "k" 'evil-previous-visual-line)
+;; ;; Also in visual mode
+(define-key evil-visual-state-map "j" 'evil-next-visual-line)
+(define-key evil-visual-state-map "k" 'evil-previous-visual-line)
+
+(defun screenshot-svg ()
+  "Save a screenshot of the current frame as an SVG image.
+Saves to a temp file and puts the filename in the kill ring."
+  (interactive)
+  (let* ((filename (make-temp-file "Emacs" nil ".svg"))
+         (data (x-export-frames nil 'svg)))
+    (with-temp-file filename
+      (insert data))
+    (kill-new filename)
+    (message filename)))
+
+;; Bind toggles
+(global-set-key (kbd "<f2>") 'mixed-pitch-mode)
+(global-set-key (kbd "<f3>") 'olivetti-mode)
+(global-set-key (kbd "<f4>") 'toggle-rot13-mode)
+(setq olivetti-body-width 90)
+; ;; (global-set-key (kbd "U") 'undo-tree-redo)
+
+; Unbind language input switcher
+(map! :map global-map "C-\\" nil)
+; Bind toggle for 80-char limit, buffer-wide
+(map! :n "SPC t c" 'display-fill-column-indicator-mode)
+(map! :n "C-\\" 'display-fill-column-indicator-mode)
+
+;; ; currently do not use org-roam, need to delete
+;; (setq org-roam-directory "~/emacs/org-roam")
+;; (setq org-roam-index-file "index.org")
+;(define-key org-roam-mode-map (kbd "C-c n l") #'org-roam)
+;(define-key org-roam-mode-map (kbd "C-c n f") #'org-roam-find-file)
+;(define-key org-roam-mode-map (kbd "C-c n j") #'org-roam-jump-to-index)
+;(define-key org-roam-mode-map (kbd "C-c n b") #'org-roam-switch-to-buffer)
+;(define-key org-roam-mode-map (kbd "C-c n g") #'org-roam-graph)
+;(define-key org-mode-map (kbd "C-c n i") #'org-roam-insert)
+;(require 'org-roam-protocol)
 
 (setq org-directory "~/org/")
 (setq display-line-numbers-type 'relative)
+
+(setq org-ellipsis " ▾")
+(setq org-startup-folded 'content)
 
 (add-hook 'org-mode-hook (lambda () (org-superstar-mode 1)))
 (setq org-superstar-headline-bullets-list
@@ -86,14 +159,13 @@
 
 (setq org-agenda-files '("~/org/Agenda.org"))
 (setq org-tag-faces
-      '(("Poly" . "gold2") ("Cer" . "lime green") ("Xray" . "red2")
-        ("Snr" . "medium orchid") ("Stat_112" . "dodger blue")))
+      '(("Synth" . "gold2") ("Nano" . "lime green") ("Light" . "red2")
+        ("Snr" . "medium orchid") ("Fail" . "dodger blue")))
 
 (setq org-agenda-start-day "+0")
 
 (setq org-super-agenda-date-format "%A, %e %b")
 (setq org-super-agenda-header-separator ?―)
-
 (org-super-agenda-mode)
 
 (setq org-agenda-custom-commands
@@ -123,123 +195,94 @@
                                  :order 15)
                           (:discard (:anything t))))))))))
 
-;; (org-read-date nil nil "+0d")
-(concat "Today is "(org-read-date nil nil "+0d"))
-;; (org-format-time-string "%A, %e" nil (org-read-date nil nil "+6d"))
-;; (current-time-string)
-;; (org-format-time-string "%A, %e" nil (current-time-string))
+(defun org-super-view-agenda ()
+  (interactive)
+  (org-agenda nil "z"))
+(map! :n "SPC o v" 'org-super-view-agenda)
 
-;; (parse-time-string (org-read-date nil nil "+1w"))
-;; (date-to-time (org-read-date nil nil "+1w"))
-;; (org-format-time-string (org-read-date nil nil "+1w"))
-;(org-time-from-absolute (org-read-date nil nil "+1w"))
-;; (org-time-string-to-absolute (org-read-date nil nil "+1w"))
+; removes 'agenda' prefix coming from agenda.org
+; also adds in effort level
+; should be (todo   . " %i %-12:c") if using multiple files
+(setq org-agenda-prefix-format
+      '((agenda . " %i %-12:c%?-12t% s")
+        (todo   . " [%e] ")
+        (tags   . " %i %-12:c")
+        (search . " %i %-12:c")))
 
 (setq org-capture-templates
       '(("t" "Agenda TODO" entry (file "~/org/Agenda.org")
         "* TODO %?" :prepend t)
         ("e" "email" entry (file+headline "~/org/Agenda.org" "Emails")
          "* TODO Reply: %? \n - %a" :prepend t)
+        ("d" "designboard" entry (file "~/org/designboard.org")
+         "* %? \n- %t" :prepend t)
       ))
 
-(setq org-latex-classes
-             '("notes"
-                   "\\documentclass[8pt]{article}
-\\usepackage[letterpaper, portrait, margin=1in]{geometry}
-\\usepackage[utf8]{inputenc}
-\\usepackage[T1]{fontenc}
-\\usepackage{amsmath}
-\\usepackage{amssymb}
-\\usepackage{hyperref}
-\\usepackage{enumitem}
-\\setitemize{itemsep=0.5pt}
-\\usepackage{lastpage}
-\\usepackage{fancyhdr}
-\\pagestyle{fancy}
-\\fancyhf{}
-\\usepackage{titling} % allows \thetitle \theauthor \thedate
-\\rhead{\\theauthor}
-\\lhead{\\thetitle}
-\\rfoot{\\thepage{} of \\pageref{LastPage}}
-\\linespread{1}
-\\setlength{\\parindent}{0pt}
-\\setlength{\\parskip}{0.5em plus 0.1em minus 0.2em}
-\\hypersetup{pdfborder=0 0 0}
-\\setcounter{secnumdepth}{0}
-[NO-DEFAULT-PACKAGES]
-[EXTRA]"
-("\\section{%s}" . "\\section*{%s}")
-("\\subsection{%s}" . "\\subsection*{%s}")
-("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-("\\paragraph{%s}" . "\\paragraph*{%s}")))
+(map! :n "SPC z" 'org-capture)
+
+(setq org-latex-classes '(("article" "\\documentclass[11pt]{article}"
+  ("\\section{%s}" . "\\section*{%s}")
+  ("\\subsection{%s}" . "\\subsection*{%s}")
+  ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+  ("\\paragraph{%s}" . "\\paragraph*{%s}")
+  ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))
+ ("report" "\\documentclass[11pt]{report}"
+  ("\\part{%s}" . "\\part*{%s}")
+  ("\\chapter{%s}" . "\\chapter*{%s}")
+  ("\\section{%s}" . "\\section*{%s}")
+  ("\\subsection{%s}" . "\\subsection*{%s}")
+  ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))
+ ("book" "\\documentclass[11pt]{book}"
+  ("\\part{%s}" . "\\part*{%s}")
+  ("\\chapter{%s}" . "\\chapter*{%s}")
+  ("\\section{%s}" . "\\section*{%s}")
+  ("\\subsection{%s}" . "\\subsection*{%s}")
+  ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))
+("notes"
+ "\\documentclass[8pt]{article}
+  \\usepackage[letterpaper, portrait, margin=1in]{geometry}
+  \\usepackage[utf8]{inputenc}
+  \\usepackage[T1]{fontenc}
+  \\usepackage{amsmath}
+  \\usepackage{amssymb}
+  \\usepackage{hyperref}
+  \\usepackage{enumitem}
+  \\setitemize{itemsep=0.5pt}
+  \\usepackage{lastpage}
+  \\usepackage{fancyhdr}
+  \\pagestyle{fancy}
+  \\fancyhf{}
+  \\usepackage{titling} % allows \thetitle \theauthor \thedate
+  \\rhead{\\theauthor}
+  \\lhead{\\thetitle}
+  \\rfoot{\\thepage{} of \\pageref{LastPage}}
+  \\linespread{1}
+  \\setlength{\\parindent}{0pt}
+  \\setlength{\\parskip}{0.5em plus 0.1em minus 0.2em}
+  \\hypersetup{pdfborder=0 0 0}
+  \\setcounter{secnumdepth}{0}"
+  ("\\section{%s}" . "\\section*{%s}")
+  ("\\subsection{%s}" . "\\subsection*{%s}")
+  ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+  ("\\paragraph{%s}" . "\\paragraph*{%s}"))))
 
 (map! :n "SPC r r" #'org-latex-export-to-pdf)
-
-; Rust
-(setq lsp-rust-server "rust-analyzer")
-(map! :n "SPC t u" #'lsp-ui-doc-mode)
-
-(defun screenshot-svg ()
-  "Save a screenshot of the current frame as an SVG image.
-Saves to a temp file and puts the filename in the kill ring."
-  (interactive)
-  (let* ((filename (make-temp-file "Emacs" nil ".svg"))
-         (data (x-export-frames nil 'svg)))
-    (with-temp-file filename
-      (insert data))
-    (kill-new filename)
-    (message filename)))
-
-; Bind Zooms??
-(map! :n "C-_" #'er/contract-region
-      :n "C-+" #'er/expand-region)
-
-;; ; unbind J,K,M
-(map! :map evil-normal-state-map "J" nil
-      "K" nil)
-(map! :map evil-motion-state-map "M" nil
-      "K" nil)
-
-;; ; rebind J,K for scrolling
-(map! :n "J" #'evil-scroll-line-up)
-(map! :n "K" #'evil-scroll-line-down)
-
-;; ; bind M for contexual lookup
-(map! :n "M" #'+lookup/documentation)
-
-;; ;; Make evil-mode up/down operate in screen lines instead of actual lines
-(define-key evil-motion-state-map "j" 'evil-next-visual-line)
-(define-key evil-motion-state-map "k" 'evil-previous-visual-line)
-;; ;; Also in visual mode
-(define-key evil-visual-state-map "j" 'evil-next-visual-line)
-(define-key evil-visual-state-map "k" 'evil-previous-visual-line)
 
 (setq swiper-use-visual-line nil)
 (setq swiper-use-visual-line-p (lambda (a) nil))
 
-(setq dired-hide-details-mode t)
-
-; unbind SPC p F
-;(map! :map doom-leader-map "p F" nil)
-; rebind SPC p F to search all projects' files
-;(map! :n "SPC p F" #'projectile-find-file-in-known-projects)
-
-;; (defun toggle-header-line-format ()
-;;     "Toggle buffer-local var header-line-format as pseudo-top margin"
-;;     (setq header-line-format (if (eq header-line-format nil) t nil))
-;;     (interactive)
-;;     (redraw-display))
-;; (global-set-key (kbd "<f6>") 'toggle-header-line-format)
-; use with set-face-font header-line
-;(set-face-background 'header-line "white")
+(add-hook 'dired-mode-hook
+      (lambda ()
+        (dired-hide-details-mode)
+        ))
+; add this into above hook to default to sorting by edit time
+; (dired-sort-toggle-or-edit)
 
 (map! :n "SPC o o" #'treemacs-visit-node-in-external-application)
 (map! :n "SPC o t" #'treemacs)
 (setq treemacs-position 'right
       treemacs-width 25
       treemacs-indentation 1)
-
-;(map! :n "SPC r r" #'pandoc-convert-to-pdf)
 
 ;define function that syncs mbsync and refreshes notmuch
 (defun sync-email ()
@@ -260,62 +303,44 @@ Saves to a temp file and puts the filename in the kill ring."
     ("subject" . "%-10s ")
     ("tags" . "(%s)"))
 )
-
+(defun establish-notmuch ()
+  (interactive)
 (setq notmuch-saved-searches '((:name "Personal" :query "tag:inbox AND to:jonathanfung2000@gmail.com AND date:nov_3_2020..today AND NOT tag:delete")
                                (:name "UCI" :query "tag:inbox AND to:fungjm@uci.edu AND date:nov_3_2020..today AND NOT tag:delete")
                                (:name "Clean Inbox" :query "tag:inbox AND date:nov_3_2020..today")
                                    (:name "Flagged" :query "tag:inbox AND tag:flagged")
-                               (:name "Inbox" :query "tag:inbox")))
+                               (:name "Inbox" :query "tag:inbox"))))
 
-;; Bind toggles
-(global-set-key (kbd "<f2>") 'mixed-pitch-mode)
-(global-set-key (kbd "<f3>") 'olivetti-mode)
-(global-set-key (kbd "<f4>") 'toggle-rot13-mode)
-(setq olivetti-body-width 90)
-; ;; (global-set-key (kbd "U") 'undo-tree-redo)
+(map! :n "SPC r e" 'establish-notmuch)
 
-; Unbind language input switcher
-(map! :map global-map "C-\\" nil)
-; Bind toggle for 80-char limit, buffer-wide
-(map! :n "SPC t c" 'display-fill-column-indicator-mode)
-(map! :n "C-\\" 'display-fill-column-indicator-mode)
-
-;; ; currently do not use org-roam, need to delete
-;; (setq org-roam-directory "~/emacs/org-roam")
-;; (setq org-roam-index-file "index.org")
-;(define-key org-roam-mode-map (kbd "C-c n l") #'org-roam)
-;(define-key org-roam-mode-map (kbd "C-c n f") #'org-roam-find-file)
-;(define-key org-roam-mode-map (kbd "C-c n j") #'org-roam-jump-to-index)
-;(define-key org-roam-mode-map (kbd "C-c n b") #'org-roam-switch-to-buffer)
-;(define-key org-roam-mode-map (kbd "C-c n g") #'org-roam-graph)
-;(define-key org-mode-map (kbd "C-c n i") #'org-roam-insert)
-;(require 'org-roam-protocol)
-
-;; enable elgantt - https://github.com/legalnonsense/elgantt/
-;; (add-to-list 'load-path (concat user-emacs-directory "elgantt/")) ;; Or wherever it is located
-;; (require 'elgantt)
+; Rust
+(setq lsp-rust-server "rust-analyzer")
+(map! :n "SPC t u" #'lsp-ui-doc-mode)
 
 (after! persp-mode
 (setq persp-emacsclient-init-frame-behaviour-override "main"))
 
 ;(annotate-mode)
 
-(setq hl-line-mode nil)
-(map! :n "SPC t h" #'hl-line-mode)
+;; enable elgantt - https://github.com/legalnonsense/elgantt/
+;; (add-to-list 'load-path (concat user-emacs-directory "elgantt/")) ;; Or wherever it is located
+;; (require 'elgantt)
 
-; meant to only have hl-line highlight on end of line
-(defun my-hl-line-range-function () (cons (line-end-position) (line-beginning-position 2)))
-;(setq hl-line-range-function #'my-hl-line-range-function)
+;; (defun toggle-header-line-format ()
+;;     "Toggle buffer-local var header-line-format as pseudo-top margin"
+;;     (setq header-line-format (if (eq header-line-format nil) t nil))
+;;     (interactive)
+;;     (redraw-display))
+;; (global-set-key (kbd "<f6>") 'toggle-header-line-format)
+; use with set-face-font header-line
+;(set-face-background 'header-line "white")
 
-(defun my-hl-line-range ()
-  "Used as value of `hl-line-range-function'."
-  (cons (line-beginning-position) (line-end-position)))
+;(map! :n "SPC r r" #'pandoc-convert-to-pdf)
 
-(setq-default hl-line-range-function #'my-hl-line-range)
-
-;; Local Variables:
-;; byte-compile-warnings: (not mapcar)
-;; End:
+; unbind SPC p F
+;(map! :map doom-leader-map "p F" nil)
+; rebind SPC p F to search all projects' files
+;(map! :n "SPC p F" #'projectile-find-file-in-known-projects)
 
 ;; (add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e")
 ;; ;; Each path is relative to `+mu4e-mu4e-mail-path', which is ~/.mail by default
