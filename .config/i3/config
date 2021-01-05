@@ -297,9 +297,8 @@ title_align center
 #hide_edge_borders smart_no_gaps
 
 exec firefox
-exec spotify
-exec emacs --daemon
-exec emacsclient -c -F '((width . 200) (height . 60))'
+exec spotify --disable-gpu
+exec emacs --daemon && emacsclient -c -F '((width . 200) (height . 60))'
 exec nitrogen --restore &
 exec sudo ntpdate -s time.nist.gov
 exec mpd

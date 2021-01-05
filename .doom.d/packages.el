@@ -23,12 +23,8 @@
 
 ;; To install SOME-PACKAGE from MELPA, ELPA or emacsmirror:
 (package! treemacs-evil)
-;; (package! pandoc-mode)
 (package! org-roam)
-;; (package! rust-mode)
 (package! modus-themes)
-;; (package! modus-vivendi-theme)
-;; (package! modus-operandi-theme)
 (package! mixed-pitch)
 (package! olivetti)
 (package! org-ql)

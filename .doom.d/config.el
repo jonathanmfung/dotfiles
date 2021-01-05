@@ -62,10 +62,10 @@
 ; This might be fatal, might turn off all keymaps
 ; (setq display-battery-mode t)
 
-(setq display-time-mode t)
-(setq display-time-default-load-average nil)
-(setq line-number-mode nil)
-(setq column-number-mode nil)
+;; (setq display-time-mode t)
+;; (setq display-time-default-load-average nil)
+;; (setq line-number-mode nil
+;;       column-number-mode nil)
 (set-face-background 'mode-line "default")
 
 (setq doom-modeline-buffer-encoding nil)
@@ -154,8 +154,7 @@ Saves to a temp file and puts the filename in the kill ring."
 (setq org-superstar-headline-bullets-list
       '("✸" ("◉" ?◈) "○" "▷"))
 
-;; (add-hook 'org-mode-hook 'pandoc-mode)
-;; (add-hook 'after-save-hook #'pandoc-convert-to-pdf)
+(map! :n "SPC o l" 'link-hint-open-link-at-point)
 
 (setq org-agenda-files '("~/org/Agenda.org"))
 (setq org-tag-faces
@@ -163,27 +162,46 @@ Saves to a temp file and puts the filename in the kill ring."
         ("Snr" . "medium orchid") ("Fail" . "dodger blue")))
 
 (setq org-agenda-start-day "+0")
+(setq org-agenda-span 'week)
+
+(setq org-agenda-timegrid-use-ampm t)
+(setq org-agenda-time-grid
+      (quote
+       ((daily today require-timed)
+        (400 1200 1600 2000 2400)
+        "  ⟿" "―――――――――――――――――――――――")))
+; 2400 is the next day
 
 (setq org-super-agenda-date-format "%A, %e %b")
 (setq org-super-agenda-header-separator ?―)
+;; (setq org-super-agenda-header-separator "")
 (org-super-agenda-mode)
 
+(map! :map org-super-agenda-header-map "k" nil
+      "j" nil)
+
+; this doesn't execute - jan 1st
 (setq org-agenda-custom-commands
       '(("z" "Super View"
          (
           ;; (agenda "" ((org-super-agenda-groups
-          ;;              '((:name "Today"
+          ;;              '((:name ""
           ;;                       :time-grid t
           ;;                       :date today
-          ;;                       :todo "TODAY"
-          ;;                       :scheduled today
-          ;;                       :order 1)))))
-          (alltodo "" ((org-agenda-overriding-header (concat (make-string 20 ?\n) "Today is "(org-read-date nil nil "+0d")))
+          ;;                       :deadline today
+          ;;                       ;; :scheduled today
+          ;;                       :order 0
+          ;;                       :discard (:anything t)
+          ;;                       )))))
+          (alltodo "" ((org-agenda-overriding-header (concat
+                       (make-string 20 ?\n)
+                       "Today is " (org-read-date nil nil "+0d")
+                       ))
                        (org-super-agenda-groups
                         '(
                           (:name "Overdue"
                                  :deadline past
-                                 :order 1)
+                                 :order 0)
                           (:name "Scheduled"
                                  :auto-planning t
                                  :order 0)
@@ -193,25 +211,87 @@ Saves to a temp file and puts the filename in the kill ring."
                           (:name "Email"
                                  :tag "Email"
                                  :order 15)
-                          (:discard (:anything t))))))))))
+                          (:discard (:anything t))
+                          ))))
+          ))))
 
-(defun org-super-view-agenda ()
+(defun jf/org-agenda-day-by-day ()
   (interactive)
   (org-agenda nil "z"))
-(map! :n "SPC o v" 'org-super-view-agenda)
+(map! :n "SPC o v" 'jf/org-agenda-day-by-day)
+
+(defun jf/org-agenda-regular-view ()
+  (interactive)
+  (org-agenda nil "a"))
+(map! :n "SPC o c" 'jf/org-agenda-regular-view)
 
 ; removes 'agenda' prefix coming from agenda.org
 ; also adds in effort level
 ; should be (todo   . " %i %-12:c") if using multiple files
 (setq org-agenda-prefix-format
-      '((agenda . " %i %-12:c%?-12t% s")
+      '(
+        ;; (agenda . "%i %-7T%?-12t% s")
+        (agenda . "%i %?-12t% s")
+        ;; (todo   . " %i %-12:c")
         (todo   . " [%e] ")
         (tags   . " %i %-12:c")
         (search . " %i %-12:c")))
 
+;; refreshes org agenda view every 60 seconds, but runs on any buffer
+;; (run-with-idle-timer 60000 t (lambda () (org-agenda nil "z")) )
+
+(set-face-attribute 'org-agenda-date nil
+
+  :weight 'bold :overline t :foreground "#00538b" )
+
+(setq org-todo-keywords
+      '((sequence "TODO(t)" "NEXT(n)" "STRT(s)" "HOLD(h)" "|" "DONE(d)" "KILL(k)")
+ (sequence "[ ](T)" "[+](P)" "[-](S)" "[?](W)" "|" "[X](D)")))
+
+(setq org-todo-keyword-faces
+'(("[-]" . +org-todo-active)
+ ("STRT" . +org-todo-active)
+ ("NEXT" . +org-todo-active)
+ ("[?]" . +org-todo-onhold)
+ ("WAIT" . +org-todo-onhold)
+ ("HOLD" . +org-todo-onhold)
+ ("PROJ" . +org-todo-project)))
+
+;; from https://github.com/alphapapa/org-super-agenda/issues/59
+(defun jf/org-agenda-relative ()
+  (interactive)
+  (let ((org-super-agenda-groups
+         `(
+           (:name "Past"
+                  :deadline past)
+           (:name "Next Items"
+                  :todo "NEXT")
+           (:name "Today"
+                  :deadline today)
+           (:name "Tomorrow"
+                  :deadline (before ,(org-read-date nil nil "+1d")))
+           (:name "Within 2 Days"
+                  :deadline (before ,(org-read-date nil nil "+2d")))
+           (:name "Within a Week"
+                  :deadline (before ,(org-read-date nil nil "+7d")))
+           (:name "Within 30 Days"
+                  :deadline (before ,(org-read-date nil nil "+30d")))
+           (:name "========\n Personal"
+                  :tag "Person"
+                  :order 10)
+           (:name "Email"
+                 :tag "Email"
+                 :order 15)
+           (:discard (:anything t))
+        )))
+    (org-agenda nil "t")))
+
+(map! :map doom-leader-map "o b" nil)
+(map! :n "SPC o b" 'jf/org-agenda-relative)
+
 (setq org-capture-templates
       '(("t" "Agenda TODO" entry (file "~/org/Agenda.org")
-        "* TODO %?" :prepend t)
+        "* TODO %? \n DEADLINE: %t" :prepend t)
         ("e" "email" entry (file+headline "~/org/Agenda.org" "Emails")
          "* TODO Reply: %? \n - %a" :prepend t)
         ("d" "designboard" entry (file "~/org/designboard.org")
@@ -285,7 +365,7 @@ Saves to a temp file and puts the filename in the kill ring."
       treemacs-indentation 1)
 
 ;define function that syncs mbsync and refreshes notmuch
-(defun sync-email ()
+(defun jf/sync-email ()
   "Lists the contents of the current directory."
   (interactive)
   (shell-command "mbsync -a && notmuch new"))
@@ -293,7 +373,7 @@ Saves to a temp file and puts the filename in the kill ring."
 ; bind notmuch-hello view
 (map! :n "SPC o n" #'notmuch-hello)
 ; bind custom function to sync mbsync and notmuch
-(map! :n "SPC r s" 'sync-email)
+(map! :n "SPC r s" 'jf/sync-email)
 
 ;; attempt to fix notmuch formatting
 (setq notmuch-search-result-format
@@ -303,22 +383,44 @@ Saves to a temp file and puts the filename in the kill ring."
     ("subject" . "%-10s ")
     ("tags" . "(%s)"))
 )
-(defun establish-notmuch ()
+(defun jf/establish-notmuch ()
   (interactive)
-(setq notmuch-saved-searches '((:name "Personal" :query "tag:inbox AND to:jonathanfung2000@gmail.com AND date:nov_3_2020..today AND NOT tag:delete")
-                               (:name "UCI" :query "tag:inbox AND to:fungjm@uci.edu AND date:nov_3_2020..today AND NOT tag:delete")
-                               (:name "Clean Inbox" :query "tag:inbox AND date:nov_3_2020..today")
-                                   (:name "Flagged" :query "tag:inbox AND tag:flagged")
-                               (:name "Inbox" :query "tag:inbox"))))
+(setq notmuch-saved-searches '((:name "Personal"
+                                :query "tag:inbox AND to:jonathanfung2000@gmail.com AND date:nov_3_2020..today AND NOT tag:delete")
+                               (:name "UCI"
+                                :query "tag:inbox AND to:fungjm@uci.edu AND date:nov_3_2020..today AND NOT tag:delete")
+                               (:name "Clean Inbox"
+                                :query "tag:inbox AND date:nov_3_2020..today")
+                               (:name "Flagged"
+                                :query "tag:inbox AND tag:flagged")
+                               (:name "Inbox"
+                                :query "tag:inbox"))))
 
-(map! :n "SPC r e" 'establish-notmuch)
+(map! :n "SPC r e" 'jf/establish-notmuch)
+
+; this sets cursor of notmuch-hellow to first saved search
+(add-hook 'notmuch-hello-refresh-hook
+          (lambda ()
+            (if (and (eq (point) (point-min))
+                     (search-forward "Saved searches:" nil t))
+                (progn
+                  (forward-line)
+                  (widget-forward 1))
+              (if (eq (widget-type (widget-at)) 'editable-field)
+                  (beginning-of-line)))))
+
+(setq notmuch-hello-sections '(notmuch-hello-insert-saved-searches))
 
 ; Rust
 (setq lsp-rust-server "rust-analyzer")
 (map! :n "SPC t u" #'lsp-ui-doc-mode)
 
+;; (setq lsp-disabled-clients '(rls))
+
 (after! persp-mode
 (setq persp-emacsclient-init-frame-behaviour-override "main"))
+
+;; (setq initial-buffer-choice t)
 
 ;(annotate-mode)
 
