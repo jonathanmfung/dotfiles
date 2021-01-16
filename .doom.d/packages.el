@@ -30,6 +30,17 @@
 (package! org-ql)
 (package! cdlatex)
 (package! org-superstar)
+(package! bufler)
+
+(package! helm-org-file)
+
+;; look at undo-fu ? in doom-emacs with soon update (- jan 16, 21)
+(package! undo-tree)
+
+(package! org-krita
+  :recipe (:host github
+           :repo "lepisma/org-krita"
+           :files ("resources" "resources" "*.el" "*.el")))
 
 ;; To install a package directly from a particular repo, you'll need to specify
 ;; a `:recipe'. You'll find documentation on what `:recipe' accepts here:
