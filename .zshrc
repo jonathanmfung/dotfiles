@@ -124,7 +124,14 @@ alias config='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
 alias configp='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME push git@github.com:jonathanmfung/dotfiles.git'
 
 alias ee='emacsclient -nw -c'
+# set dracula color scheme in TTY
 alias tt="grep -v '^#' $HOME/.config/dracula_theme.vt | setvtrgb -"
+
+# install rust-analyzer from source, since AUR path doens't work
+alias rusta="rm ~/.local/bin/rust-analyzer && curl -L https://github.com/rust-analyzer/rust-analyzer/releases/latest/download/rust-analyzer-linux -o ~/.local/bin/rust-analyzer && chmod +x ~/.local/bin/rust-analyzer"
+
+# doom emacs bin
+alias doom="~/.emacs.d/bin/doom"
 
 date -I
 

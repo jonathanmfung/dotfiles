@@ -298,7 +298,7 @@ title_align center
 
 exec firefox
 exec spotify --disable-gpu
-# running systemd user service doesn't work
+# running systemd user service for emacs daemon doesn't work
 exec emacs --daemon && exec emacsclient -c -F '((width . 200) (height . 60))'
 exec nitrogen --restore &
 exec sudo ntpdate -s time.nist.gov

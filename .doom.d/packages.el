@@ -32,7 +32,7 @@
 (package! org-superstar)
 (package! bufler)
 
-(package! helm-org-file)
+(package! helm-org-rifle)
 
 ;; look at undo-fu ? in doom-emacs with soon update (- jan 16, 21)
 (package! undo-tree)

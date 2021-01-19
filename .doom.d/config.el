@@ -1,3 +1,96 @@
+(defun make-obsolete (obsolete-name current-name &optional when)
+  "Make the byte-compiler warn that function OBSOLETE-NAME is obsolete.
+OBSOLETE-NAME should be a function name or macro name (a symbol).
+
+The warning will say that CURRENT-NAME should be used instead.
+If CURRENT-NAME is a string, that is the `use instead' message
+\(it should end with a period, and not start with a capital).
+WHEN should be a string indicating when the function
+was first made obsolete, for example a date or a release number."
+  (declare (advertised-calling-convention
+            ;; New code should always provide the `when' argument.
+            (obsolete-name current-name when) "23.1"))
+  (put obsolete-name 'byte-obsolete-info
+       ;; The second entry used to hold the `byte-compile' handler, but
+       ;; is not used any more nowadays.
+       (purecopy (list current-name nil when)))
+  obsolete-name)
+
+(defmacro define-obsolete-function-alias (obsolete-name current-name
+                                                        &optional when docstring)
+  "Set OBSOLETE-NAME's function definition to CURRENT-NAME and mark it obsolete.
+
+\(define-obsolete-function-alias \\='old-fun \\='new-fun \"22.1\" \"old-fun's doc.\")
+
+is equivalent to the following two lines of code:
+
+\(defalias \\='old-fun \\='new-fun \"old-fun's doc.\")
+\(make-obsolete \\='old-fun \\='new-fun \"22.1\")
+
+WHEN should be a string indicating when the function was first
+made obsolete, for example a date or a release number.
+
+See the docstrings of `defalias' and `make-obsolete' for more details."
+  (declare (doc-string 4)
+           (advertised-calling-convention
+            ;; New code should always provide the `when' argument.
+            (obsolete-name current-name when &optional docstring) "23.1"))
+  `(progn
+     (defalias ,obsolete-name ,current-name ,docstring)
+     (make-obsolete ,obsolete-name ,current-name ,when)))
+
+(defun make-obsolete-variable (obsolete-name current-name &optional when access-type)
+  "Make the byte-compiler warn that OBSOLETE-NAME is obsolete.
+The warning will say that CURRENT-NAME should be used instead.
+If CURRENT-NAME is a string, that is the `use instead' message.
+WHEN should be a string indicating when the variable
+was first made obsolete, for example a date or a release number.
+ACCESS-TYPE if non-nil should specify the kind of access that will trigger
+  obsolescence warnings; it can be either `get' or `set'."
+  (declare (advertised-calling-convention
+            ;; New code should always provide the `when' argument.
+            (obsolete-name current-name when &optional access-type) "23.1"))
+  (put obsolete-name 'byte-obsolete-variable
+       (purecopy (list current-name access-type when)))
+  obsolete-name)
+
+(defmacro define-obsolete-variable-alias (obsolete-name current-name
+                                                        &optional when docstring)
+  "Make OBSOLETE-NAME a variable alias for CURRENT-NAME and mark it obsolete.
+This uses `defvaralias' and `make-obsolete-variable' (which see).
+See the Info node `(elisp)Variable Aliases' for more details.
+
+If CURRENT-NAME is a defcustom or a defvar (more generally, any variable
+where OBSOLETE-NAME may be set, e.g. in an init file, before the
+alias is defined), then the define-obsolete-variable-alias
+statement should be evaluated before the defcustom, if user
+customizations are to be respected.  The simplest way to achieve
+this is to place the alias statement before the defcustom (this
+is not necessary for aliases that are autoloaded, or in files
+dumped with Emacs).  This is so that any user customizations are
+applied before the defcustom tries to initialize the
+variable (this is due to the way `defvaralias' works).
+
+WHEN should be a string indicating when the variable was first
+made obsolete, for example a date or a release number.
+
+For the benefit of Customize, if OBSOLETE-NAME has
+any of the following properties, they are copied to
+CURRENT-NAME, if it does not already have them:
+`saved-value', `saved-variable-comment'."
+  (declare (doc-string 4)
+           (advertised-calling-convention
+            ;; New code should always provide the `when' argument.
+            (obsolete-name current-name when &optional docstring) "23.1"))
+  `(progn
+     (defvaralias ,obsolete-name ,current-name ,docstring)
+     ;; See Bug#4706.
+     (dolist (prop '(saved-value saved-variable-comment))
+       (and (get ,obsolete-name prop)
+            (null (get ,current-name prop))
+            (put ,current-name prop (get ,obsolete-name prop))))
+     (make-obsolete-variable ,obsolete-name ,current-name ,when)))
+
 (setq user-full-name  "Jonathan Fung"
       user-mail-address "jonathanfung2000@gmail.com")
 
@@ -20,17 +113,28 @@
 (setq modus-themes-slanted-constructs t
       modus-themes-bold-constructs t
       modus-themes-fringes 'intense ; {nil,'subtle,'intense}
+
+      ;; Options for `modus-themes-lang-checkers': nil,
+      ;; 'straight-underline, 'subtle-foreground,
+      ;; 'subtle-foreground-straight-underline, 'intense-foreground,
+      ;; 'intense-foreground-straight-underline, 'colored-background
+      modus-themes-lang-checkers 'colored-background
+
       modus-themes-mode-line nil ; {nil,'3d,'moody}
+
       modus-themes-syntax nil ; Lots of options---continue reading the manual
+
       modus-themes-intense-hl-line t
       modus-themes-paren-match 'intense ; {nil,'subtle-bold,'intense,'intense-bold}
+
       modus-themes-links nil ; Lots of options---continue reading the manual
       modus-themes-no-mixed-fonts nil
       modus-themes-prompts 'subtle ; {nil,'subtle,'intense}
       modus-themes-completions 'opinionated ; {nil,'moderate,'opinionated}
-      modus-themes-region 'bg-only-no-extend ; {nil,'no-extend,'bg-only,'bg-only-no-extend}
+      modus-themes-region 'no-extend ; {nil,'no-extend,'bg-only,'bg-only-no-extend}
       modus-themes-diffs nil ; {nil,'desaturated,'fg-only,'bg-only}
       modus-themes-org-blocks 'grayscale ; {nil,'grayscale,'rainbow}
+
       modus-themes-headings ; Lots of options---continue reading the manual
       '((1 . rainbow-section)
         ;; (2 . rainbow-line-no-bold)
@@ -44,18 +148,22 @@
       modus-themes-scale-4 1.27
       modus-themes-scale-5 1.33)
 
-(defun modus-themes-load-operandi ()
-  "Load `modus-operandi' and disable `modus-vivendi'.
-Also run `modus-themes-after-load-theme-hook'."
-  (disable-theme 'modus-vivendi)
-  (load-theme 'modus-operandi t)
-  (run-hooks 'modus-themes-after-load-theme-hook))
+;; with Emacs 28, default seems to have a gray background for everything, this turns that to white
+(setq modus-themes-operandi-color-overrides
+      '(
+        (bg-alt . "#ffffff")
+        ))
+(setq modus-themes-vivendi-color-overrides
+      '(
+        (bg-alt . "#000000")
+        ))
+
 
 ;; Load the light theme (`modus-operandi')
-;; (modus-themes-load-operandi)
+(modus-themes-load-operandi)
 
-;; ;; Or load via a hook
-(add-hook! 'after-init-hook #'modus-themes-load-operandi)
+;; Or load via a hook
+;; (add-hook! 'after-init-hook #'modus-themes-load-operandi)
 
 ;includes part of the file's directory name at the beginning of the shared buffer name to make unique
 (setq uniquify-buffer-name-style 'forward)
@@ -67,17 +175,18 @@ Also run `modus-themes-after-load-theme-hook'."
 ;; (add-to-list 'default-frame-alist '(font . "Source Code Pro-10"))
 ;; (set-face-attribute 'default t :font "Source Code Pro-10")
 
-; CAUTION
-; This might be fatal, might turn off all keymaps
-; (setq display-battery-mode t)
+                                        ; CAUTION
+                                        ; This might be fatal, might turn off all keymaps
+                                        ; (setq display-battery-mode t)
 
 ;; (setq display-time-mode t)
 ;; (setq display-time-default-load-average nil)
-;; (setq line-number-mode nil
-;;       column-number-mode nil)
+(setq line-number-mode nil)
+(setq column-number-mode nil)
 (set-face-background 'mode-line "default")
 
 (setq doom-modeline-buffer-encoding nil)
+;; (setq doom-modeline-buffer-encoding t)
 (setq doom-modeline-buffer-file-name-style 'relative-from-project)
 
 (setq hl-line-mode nil)
@@ -168,6 +277,9 @@ Saves to a temp file and puts the filename in the kill ring."
       '("✸" ("◉" ?◈) "○" "▷"))
 
 (map! :n "SPC o l" 'link-hint-open-link-at-point)
+
+;; seems to break doom config
+;; (require 'org-inlinetask')
 
 ;; https://www.reddit.com/r/orgmode/comments/6q6cdk/adding_files_to_the_agenda_list_recursively/
 ;; doom doctor: org-agenda-file-regexp seems to be void
@@ -277,30 +389,33 @@ Saves to a temp file and puts the filename in the kill ring."
   (let ((org-super-agenda-groups
          `(
            (:name "Past"
-                  :deadline past)
+            :deadline past)
            (:name "Next Items"
-                  :todo "NEXT")
+            :todo "NEXT")
            (:name "Clean up Notes"
-                  :todo "NOTE")
+            :todo "NOTE")
            (:name "Today"
-                  :deadline today)
+            :deadline today)
            (:name "Tomorrow (+1)"
-                  :deadline (before ,(org-read-date nil nil "+2d")))
+            ;; before acts as <
+            :deadline (before ,(org-read-date nil nil "+2d")))
            (:name "Tomorrow Tomorrow (+2)"
-;; if today is 1, should show (before (1+3)) = 1, 2,3
-                  :deadline (before ,(org-read-date nil nil "+3d")))
-           (:name "Within a Week (+3..6)"
-                  :deadline (before ,(org-read-date nil nil "+7d")))
+            ;; if today is 1, should show (before (1+3)) = 1, 2,3
+            :deadline (before ,(org-read-date nil nil "+3d")))
+           (:name "Day After Tomorrow Tomorrow (+3)"
+            :deadline (before ,(org-read-date nil nil "+4d")))
+           (:name "Within a Week (+4..6)"
+            :deadline (before ,(org-read-date nil nil "+7d")))
            (:name "Within 30 Days (+7..30)"
-                  :deadline (before ,(org-read-date nil nil "+31d")))
+            :deadline (before ,(org-read-date nil nil "+31d")))
            (:name "========\n Personal"
-                  :tag "Person"
-                  :order 10)
+            :tag "Person"
+            :order 10)
            (:name "Email"
-                 :tag "Email"
-                 :order 15)
+            :tag "Email"
+            :order 15)
            (:discard (:anything t))
-        )))
+           )))
     (org-agenda nil "t")))
 
 ;; see https://github.com/alphapapa/org-super-agenda/issues/153
@@ -311,30 +426,30 @@ Saves to a temp file and puts the filename in the kill ring."
   (let ((org-super-agenda-groups
          `(
            (:name "Past"
-                  :scheduled past)
+            :scheduled past)
            (:name "Next Items"
-                  :todo "NEXT")
+            :todo "NEXT")
            (:name "Clean up Notes"
-                  :todo "NOTE")
+            :todo "NOTE")
            (:name "Scheduled Today"
-                  :scheduled today)
+            :scheduled today)
            (:name "Scheduled Tomorrow (+1)"
-                  :scheduled (before ,(org-read-date nil nil "+2d")))
+            :scheduled (before ,(org-read-date nil nil "+2d")))
            (:name "Scheduled Tomorrow Tomorrow (+2)"
-;; if today is 1, should show (before (1+3)) = 1, 2,3
-                  :scheduled (before ,(org-read-date nil nil "+3d")))
+            ;; if today is 1, should show (before (1+3)) = 1, 2,3
+            :scheduled (before ,(org-read-date nil nil "+3d")))
            (:name "Scheduled Within a Week (+3..6)"
-                  :scheduled (before ,(org-read-date nil nil "+7d")))
+            :scheduled (before ,(org-read-date nil nil "+7d")))
            (:name "Scheduled Within 30 Days (+7..30)"
-                  :scheduled (before ,(org-read-date nil nil "+31d")))
+            :scheduled (before ,(org-read-date nil nil "+31d")))
            (:name "========\n Personal"
-                  :tag "Person"
-                  :order 10)
+            :tag "Person"
+            :order 10)
            (:name "Email"
-                 :tag "Email"
-                 :order 15)
+            :tag "Email"
+            :order 15)
            (:discard (:anything t))
-        )))
+           )))
     (org-agenda nil "t")))
 
 (map! :map doom-leader-map "o b" nil)
@@ -346,8 +461,31 @@ Saves to a temp file and puts the filename in the kill ring."
   (org-agenda-quit)
   (jf/org-agenda-relative-deadline)
   )
+(defun jf/reset-relative-scheduled-super-agenda ()
+  (interactive)
+  (org-agenda-quit)
+  (jf/org-agenda-relative-scheduled)
+  )
 
 (map! :map org-agenda-mode-map "r" 'jf/reset-relative-deadline-super-agenda)
+(map! :map org-agenda-mode-map "R" 'jf/reset-relative-scheduled-super-agenda)
+
+(defhydra jf/hydra-agenda (:color blue
+                           :hint nil)
+  "
+^Relative^      ^Absolute^      ^Time-Grid^
+^^^--------------------------------------
+_d_: deadline   _e_: everyday   _w_: WHAT
+_s_: scheduled
+  "
+  ("d" jf/org-agenda-relative-deadline)
+  ("s" jf/org-agenda-relative-scheduled)
+  ("e" jf/org-agenda-day-by-day)
+  ("w" jf/org-agenda-regular-view)
+  )
+
+;; (map! :n "SPC a" 'jf/hydra-agenda/body)
+(map! :map doom-leader-map "a" 'jf/hydra-agenda/body)
 
 (setq org-todo-keywords
       '((sequence "TODO(t)" "NEXT(n)" "NOTE(m)" "STRT(s)" "HOLD(h)" "|" "DONE(d)" "KILL(k)")
@@ -450,6 +588,22 @@ Saves to a temp file and puts the filename in the kill ring."
   ;; directory is ~/.emacs.d/local/etc/templates
   :config
   (define-auto-insert "\\.org?$" "default-autoinsert.org"))
+
+  (defvar rasmus/ob-header-symbol ?☰
+    "Symbol used for babel headers")
+
+  (defun rasmus/org-prettify-symbols ()
+    (mapc (apply-partially 'add-to-list 'prettify-symbols-alist)
+          (cl-reduce 'append
+                     (mapcar (lambda (x) (list x (cons (upcase (car x)) (cdr x))))
+                             `(("#+begin_src" . ?⏠) ;; ➤ ➟ ✎
+                               ("#+end_src"   . ?⏡) ;; ⏹
+                               ("#+header:" . ,rasmus/ob-header-symbol)
+                               ("#+begin_quote" . ?❝)
+                               ("#+end_quote" . ?❞)))))
+    (turn-on-prettify-symbols-mode))
+
+  (add-hook 'org-mode-hook #'rasmus/org-prettify-symbols)
 
 (setq swiper-use-visual-line nil)
 (setq swiper-use-visual-line-p (lambda (a) nil))
