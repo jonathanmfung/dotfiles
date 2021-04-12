@@ -1,5 +1,7 @@
 let g:netrw_dirhistmax  =10
-let g:netrw_dirhistcnt =5
+let g:netrw_dirhistcnt =7
+let g:netrw_dirhist_7='/home/jonat/.config/mpd'
+let g:netrw_dirhist_6='/home/jonat/.config/vis'
 let g:netrw_dirhist_5='/home/jonat/org/blog'
 let g:netrw_dirhist_4='/home/jonat/.config/systemd/user'
 let g:netrw_dirhist_3='/home/jonat/.config/ncmpcpp'

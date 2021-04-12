@@ -96,18 +96,34 @@ CURRENT-NAME, if it does not already have them:
 
 ;; (setq doom-font (font-spec :family "Source Code Pro" :size 24))
 ;; (setq doom-big-font (font-spec :family "Source Code Pro" :size 36))
-(setq doom-font (font-spec :family "JetBrains Mono" :weight 'light ':size 24))
-(setq doom-big-font (font-spec :family "JetBrains Mono" :weight 'light :size 36))
-(setq doom-variable-pitch-font (font-spec :family "Roboto" :size 24 :weight 'bold))
 
-(require 'modus-themes)                 ; common code
-(require 'modus-operandi-theme)         ; light theme
-(require 'modus-vivendi-theme)          ; dark theme
+;; (setq doom-font (font-spec :family "JetBrains Mono" :weight 'light :size 24))
+;; (setq doom-big-font (font-spec :family "JetBrains Mono" :weight 'light :size 36))
+;; (setq doom-variable-pitch-font (font-spec :family "Overpass" :weight 'bold :size 24))
 
-(load-theme 'modus-vivendi t)           ; Dark theme
-(load-theme 'modus-operandi t)          ; Light theme
+;; (setq doom-variable-pitch-font (font-spec :family "Roboto" :size 24))
 
-(global-set-key (kbd "<f5>") (lambda () (interactive) (modus-themes-toggle) (set-face-background 'mode-line "default")))
+;; variable-pitch et al seems to inherit ":weight 'light" from doom-font
+(setq doom-font (font-spec :family "JetBrains Mono" :size 16)
+      ;; 24
+      doom-big-font (font-spec :family "JetBrains Mono" :size 36)
+      doom-variable-pitch-font (font-spec :family "Source Sans Pro" :size 24)
+      doom-serif-font (font-spec :family "IBM Plex Mono" :weight 'light))
+
+;; https://github.com/hlissner/doom-emacs/issues/3967
+(setq doom-theme 'modus-operandi)
+
+;; (require 'modus-themes)                 ; common code
+;; (require 'modus-operandi-theme)         ; light theme
+;; (require 'modus-vivendi-theme)          ; dark theme
+
+;; (load-theme 'modus-vivendi)           ; Dark theme
+;; (load-theme 'modus-operandi)          ; Light theme
+
+;; (global-set-key (kbd "<f5>") (lambda () (interactive) (modus-themes-toggle) (set-face-background 'mode-line "default")))
+
+;; for terminal use, to see window divides
+(global-set-key (kbd "<f5>") 'modus-themes-toggle)
 
 ;; Set customization options to values of your choice
 (setq modus-themes-slanted-constructs t
@@ -139,7 +155,11 @@ CURRENT-NAME, if it does not already have them:
       '((1 . rainbow-section)
         ;; (2 . rainbow-line-no-bold)
         ;; (3 . no-bold)
-        (t . rainbow-line))
+        ;; (t . rainbow)
+        ;; (t . rainbow-line)
+        (t . rainbow-line-no-bold)
+        ;; (t . highlight-no-bold)
+        )
       modus-themes-variable-pitch-headings nil
       modus-themes-scale-headings nil
       modus-themes-scale-1 1.1
@@ -158,31 +178,35 @@ CURRENT-NAME, if it does not already have them:
         (bg-alt . "#000000")
         ))
 
-
-;; Load the light theme (`modus-operandi')
-(modus-themes-load-operandi)
+;; only for "packaged variants" (?)
+;; (modus-themes-load-themes)
+;; (modus-themes-load-operandi)
 
 ;; Or load via a hook
 ;; (add-hook! 'after-init-hook #'modus-themes-load-operandi)
 
-;includes part of the file's directory name at the beginning of the shared buffer name to make unique
+                                        ;includes part of the file's directory name at the beginning of the shared buffer name to make unique
 (setq uniquify-buffer-name-style 'forward)
 ;; this may do the same thing as uniquify-buffer...
 (setq ivy-rich-path-style 'abbrev)
 
-; just editted these line 12/24
+;; (setq display-line-numbers-type 'visual)
+(setq display-line-numbers-type nil)
+
+                                        ; just editted these line 12/24
 ;; idk what these 2 lines do
 ;; (add-to-list 'default-frame-alist '(font . "Source Code Pro-10"))
 ;; (set-face-attribute 'default t :font "Source Code Pro-10")
 
-                                        ; CAUTION
-                                        ; This might be fatal, might turn off all keymaps
-                                        ; (setq display-battery-mode t)
+;; CAUTION
+;; This might be fatal, might turn off all keymaps
+;; (setq display-battery-mode t)
 
 ;; (setq display-time-mode t)
-;; (setq display-time-default-load-average nil)
-(setq line-number-mode nil)
-(setq column-number-mode nil)
+(display-time-mode)
+(setq display-time-default-load-average nil)
+(setq line-number-mode nil
+      column-number-mode nil)
 (set-face-background 'mode-line "default")
 
 (setq doom-modeline-buffer-encoding nil)
@@ -202,6 +226,170 @@ CURRENT-NAME, if it does not already have them:
   (cons (line-beginning-position) (line-end-position)))
 
 (setq-default hl-line-range-function #'my-hl-line-range)
+
+(defun jf/toggle-line-spacing ()
+  "Toggle line spacing between no extra space to extra half line height.
+URL `http://ergoemacs.org/emacs/emacs_toggle_line_spacing.html'
+Version 2017-06-02"
+  (interactive)
+  (if line-spacing
+      (setq line-spacing nil)
+    (setq line-spacing 5))
+  (redraw-frame (selected-frame)))
+
+(map! :n "SPC t v" 'jf/toggle-line-spacing)
+
+                                        ; breaks gui with error 'device X is not a termcap terminal device'
+;;(add-hook 'evil-insert-state-entry-hook  (lambda () (send-string-to-terminal "\033[6 q")))
+;;(add-hook 'evil-normal-state-entry-hook  (lambda () (send-string-to-terminal "\033[0 q")))
+
+;; (unless (display-graphic-p)
+;;   (evil-terminal-cursor-changer-activate) ; or (etcc-on)
+;;   )
+
+;; (defun jf/evil-cursor-box
+;;     (unless (display-graphic-p)
+;;       (lambda () (send-string-to-terminal "\033[6 q"))))
+
+;; (defun jf/evil-cursor-bar
+;;     (unless (display-graphic-p)
+;;       (lambda () (send-string-to-terminal "\033[0 q"))))
+
+(global-term-cursor-mode)
+
+;;; term-cursor.el --- Change cursor shape in terminal -*- lexical-binding: t; coding: utf-8; -*-
+
+;; Version: 0.4
+;; Author: h0d
+;; URL: https://github.com/h0d
+;; Keywords: terminals
+;; Package-Requires: ((emacs "26.1"))
+
+;;; Commentary:
+
+;; Send terminal escape codes to change cursor shape in TTY Emacs.
+;; Using VT520 DECSCUSR (cf https://invisible-island.net/xterm/ctlseqs/ctlseqs.html).
+;; Does not interfere with GUI Emacs behavior.
+
+;;; Code:
+
+(defgroup term-cursor nil
+  "Group for term-cursor."
+  :group 'terminals
+  :prefix 'term-cursor-)
+
+;; Define escape codes for different cursors
+(defcustom term-cursor-block-blinking "\e[1 q"
+  "The escape code sent to terminal to set the cursor as a blinking box."
+  :type 'string
+  :group 'term-cursor)
+
+(defcustom term-cursor-block-steady "\e[2 q"
+  "The escape code sent to terminal to set the cursor as a steady box."
+  :type 'string
+  :group 'term-cursor)
+
+(defcustom term-cursor-underline-blinking "\e[3 q"
+  "The escape code sent to terminal to set the cursor as a blinking underscore."
+  :type 'string
+  :group 'term-cursor)
+
+(defcustom term-cursor-underline-steady "\e[4 q"
+  "The escape code sent to terminal to set the cursor as a steady underscore."
+  :type 'string
+  :group 'term-cursor)
+
+(defcustom term-cursor-bar-blinking "\e[5 q"
+  "The escape code sent to terminal to set the cursor as a blinking bar."
+  :type 'string
+  :group 'term-cursor)
+
+(defcustom term-cursor-bar-steady "\e[6 q"
+  "The escape code sent to terminal to set the cursor as a steady bar."
+  :type 'string
+  :group 'term-cursor)
+
+;; Current cursor evaluation
+(defcustom term-cursor-triggers (list 'blink-cursor-mode-hook 'lsp-ui-doc-frame-hook)
+  "Hooks to add when the variable watcher might not be enough.
+That is, hooks to trigger `term-cursor--immediate'."
+  :type 'list
+  :group 'term-cursor)
+
+;;;###autoload
+(define-minor-mode term-cursor-mode
+  "Minor mode for term-cursor."
+  :group 'term-cursor
+  (if term-cursor-mode
+      (term-cursor-watch)
+    ;; else
+    (term-cursor-unwatch)))
+
+;;;###autoload
+(define-globalized-minor-mode global-term-cursor-mode term-cursor-mode
+  (lambda ()
+    (term-cursor-mode t))
+  :group 'term-cursor)
+
+(defun term-cursor--normalize (cursor)
+  "Return the actual value of CURSOR.
+It can sometimes be a `cons' from which we only want the first element (cf `cursor-type')."
+  (if (consp cursor)
+      (car cursor)
+    ;; else
+    cursor))
+
+(defun term-cursor--determine-esc (cursor blink)
+  "Return an escape code depending on the CURSOR and whether it should BLINK."
+  (cond (;; Vertical bar
+	 (eq cursor 'bar)
+	 (if blink term-cursor-bar-blinking
+	   term-cursor-bar-steady))
+	(;; Underscore
+	 (eq cursor 'hbar)
+	 (if blink term-cursor-underline-blinking
+	   term-cursor-underline-steady))
+	(;; Box — default value
+	 t
+	 (if blink term-cursor-block-blinking
+	   term-cursor-block-steady))))
+
+(defun term-cursor--eval (cursor blink)
+  "Send escape code to terminal according to CURSOR and whether it should BLINK."
+  (unless (display-graphic-p) ; Must be in TTY
+    ;; CURSOR can be a `cons' (cf. `cursor-type')
+    (setq cursor
+	  (term-cursor--normalize cursor))
+
+    ;; Ask terminal to display new cursor
+    (send-string-to-terminal
+     (term-cursor--determine-esc cursor blink))))
+
+(defun term-cursor--immediate ()
+  "Send an escape code without waiting for `term-cursor-watcher'."
+  (term-cursor--eval cursor-type blink-cursor-mode))
+
+(defun term-cursor-watcher (_symbol cursor operation _watch)
+  "Change cursor shape through escape sequences depending on CURSOR.
+Waits for OPERATION to be 'set."
+  (when (eq operation 'set)  ; A new value must be set to the variable
+    (term-cursor--eval cursor blink-cursor-mode)))
+
+(defun term-cursor-watch ()
+  "Start reacting to cursor change."
+  (add-variable-watcher 'cursor-type #'term-cursor-watcher)
+  (dolist (hook term-cursor-triggers)
+    (add-hook hook #'term-cursor--immediate)))
+
+(defun term-cursor-unwatch ()
+  "Stop reacting to cursor change."
+  (remove-variable-watcher 'cursor-type #'term-cursor-watcher)
+  (dolist (hook term-cursor-triggers)
+    (remove-hook hook #'term-cursor--immediate)))
+
+(provide 'term-cursor)
+
+;;; term-cursor.el ends here
 
 ; Bind Zooms??
 (map! :n "C-_" #'er/contract-region
@@ -266,20 +454,28 @@ Saves to a temp file and puts the filename in the kill ring."
 
 (setq global-undo-tree-mode t)
 
+(map! :n "SPC f a" 'save-some-buffers)
+
+;; (map! :map org-agenda-mode-map "SPC f a" 'save-some-buffers)
+
+(map! :map doom-leader-map "f a" 'save-some-buffers)
+
 (setq org-directory "~/org/")
-(setq display-line-numbers-type 'relative)
 
 (setq org-ellipsis " ▾")
 (setq org-startup-folded 'content)
 
 (add-hook 'org-mode-hook (lambda () (org-superstar-mode 1)))
-(setq org-superstar-headline-bullets-list
-      '("✸" ("◉" ?◈) "○" "▷"))
+;; (setq org-superstar-headline-bullets-list
+;;       '("✸" ("◉" ?◈) "○" "▷"))
+
+;; https://www.reddit.com/r/emacs/comments/lapujj/weekly_tipstricketc_thread/glvoifj/
+(setq org-superstar-headline-bullets-list '("☰" "☷" "▶" "●" "✱" "✲" "✸" "⦿" "⌾" "◦"))
 
 (map! :n "SPC o l" 'link-hint-open-link-at-point)
 
-;; seems to break doom config
-;; (require 'org-inlinetask')
+;; seems to break doom config ?
+;; (require 'org-inlinetask)
 
 ;; https://www.reddit.com/r/orgmode/comments/6q6cdk/adding_files_to_the_agenda_list_recursively/
 ;; doom doctor: org-agenda-file-regexp seems to be void
@@ -291,23 +487,33 @@ Saves to a temp file and puts the filename in the kill ring."
 ;;                    '("~/School/W21/" "~/org/"))))
 
 ;; Need to manually update based on school term
-(setq org-agenda-files '("~/org" "~/School/W21/MAE_157_Light" "~/School/W21/MSE_141_Nano" "~/School/W21/MSE_175_Fail" "~/School/W21/MSE_189B_Snr" "~/School/W21/MSE_60_Synth" ))
-
+(setq org-agenda-files '("~/org"
+                         "~/org/blog"
+                         "~/org/voxpop"
+                         "~/org/resources"
+                         "~/School/S21/ENGR_165_Manuf"
+                         "~/School/S21/MSE_165C_Phase"
+                         "~/School/S21/MSE_189C_Snr"
+                         "~/School/S21/STATS_120C_Prob"
+                         "~/rust/effex"
+                         ))
 
 (setq org-tag-faces
-      '(("Synth" . "gold2") ("Nano" . "lime green") ("Light" . "red2")
-        ("Snr" . "medium orchid") ("Fail" . "dodger blue")))
+      '(("Phase" . "gold2")
+        ("Nano" . "lime green")
+        ("Manuf" . "red2")
+        ("Snr" . "medium orchid")
+        ("Stats" . "dodger blue")))
 
-(setq org-agenda-start-day "+0")
-(setq org-agenda-span 'week)
+(setq org-agenda-start-day "+0"
+      org-agenda-span 1) ;; for use with day-by-day view
 
 (setq org-agenda-timegrid-use-ampm t)
 (setq org-agenda-time-grid
       (quote
        ((daily today require-timed)
         (400 1200 1600 2000 2400)
-        "  ⟿" "―――――――――――――――――――――――")))
-; 2400 is the next day
+        "  ⟿" "―――――――――――――――――――――――"))) ; 2400 is the next day
 
 (setq org-super-agenda-date-format "%A, %e %b")
 (setq org-super-agenda-header-separator ?―)
@@ -317,10 +523,9 @@ Saves to a temp file and puts the filename in the kill ring."
 (map! :map org-super-agenda-header-map "k" nil
       "j" nil)
 
-
-; removes 'agenda' prefix coming from agenda.org
-; also adds in effort level
-; should be (todo   . " %i %-12:c") if using multiple files
+                                        ; removes 'agenda' prefix coming from agenda.org
+                                        ; also adds in effort level
+                                        ; should be (todo   . " %i %-12:c") if using multiple files
 (setq org-agenda-prefix-format
       '(
         ;; (agenda . "%i %-7T%?-12t% s")
@@ -335,39 +540,38 @@ Saves to a temp file and puts the filename in the kill ring."
 
 
 (set-face-attribute 'org-agenda-date nil
-  :weight 'bold :overline t :foreground "#00538b" )
+                    :weight 'bold :overline t :foreground "#00538b" )
 
-; this doesn't execute - jan 1st
 (setq org-agenda-custom-commands
-      '(("z" "Super View"
+      '(("z" "Super View, Everyday"
          (
-          ;; (agenda "" ((org-super-agenda-groups
-          ;;              '((:name ""
-          ;;                       :time-grid t
-          ;;                       :date today
-          ;;                       :deadline today
-          ;;                       ;; :scheduled today
-          ;;                       :order 0
-          ;;                       :discard (:anything t)
-          ;;                       )))))
+          (agenda "" ((org-super-agenda-groups
+                       '((:name ""
+                          :time-grid t
+                          :date today
+                          :deadline today
+                          ;; :scheduled today
+                          :order 0
+                          :discard (:anything t)
+                          )))))
           (alltodo "" ((org-agenda-overriding-header (concat
-                       (make-string 5 ?\n)
-                       "Today is " (org-read-date nil nil "+0d")
-                       ))
+                                                      (make-string 1 ?\n)
+                                                      "Today is " (org-read-date nil nil "+0d")
+                                                      ))
                        (org-super-agenda-groups
                         '(
                           (:name "Overdue"
-                                 :deadline past
-                                 :order 0)
+                           :deadline past
+                           :order 0)
                           (:name "Scheduled"
-                                 :auto-planning t
-                                 :order 0)
+                           :auto-planning t
+                           :order 0)
                           (:name "========\n Personal"
-                                 :tag "Person"
-                                 :order 10)
+                           :tag "Person"
+                           :order 10)
                           (:name "Email"
-                                 :tag "Email"
-                                 :order 15)
+                           :tag "Email"
+                           :order 15)
                           (:discard (:anything t))
                           ))))
           ))))
@@ -394,6 +598,9 @@ Saves to a temp file and puts the filename in the kill ring."
             :todo "NEXT")
            (:name "Clean up Notes"
             :todo "NOTE")
+           (:name "Today's Time Blocks"
+            :and (:todo "BLOCK"
+                  :date today))
            (:name "Today"
             :deadline today)
            (:name "Tomorrow (+1)"
@@ -416,7 +623,12 @@ Saves to a temp file and puts the filename in the kill ring."
             :order 15)
            (:discard (:anything t))
            )))
-    (org-agenda nil "t")))
+    (org-agenda nil "t")
+    ;; (org-agenda-list)
+    ;; this allows time grid to show with TODO, but doesn't catch
+    ;; NEXT, Personal, and doesn't extend to 30 days
+    ;; Text is also red for some reason
+    ))
 
 ;; see https://github.com/alphapapa/org-super-agenda/issues/153
 ;; for a combined deadline-scheduled view with repeating items
@@ -431,6 +643,9 @@ Saves to a temp file and puts the filename in the kill ring."
             :todo "NEXT")
            (:name "Clean up Notes"
             :todo "NOTE")
+           (:name "Today's Time Blocks"
+            :and (:todo "BLOCK"
+                  :date today))
            (:name "Scheduled Today"
             :scheduled today)
            (:name "Scheduled Tomorrow (+1)"
@@ -475,7 +690,7 @@ Saves to a temp file and puts the filename in the kill ring."
   "
 ^Relative^      ^Absolute^      ^Time-Grid^
 ^^^--------------------------------------
-_d_: deadline   _e_: everyday   _w_: WHAT
+_d_: deadline   _e_: everyday   _w_: regular
 _s_: scheduled
   "
   ("d" jf/org-agenda-relative-deadline)
@@ -488,24 +703,30 @@ _s_: scheduled
 (map! :map doom-leader-map "a" 'jf/hydra-agenda/body)
 
 (setq org-todo-keywords
-      '((sequence "TODO(t)" "NEXT(n)" "NOTE(m)" "STRT(s)" "HOLD(h)" "|" "DONE(d)" "KILL(k)")
- (sequence "[ ](T)" "[+](P)" "[-](S)" "[?](W)" "|" "[X](D)")))
+      '((sequence "TODO(t)" "NEXT(n)" "NOTE(m)" "BLOCK(b)" "STRT(s)" "HOLD(h)" "|" "DONE(d)" "KILL(k)")
+        (sequence "[ ](T)" "[+](P)" "[-](S)" "[?](W)" "|" "[X](D)")))
 
 (setq org-todo-keyword-faces
-'(("[-]" . +org-todo-active)
- ("STRT" . +org-todo-active)
- ("NEXT" . +org-todo-active)
- ("[?]" . +org-todo-onhold)
- ("WAIT" . +org-todo-onhold)
- ("HOLD" . +org-todo-onhold)
- ("PROJ" . +org-todo-project)))
+      '(("[-]" . +org-todo-active)
+        ("STRT" . +org-todo-active)
+        ("BLOCK" . +org-todo-active)
+        ("NEXT" . +org-todo-active)
+        ("[?]" . +org-todo-onhold)
+        ("WAIT" . +org-todo-onhold)
+        ("HOLD" . +org-todo-onhold)
+        ("PROJ" . +org-todo-project)))
 
 ;; sort todos by deadline earliest first, then priority high first
 (setq org-agenda-sorting-strategy
-    '((agenda habit-down time-up priority-down category-keep)
-      (todo deadline-up priority-down category-keep)
-      (tags priority-down category-keep)
-      (search category-keep)) )
+      '((agenda habit-down time-up priority-down category-keep)
+        (todo deadline-up priority-down category-keep)
+        (tags priority-down category-keep)
+        (search category-keep)) )
+
+;; when set to t, toggling a repeating TODO item to DONE will reset the TODO prefix to the previous one
+;; implemented when switching BLOCK -> DONE, which returns it to BLOCK and not TODO
+;; reason: super-agenda selector is based on TODO name
+(setq org-todo-repeat-to-state t)
 
 (setq org-capture-templates
       '(("t" "Agenda TODO" entry (file "~/org/Agenda.org")
@@ -519,31 +740,33 @@ _s_: scheduled
 (map! :n "SPC z" 'org-capture)
 
 (setq org-latex-classes '(("article" "\\documentclass[11pt]{article}"
-  ("\\section{%s}" . "\\section*{%s}")
-  ("\\subsection{%s}" . "\\subsection*{%s}")
-  ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-  ("\\paragraph{%s}" . "\\paragraph*{%s}")
-  ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))
- ("report" "\\documentclass[11pt]{report}"
-  ("\\part{%s}" . "\\part*{%s}")
-  ("\\chapter{%s}" . "\\chapter*{%s}")
-  ("\\section{%s}" . "\\section*{%s}")
-  ("\\subsection{%s}" . "\\subsection*{%s}")
-  ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))
- ("book" "\\documentclass[11pt]{book}"
-  ("\\part{%s}" . "\\part*{%s}")
-  ("\\chapter{%s}" . "\\chapter*{%s}")
-  ("\\section{%s}" . "\\section*{%s}")
-  ("\\subsection{%s}" . "\\subsection*{%s}")
-  ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))
-("notes"
- "\\documentclass[8pt]{article}
+                           ("\\section{%s}" . "\\section*{%s}")
+                           ("\\subsection{%s}" . "\\subsection*{%s}")
+                           ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                           ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                           ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))
+                          ("report" "\\documentclass[11pt]{report}"
+                           ("\\part{%s}" . "\\part*{%s}")
+                           ("\\chapter{%s}" . "\\chapter*{%s}")
+                           ("\\section{%s}" . "\\section*{%s}")
+                           ("\\subsection{%s}" . "\\subsection*{%s}")
+                           ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))
+                          ("book" "\\documentclass[11pt]{book}"
+                           ("\\part{%s}" . "\\part*{%s}")
+                           ("\\chapter{%s}" . "\\chapter*{%s}")
+                           ("\\section{%s}" . "\\section*{%s}")
+                           ("\\subsection{%s}" . "\\subsection*{%s}")
+                           ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))
+                          ("notes"
+                           "\\documentclass[8pt]{article}
   \\usepackage[letterpaper, portrait, margin=1in]{geometry}
   \\usepackage[utf8]{inputenc}
   \\usepackage[T1]{fontenc}
   \\usepackage{amsmath}
   \\usepackage{amssymb}
   \\usepackage{hyperref}
+  \\usepackage[cache=false]{minted}
+  \\usemintedstyle{paraiso-light} % pygmentize -L styles
   \\usepackage{enumitem}
   \\setitemize{itemsep=0.5pt}
   \\usepackage{lastpage}
@@ -559,20 +782,25 @@ _s_: scheduled
   \\setlength{\\parskip}{0.5em plus 0.1em minus 0.2em}
   \\hypersetup{pdfborder=0 0 0}
   \\setcounter{secnumdepth}{0}"
-  ("\\section{%s}" . "\\section*{%s}")
-  ("\\subsection{%s}" . "\\subsection*{%s}")
-  ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-  ("\\paragraph{%s}" . "\\paragraph*{%s}")
-  ("\\subparagraph{%s}" . "\\subparagraph*{%s}")
-  )))
+                           ("\\section{%s}" . "\\section*{%s}")
+                           ("\\subsection{%s}" . "\\subsection*{%s}")
+                           ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                           ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                           ("\\subparagraph{%s}" . "\\subparagraph*{%s}")
+                           )))
 
 (map! :n "SPC r r" #'org-latex-export-to-pdf)
 
 (setq org-export-headline-levels 5)
 
-(use-package! org-krita
-  :config
-  (add-hook 'org-mode-hook 'org-krita-mode))
+(setq org-format-latex-options '(:foreground default :background default :scale 3.5 :html-foreground "Black" :html-background "Transparent" :html-scale 1.0 :matchers
+                                 ("begin" "$1" "$" "$$" "\\(" "\\[")) )
+
+;; minted uses Pygments (python) to syntax highlight pdf exported source blocks
+;; look into https://www.reddit.com/r/emacs/comments/lbkmmz/the_best_syntax_highlighting_in_a_pdf_youll_see_a/
+;; as an alternative
+(add-to-list 'org-latex-packages-alist '("" "minted"))
+(setq org-latex-listings 'minted)
 
 (map! :n "SPC t i" #'org-indent-mode)
 
@@ -593,6 +821,7 @@ _s_: scheduled
     "Symbol used for babel headers")
 
   (defun rasmus/org-prettify-symbols ()
+    (interactive)
     (mapc (apply-partially 'add-to-list 'prettify-symbols-alist)
           (cl-reduce 'append
                      (mapcar (lambda (x) (list x (cons (upcase (car x)) (cdr x))))
@@ -853,21 +1082,152 @@ Here are two examples:
 ;; definition needed to latex export svgs (in [[./foo.svg]] format)
 (setq org-latex-pdf-process
       '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
-    "bibtex %b"
-    "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
-    "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
+        "bibtex %b"
+        "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+        "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
 
-; Rust
+;;; wwg.el --- writer word goals
+
+;; Copyright (C) 2021 Andrea
+
+;; Author: Andrea andrea-dev@hotmail.com>
+;; Version: 0.0.0
+;; Package-Version: 20210121
+;; Keywords: writing
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;; A word number countdown for your writing goals.
+;;
+;; This mode helps you staying focused on the number of words you
+;; setup for your goals. The more you write the closer you get to your
+;; self-set goal for this session.
+;;
+;; See documentation on https://github.com/ag91/writer-word-goals
+
+;;; Code:
+
+(defgroup wwg nil
+  "Options specific to wwg."
+  :tag "wwg"
+  :group 'wwg)
+
+(defvar wwg/active-timer-alist nil "Alist of (buffer . timer) bindings to cleanup achieved targets.")
+
+(defcustom wwg/monitor-period 15 "How many seconds before checking if a writer has reached the target number of words. Defaults to a minute." :group 'wwg)
+
+(defvar wwg/monitor-function 'wwg/check-count-and-beep-with-message-if-finished "The function to monitor the target was reached in buffer. It takes two arguments: a number (target) and the buffer. It should return any value when it finds the target satisfied for cleanup purposes.")
+
+(defun wwg/check-count-and-beep-with-message-if-finished (target-count buffer)
+  "Beep if TARGET-COUNT was reached in BUFFER."
+  (let* ((total-so-far (with-current-buffer buffer (count-words (point-min) (point-max))))
+         (remaining-words (- target-count total-so-far)))
+    (if (<= remaining-words 0)
+        (progn
+          (beep)
+          (message
+           "Well done! You wrote %s words, and %s extra words!!"
+           target-count
+           (abs remaining-words))
+          'finished)
+      (progn
+        (message
+         "Okay! %s words left."
+         remaining-words)
+        nil))))
+
+(defun wwg/run-monitor (target-number buffer)
+  "Call `wwg/monitor-function' with TARGET-NUMBER and BUFFER and cleanup timer if completed."
+  (when (and
+         (eq buffer (current-buffer))
+         (funcall wwg/monitor-function target-number buffer))
+    (cancel-timer (car (alist-get buffer wwg/active-timer-alist)))))
+
+(defun wwg/monitor-word-count-for-buffer (target-number buffer)
+  "Monitor every `wwg/monitor-period' seconds if the writer reached the TARGET-NUMBER in BUFFER."
+  (add-to-list
+   'wwg/active-timer-alist
+   (list
+    buffer
+    (run-with-timer
+     wwg/monitor-period
+     wwg/monitor-period
+     `(lambda () (wwg/run-monitor ,target-number ,buffer))))))
+
+(defun wwg/set-goal-current-buffer (number-of-words)
+  "Monitor when you achieve the target NUMBER-OF-WORDS."
+  (interactive "nHow many words do you want to write for this session?")
+  (let ((buffer (current-buffer))
+        (words-already-there (count-words (point-min) (point-max))))
+    (wwg/monitor-word-count-for-buffer (+ number-of-words words-already-there) buffer)))
+
+(defun wwg/set-1k-goal-current-buffer ()
+  "Monitor when you achieve the target 1k words."
+  (interactive)
+  (wwg/set-goal-current-buffer 1000))
+
+
+(provide 'wwg)
+;;; wwg ends here
+
+;; Local Variables:
+;; time-stamp-pattern: "10/Version:\\?[ \t]+1.%02y%02m%02d\\?\n"
+;; End:
+
+                                        ; Rust
 ;; (setq lsp-rust-server 'rust-analyzer)
 (map! :n "SPC t u" #'lsp-ui-doc-mode)
 
-(after! rustic
-  (setq rustic-lsp-server 'rust-analyzer))
+;; (after! rustic
+;; (setq rustic-lsp-server 'rust-analyzer))
 
-(after! lsp-rust
-  (setq lsp-rust-server 'rust-analyzer))
+;; (after! lsp-rust
+;;   (setq lsp-rust-server 'rust-analyzer))
 
 ;; (setq lsp-disabled-clients '(rls))
+
+;; used when using Pkg.add("LanguageServer")
+(setq lsp-julia-package-dir nil)
+
+                                        ; for some reason emacs can't find the julia bin in PATH
+(setq julia-repl-executable-records
+      '((default "~/julia-1.6.0/bin/julia")
+        ))
+
+(after! julia-repl
+  (julia-repl-set-terminal-backend 'vterm)
+  )
+
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((emacs-lisp . t)
+   (julia . t)
+   (python . t)
+   (jupyter . t)))
+
+(setq org-babel-default-header-args:jupyter-julia '((:async . "no")
+                                                    (:session . "jl")
+                                                    (:kernel . "julia-1.6")))
+;; just using a snippet instead
+;; (add-to-list 'org-structure-template-alist
+;; '("j" . "src jupyter-julia :session jl :results graphics"))
+
+;; required to get lsp to work
+;; https://github.com/non-Jedi/lsp-julia/issues/35
+(setq lsp-enable-folding t)
 
 (after! persp-mode
 (setq persp-emacsclient-init-frame-behaviour-override "main"))
@@ -903,6 +1263,10 @@ Here are two examples:
 ; rebind SPC p F to search all projects' files
 ;(map! :n "SPC p F" #'projectile-find-file-in-known-projects)
 
+;; (use-package! org-krita
+;;   :config
+;;   (add-hook 'org-mode-hook 'org-krita-mode))
+
 ;; (add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e")
 ;; ;; Each path is relative to `+mu4e-mu4e-mail-path', which is ~/.mail by default
 ;; (set-email-account! "Personal"
@@ -920,4 +1284,4 @@ Here are two examples:
 ;;     (mu4e-refile-folder     . "/uci/[Gmail].All Mail")
 ;;     (smtpmail-smtp-user     . "fungjm@uci.edu")
 ;;     ;; (mu4e-compose-signature . "---\nHenrik Lissner"))
-;;   t))
+;;   t)

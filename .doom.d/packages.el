@@ -37,10 +37,17 @@
 ;; look at undo-fu ? in doom-emacs with soon update (- jan 16, 21)
 (package! undo-tree)
 
-(package! org-krita
-  :recipe (:host github
-           :repo "lepisma/org-krita"
-           :files ("resources" "resources" "*.el" "*.el")))
+;; (package! org-krita
+;;   :recipe (:host github
+;;            :repo "lepisma/org-krita"
+;;            :files ("resources" "resources" "*.el" "*.el")))
+
+(package! vterm)
+
+(package! jupyter)
+(package! lsp-julia :recipe (:host github :repo "non-jedi/lsp-julia"))
+
+;; (package! evil-terminal-cursor-changer)
 
 ;; To install a package directly from a particular repo, you'll need to specify
 ;; a `:recipe'. You'll find documentation on what `:recipe' accepts here:

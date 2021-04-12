@@ -1,10 +1,14 @@
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
+# using https://protesilaos.com/codelog/2021-02-22-modus-themes-exporter/
+# instead of pywal for now
+# can't toggle light/dark, have to manually uncomment
+
 # Import colorscheme from 'wal' asynchronously
 # &   # Run the process in the background.
 # ( ) # Hide shell job control messages.
-(cat ~/.cache/wal/sequences &)
+# (cat ~/.cache/wal/sequences &)
 
 # Alternative (blocks terminal for 0-3ms)
 #cat ~/.cache/wal/sequences
@@ -83,7 +87,8 @@ plugins=(git)
 if [[ -n $SSH_CONNECTION ]]; then
   export EDITOR='emacs'
 else
-  export EDITOR='nvim'
+  export EDITOR=nvim
+  export VISUAL=nvim
 fi
 
 # Compilation flags
@@ -128,12 +133,19 @@ alias ee='emacsclient -nw -c'
 alias tt="grep -v '^#' $HOME/.config/dracula_theme.vt | setvtrgb -"
 
 # install rust-analyzer from source, since AUR path doens't work
-alias rusta="rm ~/.local/bin/rust-analyzer && curl -L https://github.com/rust-analyzer/rust-analyzer/releases/latest/download/rust-analyzer-linux -o ~/.local/bin/rust-analyzer && chmod +x ~/.local/bin/rust-analyzer"
+# alias rusta="rm ~/.local/bin/rust-analyzer && curl -L https://github.com/rust-analyzer/rust-analyzer/releases/latest/download/rust-analyzer-linux -o ~/.local/bin/rust-analyzer && chmod +x ~/.local/bin/rust-analyzer"
+# Update 1/20/21, AUR package seems to work now, forgot rust-analyzer requires a cargo structure, which rustlings doesn't have
 
 # doom emacs bin
 alias doom="~/.emacs.d/bin/doom"
 
+alias red="redshift -v -r -t 4000:3000 -l 37.77:122.42 &"
+
+alias up="uptime -p"
+
 date -I
+
+export PATH="$PATH:/home/jonat/julia-1.6.0/bin"
 
 #function tmr(){
 #   date1=$((`date +%s` + $1)); 

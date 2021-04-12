@@ -17,11 +17,17 @@ set $mod Mod4
 
 # Font for window titles. Will also be used by the bar unless a different font
 # is used in the bar {} block below.
-font pango:monospace 8
+# font pango:Roboto 12px
+# font pango:SourceSansPro, 12
+# font pango:SourceCodePro 12
+# font -ADBO-Source_Code_Pro-normal-normal-normal-*-*-*-*-*-m-0-iso10646-1
+
+# this is hacky to change window title font as the previous lines don't work (3/13/21)
+for_window [class=".*"] title_format "<span font='Source Sans Pro 12'>%title</span>"
 
 # This font is widely installed, provides lots of unicode glyphs, right-to-left
 # text rendering and scalability on retina/hidpi displays (thanks to pango).
-#font pango:DejaVu Sans Mono 8
+# font pango:DejaVu Sans Mono 8
 
 # The combination of xss-lock, nm-applet and pactl is a popular choice, so
 # they are included here as an example. Modify as you see fit.
@@ -36,13 +42,19 @@ exec --no-startup-id nm-applet
 
 # Use pactl to adjust volume in PulseAudio.
 set $refresh_i3status killall -SIGUSR1 i3status
+
+# bindsym XF86AudioRaiseVolume exec --no-startup-id amixer sset Master 1%+
+# bindsym XF86AudioLowerVolume exec --no-startup-id amixer sset Master 1%-
+# bindsym XF86AudioMute exec --no-startup-id amixer sset Master toggle
+
 bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ +2% && $refresh_i3status && notify-send 'Volume up'
 bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ -2% && $refresh_i3status && notify-send 'Volume down'
+bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ toggle && $refresh_i3status && notify-send 'Mute/Unmute'
+bindsym XF86AudioMicMute exec --no-startup-id pactl set-source-mute @DEFAULT_SOURCE@ toggle && $refresh_i3status
+
 bindsym XF86AudioPlay exec --no-startup-id playerctl -p spotify play-pause && $refresh_i3status && notify-send 'Play/Pause'
 bindsym XF86AudioPrev exec --no-startup-id playerctl -p spotify previous && $refresh_i3status && notify-send 'Prev Track'
 bindsym XF86AudioNext exec --no-startup-id playerctl -p spotify next && $refresh_i3status && notify-send 'Next Track'
-bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ toggle && $refresh_i3status && notify-send 'Mute/Unmute'
-bindsym XF86AudioMicMute exec --no-startup-id pactl set-source-mute @DEFAULT_SOURCE@ toggle && $refresh_i3status
 
 # Sreen brightness controls
 bindsym XF86MonBrightnessUp exec xbacklight -inc 2 # increase screen brightness
@@ -58,8 +70,10 @@ bindsym $mod+comma exec mpc -p 6605 next
 floating_modifier $mod
 
 # start a terminal
-bindsym $mod+Return exec --no-startup-id alacritty
-bindsym $mod+Shift+Return exec --no-startup-id alacritty --class floating -d 80 35 
+#bindsym $mod+Return exec --no-startup-id alacritty
+#bindsym $mod+Shift+Return exec --no-startup-id alacritty --class floating -d 80 35 
+bindsym $mod+Return exec --no-startup-id termite --title=termite
+bindsym $mod+Shift+Return exec --no-startup-id termite --class=floating 
 #--position 3000 450 
 #i3-sensible-terminal
 
@@ -213,13 +227,16 @@ bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcu
 bindsym $mod+i exec emacsclient -c -F '((name . "floating"))' -e "(dired nil)"
 # --position 2800 400 
 #bindsym $mod+o exec --no-startup-id alacritty --class floating -d 22 25 --hold -e cal -3
-bindsym $mod+o exec emacsclient -c -F '((name . "floating"))' -e "(calendar)"
+#bindsym $mod+o exec emacsclient -c -F '((name . "floating"))' -e "(calendar)"
+bindsym $mod+o exec notify-send "$(cal)"
 # --position 3500 400 
 bindsym $mod+p exec --no-startup-id alacritty --class floating -d 80 40 --hold -e nmtui
 # --position 3200 400 
 
 # floating pavucontrol to fix audio configurations
 bindsym $mod+u exec --no-startup-id pavucontrol --class floating
+
+bindsym $mod+Shift+s exec --no-startup-id spotify --disable-gpu 
 
 for_window [class="Alacritty" instance="floating"] floating enable border pixel 3
 for_window [class="floating"] floating enable border pixel 3
@@ -303,7 +320,7 @@ exec emacs --daemon && exec emacsclient -c -F '((width . 200) (height . 60))'
 exec nitrogen --restore &
 exec sudo ntpdate -s time.nist.gov
 exec mpd
-exec anki
+#exec anki
 exec pulseeffects --gapplication-service
 
 # class                 border  backgr. text    indicator child_border
@@ -318,9 +335,12 @@ client.unfocused        #707070 #707070 #ffffff #292d2e   #707070
 #client.unfocused        #707070 #000000 #ffffff #292d2e   #707070
 
 
-exec --no-startup-id redshift -v -t 4500:3000 &!
+exec --no-startup-id redshift -v -r -t 4000:3000 -l 37.77:-122.42 &!
 
-bindsym $mod+t exec xrandr --output eDP1 --primary --mode 1920x1080 --pos 1975x2160 --rotate normal --output DP1 --mode 1920x1080 --pos 0x240 --rotate right --output HDMI1 --mode 3840x2160 --pos 1080x0 --rotate normal --output HDMI2 --off --output VIRTUAL1 --off
+# 4k
+#bindsym $mod+t exec xrandr --output eDP1 --primary --mode 1920x1080 --pos 1975x2160 --rotate normal --output DP1 --mode 1920x1080 --pos 0x240 --rotate right --output HDMI1 --mode 3840x2160 --pos 1080x0 --rotate normal --output HDMI2 --off --output VIRTUAL1 --off
+# 1440p
+bindsym $mod+t exec xrandr --output eDP1 --primary --mode 1920x1080 --pos 1400x1623 --rotate normal --output DP1 --mode 1920x1080 --pos 0x0 --rotate right --output HDMI1 --mode 2560x1440 --pos 1080x183 --rotate normal --output HDMI2 --off --output VIRTUAL1 --off
 bindsym $mod+y exec xrandr --output HDMI1 --off  --output DP1 --off
 
 workspace 1 output HDMI1
@@ -343,6 +363,9 @@ bindsym $mod+c move workspace to output right
 bindsym $mod+shift+v move workspace to output up
 bindsym $mod+z exec flameshot gui 
 bindsym $mod+shift+z exec i3lock -c 707070 
+bindsym $mod+shift+f exec firefox -new-window
+#bindsym $mod+shift+d fullscreen toggle global # fullscreens across whole virtual x display
+
 
 #toggle light and dark terminal scheme
 bindsym $mod+shift+t exec wal -n --saturate 0.8 -i ~/Downloads/walls/Jack_Vanzet_68.jpg -l -e
