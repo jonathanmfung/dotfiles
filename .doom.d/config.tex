@@ -1,3 +1,84 @@
+% Created 2021-05-02 Sun 04:32
+% Intended LaTeX compiler: pdflatex
+\documentclass[8pt]{article}
+  \usepackage[letterpaper, portrait, margin=1in]{geometry}
+  \usepackage[utf8]{inputenc}
+  \usepackage[T1]{fontenc}
+  \usepackage{amsmath}
+  \usepackage{amssymb}
+  \usepackage{hyperref}
+  \usepackage{tcolorbox}
+% http://tug.ctan.org/macros/latex/contrib/minted/minted.pdf
+  \usepackage[cache=false]{minted}
+  \setminted{breaklines=true, breakanywhere=true}
+% \usemintedstyle{paraiso-light} % pygmentize -L styles
+  \usemintedstyle{emacs} % pygmentize -L styles
+% https://tex.stackexchange.com/questions/112559/box-around-minted-environment
+% https://ctan.math.utah.edu/ctan/tex-archive/macros/latex/contrib/tcolorbox/tcolorbox.pdf
+  \BeforeBeginEnvironment{minted}{\begin{tcolorbox}[colframe=black!85!white, colback=black!5!white, boxrule=0.3mm]}
+  \AfterEndEnvironment{minted}{\end{tcolorbox}}
+  \usepackage{enumitem}
+  \setitemize{itemsep=0.5pt}
+  \usepackage{lastpage}
+  \usepackage{fancyhdr}
+  \pagestyle{fancy}
+  \fancyhf{}
+  \usepackage{titling} % allows 	hetitle 	heauthor 	hedate
+  \rhead{\theauthor}
+  \lhead{\thetitle}
+  \rfoot{\thepage{} of \pageref{LastPage}}
+  \linespread{1}
+  \setlength{\parindent}{0pt}
+  \setlength{\parskip}{0.5em plus 0.1em minus 0.2em}
+  \hypersetup{pdfborder=0 0 0}
+  \setcounter{secnumdepth}{0}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{grffile}
+\usepackage{longtable}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{textcomp}
+\usepackage{amssymb}
+\usepackage{capt-of}
+\usepackage{hyperref}
+\usepackage{minted}
+\author{Jonathan Fung}
+\date{}
+\title{Literate Doom Emacs Config}
+\hypersetup{
+ pdfauthor={Jonathan Fung},
+ pdftitle={Literate Doom Emacs Config},
+ pdfkeywords={},
+ pdfsubject={},
+ pdfcreator={Emacs 28.0.50 (Org mode 9.5)}, 
+ pdflang={English}}
+\begin{document}
+
+\maketitle
+\section{Resources}
+\label{sec:orgc93b7cb}
+\subsection{444 Days of Literate Configuration}
+\label{sec:org669e223}
+\url{https://www.reddit.com/r/emacs/comments/m9zxw6/444\_days\_of\_literate\_configuration\_450\_days\_using/}
+
+\url{https://github.com/tecosaur/emacs-config/}
+
+\section{Emacs 28 Info}
+\label{sec:org9b1ad6b}
+\url{https://www.reddit.com/r/emacs/comments/kev7o8/aur\_arch\_linux\_package\_delivering\_emacs\_binaries/}
+
+\texttt{emacs} was assimilating to 27.1, even with rm -rf--ing .emacs.d. I had to delete my extra Emacs 27.1 bin.
+
+Just reinstalled doom in .emacs.d, and synced
+
+\subsection{Emacs 28 Fix: define-obsolete-function-alias}
+\label{sec:orgcfee300}
+From \url{https://www.reddit.com/r/emacs/comments/kqb9s9/cannot\_recompile\_packagess\_error\_wrong\_number\_of/}
+\begin{minted}[]{elisp}
 (defun make-obsolete (obsolete-name current-name &optional when)
   "Make the byte-compiler warn that function OBSOLETE-NAME is obsolete.
 OBSOLETE-NAME should be a function name or macro name (a symbol).
@@ -90,10 +171,57 @@ CURRENT-NAME, if it does not already have them:
             (null (get ,current-name prop))
             (put ,current-name prop (get ,obsolete-name prop))))
      (make-obsolete-variable ,obsolete-name ,current-name ,when)))
+\end{minted}
 
+\section{Information}
+\label{sec:org5f659ab}
+\subsection{User Info}
+\label{sec:orgcb4e00e}
+Some functionality uses this to identify you, e.g. GPG configuration, email
+clients, file templates and snippets.
+\begin{minted}[]{elisp}
 (setq user-full-name  "Jonathan Fung"
       user-mail-address "jonathanfung2000@gmail.com")
+\end{minted}
 
+\subsection{Doom Info}
+\label{sec:org17631b6}
+Here are some additional functions/macros that could help you configure Doom:
+
+\begin{itemize}
+\item `load!' for loading external *.el files relative to this one
+\item `use-package' for configuring packages
+\item `after!' for running code after a package has loaded
+\item `add-load-path!' for adding directories to the `load-path', relative to
+this file. Emacs searches the `load-path' when you load packages with
+`require' or `use-package'.
+\item `map!' for binding new keys
+\end{itemize}
+
+To get info about any of these functions/macros, move the cursor over
+the highlighted symbol at press 'K' (non-evil users must press 'C-c g k').
+This will open documentation for it, including demos of how they are used.
+
+You can also try 'gd' (or 'C-c g d') to jump to their definition and see how
+they are implemented.
+
+\section{Visual Interface}
+\label{sec:orge193c28}
+\subsection{Fonts}
+\label{sec:org0bb0f61}
+Doom exposes five (optional) variables for controlling fonts in Doom. Here
+are the three important ones:
+
+\begin{itemize}
+\item `doom-font'
+\item `doom-variable-pitch-font'
+\item `doom-big-font' -- used for `doom-big-font-mode'; use this for
+presentations or streaming.
+\end{itemize}
+
+They all accept either a font-spec, font string (``Input Mono-12''), or xlfd
+font string. You generally only need these two:
+\begin{minted}[]{elisp}
 ;; (setq doom-font (font-spec :family "Source Code Pro" :size 24))
 ;; (setq doom-big-font (font-spec :family "Source Code Pro" :size 36))
 
@@ -113,7 +241,23 @@ CURRENT-NAME, if it does not already have them:
       ;; doom-variable-pitch-font (font-spec :family "IBM Plex Sans Condensed" :size 24 :weight 'normal)
       ;; doom-variable-pitch-font (font-spec :family "IBM Plex Serif" :size 24 :weight 'normal)
       doom-serif-font (font-spec :family "IBM Plex Mono" :weight 'light))
+\end{minted}
 
+\subsection{Theme}
+\label{sec:orgef331e2}
+\subsubsection{Modus is included in Emacs 28.1}
+\label{sec:orgb207baf}
+There are two ways to load a theme. Both assume the theme is installed and
+available. You can either set `doom-theme' or manually load a theme with the
+`load-theme' function.
+
+Reference: \url{https://protesilaos.com/modus-themes}
+
+As of 3/14/21, my current emacs version is
+GNU Emacs 28.0.50 (build 2, x86\textsubscript{64}-pc-linux-gnu, GTK+ Version 3.24.24, cairo version 1.17.4) of 2021-01-30
+so, modus is not in native emacs
+
+\begin{minted}[]{elisp}
 ;; https://github.com/hlissner/doom-emacs/issues/3967
 ;; (setq doom-theme 'modus-operandi)
 (setq doom-theme 'modus-vivendi)
@@ -125,38 +269,36 @@ CURRENT-NAME, if it does not already have them:
 ;; (load-theme 'modus-vivendi)           ; Dark theme
 ;; (load-theme 'modus-operandi)          ; Light theme
 
+;; (global-set-key (kbd "<f5>") (lambda () (interactive) (modus-themes-toggle) (set-face-background 'mode-line "default")))
 
-;;(global-set-key (kbd "<f5>") (lambda () (interactive) (modus-themes-toggle) (set-face-background 'mode-line "default")))
-
+;; for terminal use, to see window divides
 (global-set-key (kbd "<f5>") 'modus-themes-toggle)
 
-(add-hook! 'modus-themes-after-load-theme-hook (set-face-background 'mode-line "default"))
-
-
 ;; Set customization options to values of your choice
-(setq modus-themes-bold-constructs t
-      modus-themes-slanted-constructs t
-      modus-themes-syntax nil ; Lots of options---continue reading the manual
-      modus-themes-no-mixed-fonts nil
-      modus-themes-links nil ; Lots of options---continue reading the manual
-      modus-themes-prompts 'subtle-accented ; {nil,'subtle-accented, 'intense-accented, 'subtle-gray, 'intense-gray}
-
-      modus-themes-mode-line 'borderless ; {nil,'3d,'moody, 'borderless, 'borderless-3d, 'borderless-moody}
-      modus-themes-completions 'opinionated ; {nil,'moderate,'opinionated}
+(setq modus-themes-slanted-constructs t
+      modus-themes-bold-constructs t
       modus-themes-fringes 'intense ; {nil,'subtle,'intense}
 
-      modus-themes-lang-checkers 'colored-background ; Lots of options---continue reading the manual
+      ;; Options for `modus-themes-lang-checkers': nil,
+      ;; 'straight-underline, 'subtle-foreground,
+      ;; 'subtle-foreground-straight-underline, 'intense-foreground,
+      ;; 'intense-foreground-straight-underline, 'colored-background
+      modus-themes-lang-checkers 'colored-background
 
-      modus-themes-hl-line 'intense-background ; Lots of options---continue reading the manual
+      modus-themes-mode-line nil ; {nil,'3d,'moody}
 
-      modus-themes-subtle-line-numbers t ; {nil, t}
-      modus-themes-paren-match nil ; {nil,'subtle-bold,'intense,'intense-bold}
-      modus-themes-region 'no-extend ; Lots of options
+      modus-themes-syntax nil ; Lots of options---continue reading the manual
 
+      modus-themes-intense-hl-line t
+      modus-themes-paren-match 'intense ; {nil,'subtle-bold,'intense,'intense-bold}
+
+      modus-themes-links nil ; Lots of options---continue reading the manual
+      modus-themes-no-mixed-fonts nil
+      modus-themes-prompts 'subtle ; {nil,'subtle,'intense}
+      modus-themes-completions 'opinionated ; {nil,'moderate,'opinionated}
+      modus-themes-region 'no-extend ; {nil,'no-extend,'bg-only,'bg-only-no-extend}
       modus-themes-diffs nil ; {nil,'desaturated,'fg-only,'bg-only}
-
       modus-themes-org-blocks 'grayscale ; {nil,'grayscale,'rainbow}
-      modus-themes-org-habit nil
 
       modus-themes-headings ; Lots of options---continue reading the manual
       '((1 . rainbow-section)
@@ -167,16 +309,13 @@ CURRENT-NAME, if it does not already have them:
         (t . rainbow-line-no-bold)
         ;; (t . highlight-no-bold)
         )
-
+      modus-themes-variable-pitch-headings nil
       modus-themes-scale-headings nil
       modus-themes-scale-1 1.1
       modus-themes-scale-2 1.15
       modus-themes-scale-3 1.21
       modus-themes-scale-4 1.27
-      modus-themes-scale-5 1.33
-
-      modus-themes-variable-pitch-ui nil
-      modus-themes-variable-pitch-headings nil)
+      modus-themes-scale-5 1.33)
 
 ;; with Emacs 28, default seems to have a gray background for everything, this turns that to white
 ;; (setq modus-themes-operandi-color-overrides
@@ -194,7 +333,10 @@ CURRENT-NAME, if it does not already have them:
 
 ;; Or load via a hook
 ;; (add-hook! 'after-init-hook #'modus-themes-load-operandi)
-
+\end{minted}
+\subsection{{\bfseries\sffamily TODO} Display}
+\label{sec:orgee5b454}
+\begin{minted}[]{elisp}
                                         ;includes part of the file's directory name at the beginning of the shared buffer name to make unique
 (setq uniquify-buffer-name-style 'forward)
 ;; this may do the same thing as uniquify-buffer...
@@ -207,7 +349,10 @@ CURRENT-NAME, if it does not already have them:
 ;; idk what these 2 lines do
 ;; (add-to-list 'default-frame-alist '(font . "Source Code Pro-10"))
 ;; (set-face-attribute 'default t :font "Source Code Pro-10")
-
+\end{minted}
+\subsection{{\bfseries\sffamily TODO} Modeline}
+\label{sec:org2a08cf1}
+\begin{minted}[]{elisp}
 ;; CAUTION
 ;; This might be fatal, might turn off all keymaps
 ;; (setq display-battery-mode t)
@@ -222,7 +367,11 @@ CURRENT-NAME, if it does not already have them:
 (setq doom-modeline-buffer-encoding nil)
 ;; (setq doom-modeline-buffer-encoding t)
 (setq doom-modeline-buffer-file-name-style 'relative-from-project)
+\end{minted}
 
+\subsection{hl-line mode}
+\label{sec:org6d0ea77}
+\begin{minted}[]{elisp}
 (setq hl-line-mode nil)
 (map! :n "SPC t h" #'hl-line-mode)
 
@@ -236,7 +385,11 @@ CURRENT-NAME, if it does not already have them:
   (cons (line-beginning-position) (line-end-position)))
 
 (setq-default hl-line-range-function #'my-hl-line-range)
+\end{minted}
 
+\subsection{Line Spacing}
+\label{sec:org3511cef}
+\begin{minted}[]{elisp}
 (defun jf/toggle-line-spacing ()
   "Toggle line spacing between no extra space to extra half line height.
 URL `http://ergoemacs.org/emacs/emacs_toggle_line_spacing.html'
@@ -248,7 +401,13 @@ Version 2017-06-02"
   (redraw-frame (selected-frame)))
 
 (map! :n "SPC t v" 'jf/toggle-line-spacing)
+\end{minted}
 
+\subsection{evil-mode terminal cursors}
+\label{sec:orge77bdb3}
+\url{https://github.com/h0d/term-cursor.el}
+
+\begin{minted}[]{elisp}
 ;;; term-cursor.el --- Change cursor shape in terminal -*- lexical-binding: t; coding: utf-8; -*-
 
 ;; Version: 0.4
@@ -384,8 +543,13 @@ Waits for OPERATION to be 'set."
 ;;; term-cursor.el ends here
 
 (global-term-cursor-mode)
-
-                                        ; Bind Zooms??
+\end{minted}
+\section{Usability}
+\label{sec:org578fd5b}
+\subsection{Navigation}
+\label{sec:org047ad75}
+\begin{minted}[]{elisp}
+; Bind Zooms??
 (map! :n "C-_" #'er/contract-region
       :n "C-+" #'er/expand-region)
 
@@ -394,8 +558,6 @@ Waits for OPERATION to be 'set."
       "K" nil)
 (map! :map evil-motion-state-map "M" nil
       "K" nil)
-
-(map! :n "V" #'evil-visual-line)
 
 ;; ; rebind J,K for scrolling
 (map! :n "J" #'evil-scroll-line-up)
@@ -410,7 +572,10 @@ Waits for OPERATION to be 'set."
 ;; ;; Also in visual mode
 (define-key evil-visual-state-map "j" 'evil-next-visual-line)
 (define-key evil-visual-state-map "k" 'evil-previous-visual-line)
-
+\end{minted}
+\subsection{Screenshots}
+\label{sec:org6ab1ba9}
+\begin{minted}[]{elisp}
 (defun screenshot-svg ()
   "Save a screenshot of the current frame as an SVG image.
 Saves to a temp file and puts the filename in the kill ring."
@@ -421,9 +586,15 @@ Saves to a temp file and puts the filename in the kill ring."
       (insert data))
     (kill-new filename)
     (message filename)))
-
-;; (add-hook 'pdf-tools-enabled-hook 'pdf-view-midnight-minor-mode)
-
+\end{minted}
+\subsection{pdf-tools}
+\label{sec:orgc058279}
+\begin{minted}[]{elisp}
+(add-hook 'pdf-tools-enabled-hook 'pdf-view-midnight-minor-mode)
+\end{minted}
+\subsection{Custom Keybinds}
+\label{sec:org0907871}
+\begin{minted}[]{elisp}
 ;; Bind toggles
 (global-set-key (kbd "<f2>") 'mixed-pitch-mode)
 (global-set-key (kbd "<f3>") 'olivetti-mode)
@@ -448,28 +619,43 @@ Saves to a temp file and puts the filename in the kill ring."
 ;; (define-key org-roam-mode-map (kbd "C-c n g") #'org-roam-graph)
 ;; (define-key org-mode-map (kbd "C-c n i") #'org-roam-insert)
 ;; (require 'org-roam-protocol)
-
+\end{minted}
+\subsection{undo-tree}
+\label{sec:org8cc73c5}
+\begin{minted}[]{elisp}
 (setq global-undo-tree-mode t)
-
+\end{minted}
+\subsection{save-some-buffers}
+\label{sec:orgb375745}
+\begin{minted}[]{elisp}
 (map! :n "SPC f a" 'save-some-buffers)
 
 ;; (map! :map org-agenda-mode-map "SPC f a" 'save-some-buffers)
 
 (map! :map doom-leader-map "f a" 'save-some-buffers)
+\end{minted}
+\subsection{find-buffer-pdf}
+\label{sec:orga48a7a1}
+\url{https://www.reddit.com/r/emacs/comments/mzuaf6/how\_open\_a\_pdf\_file\_with\_pdftools\_when\_you\_are/}
 
+My own function
+\begin{minted}[]{elisp}
 (defun jf/find-buffer-pdf ()
   (interactive)
   (find-file (concat
               "./"
-              (car (split-string
-                    (file-name-nondirectory (buffer-name))
-                    "\\."))
+              (car (split-string (buffer-name)
+                                 "\\."))
               ".pdf")))
 
 (map! :n "SPC o p" 'jf/find-buffer-pdf)
+\end{minted}
 
-(map! :n "SPC e" 'eval-last-sexp)
-
+\section{Org-Mode}
+\label{sec:orga77104f}
+\subsection{Org}
+\label{sec:org791de05}
+\begin{minted}[]{elisp}
 (setq org-directory "~/org/")
 
 (setq org-ellipsis " ▾")
@@ -482,19 +668,54 @@ Saves to a temp file and puts the filename in the kill ring."
 ;; https://www.reddit.com/r/emacs/comments/lapujj/weekly_tipstricketc_thread/glvoifj/
 (setq org-superstar-headline-bullets-list '("☰" "☷" "▶" "●" "✱" "✲" "✸" "⦿" "⌾" "◦"))
 
-(setq org-highlight-latex-and-related '(native script))
-
 (map! :n "SPC o l" 'link-hint-open-link-at-point)
-
-(map! :map org-mode-map "C-j" nil
-      "C-k" nil)
-
-(map! :map org-mode-map "C-j" 'org-next-visible-heading
-      "C-k" 'org-previous-visible-heading)
-
+\end{minted}
+\subsubsection{a}
+\label{sec:org6108bad}
+\paragraph{b}
+\label{sec:org109f49b}
+\subparagraph{c}
+\label{sec:org5dc51e4}
+\begin{enumerate}
+\item d
+\label{sec:org6b0011e}
+\begin{enumerate}
+\item e
+\label{sec:orge147889}
+\begin{enumerate}
+\item f
+\label{sec:org9517c87}
+\begin{enumerate}
+\item g
+\label{sec:org1bf97df}
+\begin{enumerate}
+\item h
+\label{sec:org8a65771}
+\begin{enumerate}
+\item i
+\label{sec:orga730813}
+\end{enumerate}
+\end{enumerate}
+\end{enumerate}
+\end{enumerate}
+\end{enumerate}
+\end{enumerate}
+\subsection{{\bfseries\sffamily TODO} Org-Inline Task}
+\label{sec:org2ab6920}
+\url{https://mattduck.github.io/generic-css/demo/org-demo.html}
+\url{https://www.reddit.com/r/emacs/comments/3tpd5z/a\_different\_way\_to\_use\_org\_xpost\_rorgmode/}
+\url{https://github.com/amluto/org-mode/blob/master/lisp/org-inlinetask.el}
+\url{https://irreal.org/blog/?p=8418}
+\begin{minted}[]{elisp}
 ;; seems to break doom config ?
 ;; (require 'org-inlinetask)
+\end{minted}
 
+\subsection{Org Agenda + Super Agenda}
+\label{sec:org41ab738}
+\subsubsection{Setup (Super) Agenda}
+\label{sec:orgaba2415}
+\begin{minted}[]{elisp}
 ;; https://www.reddit.com/r/orgmode/comments/6q6cdk/adding_files_to_the_agenda_list_recursively/
 ;; doom doctor: org-agenda-file-regexp seems to be void
 ;; (setq org-agenda-files (apply 'append
@@ -559,7 +780,10 @@ Saves to a temp file and puts the filename in the kill ring."
 
 (set-face-attribute 'org-agenda-date nil
                     :weight 'bold :overline t :foreground "#00538b" )
-
+\end{minted}
+\subsubsection{Day-by-Day + Regular (Super) Agenda Views}
+\label{sec:org76a9f78}
+\begin{minted}[]{elisp}
 (setq org-agenda-custom-commands
       '(("z" "Super View, Everyday"
          (
@@ -603,7 +827,10 @@ Saves to a temp file and puts the filename in the kill ring."
   (interactive)
   (org-agenda nil "a"))
 (map! :n "SPC o c" 'jf/org-agenda-regular-view)
-
+\end{minted}
+\subsubsection{Relative (Super) Agenda Views}
+\label{sec:orgd48f7f2}
+\begin{minted}[]{elisp}
 ;; from https://github.com/alphapapa/org-super-agenda/issues/59
 ;; function is needed to always eval relative dates
 (defun jf/org-agenda-relative-deadline ()
@@ -702,7 +929,10 @@ Saves to a temp file and puts the filename in the kill ring."
 
 (map! :map org-agenda-mode-map "r" 'jf/reset-relative-deadline-super-agenda)
 (map! :map org-agenda-mode-map "R" 'jf/reset-relative-scheduled-super-agenda)
-
+\end{minted}
+\subsubsection{Hydra Map for Agenda Views}
+\label{sec:orgc6f8338}
+\begin{minted}[]{elisp}
 (defhydra jf/hydra-agenda (:color blue
                            :hint nil)
   "
@@ -719,7 +949,10 @@ _s_: scheduled
 
 ;; (map! :n "SPC a" 'jf/hydra-agenda/body)
 (map! :map doom-leader-map "a" 'jf/hydra-agenda/body)
-
+\end{minted}
+\subsubsection{Org-Todo}
+\label{sec:org8f8ed6b}
+\begin{minted}[]{elisp}
 (setq org-todo-keywords
       '((sequence "TODO(t)" "NEXT(n)" "NOTE(m)" "BLOCK(b)" "STRT(s)" "HOLD(h)" "|" "DONE(d)" "KILL(k)")
         (sequence "[ ](T)" "[+](P)" "[-](S)" "[?](W)" "|" "[X](D)")))
@@ -745,7 +978,10 @@ _s_: scheduled
 ;; implemented when switching BLOCK -> DONE, which returns it to BLOCK and not TODO
 ;; reason: super-agenda selector is based on TODO name
 (setq org-todo-repeat-to-state t)
-
+\end{minted}
+\subsection{Org Capture}
+\label{sec:org3a05fb8}
+\begin{minted}[]{elisp}
 (setq org-capture-templates
       '(("t" "Agenda TODO" entry (file "~/org/Agenda.org")
         "* TODO %? \n DEADLINE: %t" :prepend t)
@@ -756,7 +992,10 @@ _s_: scheduled
       ))
 
 (map! :n "SPC z" 'org-capture)
-
+\end{minted}
+\subsection{Org Export - Latex}
+\label{sec:org63cf379}
+\begin{minted}[]{elisp}
 (setq org-latex-classes '(("article" "\\documentclass[11pt]{article}"
                            ("\\section{%s}" . "\\section*{%s}")
                            ("\\subsection{%s}" . "\\subsection*{%s}")
@@ -788,10 +1027,7 @@ _s_: scheduled
   \\usepackage[cache=false]{minted}
   \\setminted{breaklines=true, breakanywhere=true}
 % \\usemintedstyle{paraiso-light} % pygmentize -L styles
-% \\usemintedstyle{emacs} % pygmentize -L styles
-% \\usemintedstyle{colorful} % pygmentize -L styles
-% \\usemintedstyle{rainbow_dash} % pygmentize -L styles
-  \\usemintedstyle{tango} % pygmentize -L styles
+  \\usemintedstyle{emacs} % pygmentize -L styles
 % https://tex.stackexchange.com/questions/112559/box-around-minted-environment
 % https://ctan.math.utah.edu/ctan/tex-archive/macros/latex/contrib/tcolorbox/tcolorbox.pdf
   \\BeforeBeginEnvironment{minted}{\\begin{tcolorbox}[colframe=black!85!white, colback=black!5!white, boxrule=0.3mm]}
@@ -830,9 +1066,16 @@ _s_: scheduled
 ;; as an alternative
 (add-to-list 'org-latex-packages-alist '("" "minted"))
 (setq org-latex-listings 'minted)
-
+\end{minted}
+\subsection{Org-Indent}
+\label{sec:org71402fa}
+\begin{minted}[]{elisp}
 (map! :n "SPC t i" #'org-indent-mode)
-
+\end{minted}
+\subsection{{\bfseries\sffamily TODO} Autoinsert}
+\label{sec:org053a4e1}
+Taken from: \url{https://emacs.stackexchange.com/questions/34651/how-can-i-create-custom-org-mode-templates}
+\begin{minted}[]{elisp}
 (use-package autoinsert
   :init
   ;; Don't want to be prompted before insertion:
@@ -846,6 +1089,12 @@ _s_: scheduled
   :config
   (define-auto-insert "\\.org?$" "default-autoinsert.org"))
 
+\end{minted}
+\subsection{Source Block Markup}
+\label{sec:org091a858}
+\url{https://www.reddit.com/r/emacs/comments/kzo09h/emacs\_configuration\_created\_for\_heavy\_orgmode/}
+\url{https://github.com/lijigang/config-orgmode-within-doom}
+\begin{minted}[]{elisp}
   (defvar rasmus/ob-header-symbol ?☰
     "Symbol used for babel headers")
 
@@ -862,23 +1111,42 @@ _s_: scheduled
     (turn-on-prettify-symbols-mode))
 
   (add-hook 'org-mode-hook #'rasmus/org-prettify-symbols)
+\end{minted}
+\section{Applications}
+\label{sec:org6a01b31}
+\subsection{Swiper - In-Buffer Fuzzy Finder}
+\label{sec:org6f8abad}
+From r/emacs:
+By default if you have visual line mode on swiper scans every visual line, which can be really slow in large files. This forces swiper to revert back to searching only every actual line even if the user is using visual line mode
 
+Note: seems to only find one occurrence in each file line, user needs to scan main buffer for thorough results.
+\begin{minted}[]{elisp}
 (setq swiper-use-visual-line nil)
 (setq swiper-use-visual-line-p (lambda (a) nil))
-
+\end{minted}
+\subsection{Dired - File Manager}
+\label{sec:org3055a95}
+\begin{minted}[]{elisp}
 (add-hook 'dired-mode-hook
       (lambda ()
         (dired-hide-details-mode)
         ))
 ; add this into above hook to default to sorting by edit time
 ; (dired-sort-toggle-or-edit)
-
+\end{minted}
+\subsection{Treemacs - Sidebar Directory Viewer}
+\label{sec:orga38a552}
+Bind external (zathura, etc.) opening for treemacs
+\begin{minted}[]{elisp}
 (map! :n "SPC o o" #'treemacs-visit-node-in-external-application)
 (map! :n "SPC o t" #'treemacs)
 (setq treemacs-position 'right
       treemacs-width 25
       treemacs-indentation 1)
-
+\end{minted}
+\subsection{{\bfseries\sffamily TODO} Notmuch - Email Client}
+\label{sec:org5e6d9e1}
+\begin{minted}[]{elisp}
 ;define function that syncs mbsync and refreshes notmuch
 (defun jf/sync-email ()
   "Lists the contents of the current directory."
@@ -925,7 +1193,11 @@ _s_: scheduled
                   (beginning-of-line)))))
 
 (setq notmuch-hello-sections '(notmuch-hello-insert-saved-searches))
+\end{minted}
 
+\subsection{{\bfseries\sffamily TODO} Inkscape}
+\label{sec:org63af589}
+\begin{minted}[]{elisp}
 ;;; scimax-inkscape.el --- Using inkscape in org-mode
 
 ;;; Commentary:
@@ -1114,7 +1386,20 @@ Here are two examples:
         "bibtex %b"
         "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
         "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
+\end{minted}
 
+\subsection{{\bfseries\sffamily TODO} writer-word-goals}
+\label{sec:org606309b}
+\url{https://www.reddit.com/r/emacs/comments/l2a22l/have\_you\_writers\_ambitions\_write\_a\_little\_write/}
+\url{https://github.com/ag91/writer-word-goals}
+\begin{itemize}
+\item does not allow for killing/stopping processes
+\begin{itemize}
+\item killing buffer seems to stop it
+\end{itemize}
+\item can also apply multiple trackers to the same buffer
+\end{itemize}
+\begin{minted}[]{elisp}
 ;;; wwg.el --- writer word goals
 
 ;; Copyright (C) 2021 Andrea
@@ -1215,22 +1500,44 @@ Here are two examples:
 ;; Local Variables:
 ;; time-stamp-pattern: "10/Version:\\?[ \t]+1.%02y%02m%02d\\?\n"
 ;; End:
+\end{minted}
 
+\section{Emacsclient + Sessions}
+\label{sec:orgdd212b4}
+\subsection{Workspace + emacsclient}
+\label{sec:org421dc1a}
+Stops new emacsclient frames from creating new workspaces
+\begin{minted}[]{elisp}
 (after! persp-mode
 (setq persp-emacsclient-init-frame-behaviour-override "main"))
-
+\end{minted}
+\subsection{{\bfseries\sffamily TODO} Initial Buffer}
+\label{sec:org84a3329}
+\begin{minted}[]{elisp}
 ;; (setq initial-buffer-choice t)
-
+\end{minted}
+\subsection{{\bfseries\sffamily TODO} Desktop}
+\label{sec:org691a6f0}
+\begin{minted}[]{elisp}
 ;; (setq desktop-auto-save-timeout 300)
 ;; (setq desktop-dirname "~/.emacs.d/.local/etc")
 ;; (setq desktop-base-file-name "desktop")
 ;; (setq desktop-load-locked-desktop t)
 ;; (desktop-save-mode 1)
 ;; (add-hook 'server-after-make-frame-hook 'desktop-read)
-
+\end{minted}
+\section{Programming}
+\label{sec:org72c2fb0}
+\subsection{Formatting}
+\label{sec:orgc5ae76d}
+\begin{minted}[]{elisp}
 (setq +format-on-save-enabled-modes
       '(not emacs-lisp-mode sql-mode tex-mode latex-mode julia-mode))
+\end{minted}
 
+\subsection{{\bfseries\sffamily TODO} LSP}
+\label{sec:orgc27f4db}
+\begin{minted}[]{elisp}
                                         ; Rust
 ;; (setq lsp-rust-server 'rust-analyzer)
 (map! :n "SPC t u" #'lsp-ui-doc-mode)
@@ -1243,9 +1550,12 @@ Here are two examples:
 
 ;; (setq lsp-disabled-clients '(rls))
 
-;; https://github.com/nnicandro/emacs-jupyter/issues/306
-(require 'ob-jupyter)
+\end{minted}
+\subsection{Julia}
+\label{sec:org5160e5e}
+\url{https://github.com/julia-vscode/LanguageServer.jl/issues/651}
 
+\begin{minted}[]{elisp}
 ;; used when using Pkg.add("LanguageServer")
 (setq lsp-julia-package-dir nil)
 
@@ -1265,32 +1575,43 @@ Here are two examples:
    (python . t)
    (jupyter . t)))
 
-(setq org-babel-default-header-args:jupyter-julia '((:async . "yes")
+(setq org-babel-default-header-args:jupyter-julia '((:async . "no")
                                                     (:session . "jl")
                                                     (:kernel . "julia-1.6")))
 ;; just using a snippet instead
 ;; (add-to-list 'org-structure-template-alist
 ;; '("j" . "src jupyter-julia :session jl :results graphics"))
-;; https://github.com/nnicandro/emacs-jupyter#jupyter-eval-use-overlays
-
-(setq jupyter-eval-use-overlays t)
-(set-face-attribute 'jupyter-eval-overlay nil
-                    :underline t)
 
 ;; required to get lsp to work
 ;; https://github.com/non-Jedi/lsp-julia/issues/35
 (setq lsp-enable-folding t)
 
-(setq ob-async-no-async-languages-alist '("jupyter-python" "jupyter-julia"))
 
 (map! :map julia-repl-mode-map "M-RET" 'julia-repl-send-region-or-line)
-
+\end{minted}
+\section{{\bfseries\sffamily STRT} Packages to Look At}
+\label{sec:org797adbd}
+\subsection{{\bfseries\sffamily STRT} Transclusion}
+\label{sec:orga395944}
+\url{https://github.com/nobiot/org-transclusion}
+\subsection{{\bfseries\sffamily STRT} Annotate}
+\label{sec:org910a30c}
+\begin{minted}[]{elisp}
 ;(annotate-mode)
+\end{minted}
 
+\subsection{{\bfseries\sffamily STRT} Elgantt}
+\label{sec:org8e6067a}
+\begin{minted}[]{elisp}
 ;; enable elgantt - https://github.com/legalnonsense/elgantt/
 ;; (add-to-list 'load-path (concat user-emacs-directory "elgantt/")) ;; Or wherever it is located
 ;; (require 'elgantt)
-
+\end{minted}
+\section{{\bfseries\sffamily HOLD} Packages Not Used Right Now}
+\label{sec:org2ac471a}
+\subsection{{\bfseries\sffamily HOLD} header-line}
+\label{sec:orgdb8c6fd}
+\begin{minted}[]{elisp}
 ;; (defun toggle-header-line-format ()
 ;;     "Toggle buffer-local var header-line-format as pseudo-top margin"
 ;;     (setq header-line-format (if (eq header-line-format nil) t nil))
@@ -1299,18 +1620,28 @@ Here are two examples:
 ;; (global-set-key (kbd "<f6>") 'toggle-header-line-format)
 ; use with set-face-font header-line
 ;(set-face-background 'header-line "white")
+\end{minted}
 
+\subsection{{\bfseries\sffamily HOLD} Pandoc}
+\label{sec:orgf82f4c5}
+Bind pdf-export in pandoc
+
+Note: Deprecated in favor of Org Export - Latex
+\begin{minted}[]{elisp}
 ;(map! :n "SPC r r" #'pandoc-convert-to-pdf)
-
+\end{minted}
+\subsection{{\bfseries\sffamily HOLD} Projectile}
+\label{sec:org6f0b4da}
+\begin{minted}[]{elisp}
 ; unbind SPC p F
 ;(map! :map doom-leader-map "p F" nil)
 ; rebind SPC p F to search all projects' files
 ;(map! :n "SPC p F" #'projectile-find-file-in-known-projects)
+\end{minted}
 
-;; (use-package! org-krita
-;;   :config
-;;   (add-hook 'org-mode-hook 'org-krita-mode))
-
+\subsection{{\bfseries\sffamily HOLD} mu4e}
+\label{sec:org46aa5e1}
+\begin{minted}[]{common-lisp}
 ;; (add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e")
 ;; ;; Each path is relative to `+mu4e-mu4e-mail-path', which is ~/.mail by default
 ;; (set-email-account! "Personal"
@@ -1329,3 +1660,13 @@ Here are two examples:
 ;;     (smtpmail-smtp-user     . "fungjm@uci.edu")
 ;;     ;; (mu4e-compose-signature . "---\nHenrik Lissner"))
 ;;   t)
+\end{minted}
+
+\subsection{{\bfseries\sffamily HOLD} Org-Krita}
+\label{sec:orgf89b907}
+\begin{minted}[]{elisp}
+;; (use-package! org-krita
+;;   :config
+;;   (add-hook 'org-mode-hook 'org-krita-mode))
+\end{minted}
+\end{document}

@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: fraction
+# key: fr
+# uuid: frac
+# --
+\frac{${1:`(or % "numerator")`}}{${2:denominator}}$0

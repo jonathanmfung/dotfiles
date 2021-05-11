@@ -4,6 +4,7 @@ set window-title-basename	"true"
 set recolor                     "false"
 set recolor-keephue             "true"
 set recolor-lightcolor          "#505050" # Background
+#set recolor-lightcolor          "#000000" # Background
 set recolor-darkcolor           "#ffffff" # Foreground
 
 set font                        "Source Code Pro 10"

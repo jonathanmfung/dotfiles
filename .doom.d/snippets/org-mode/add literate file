@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: add literate file
+# key: litfile
+# condition: t
+# --
+file:$1
+#+begin_src $2 :tangle $1 :noweb no-export
+$0
+#+end_src

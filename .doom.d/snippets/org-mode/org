@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: org notes
+# key: org
+# condition: t
+# --
+#+TITLE: $1
+#+DATE: $2
+#+LaTeX_CLASS: notes
+#+OPTIONS: toc:nil
+$0

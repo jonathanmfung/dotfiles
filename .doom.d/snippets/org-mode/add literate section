@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: add literate section
+# key: litsec
+# condition: t
+# --
+$1+=
+#+begin_src $2 :noweb no-export :noweb-ref $1
+$0
+#+end_src

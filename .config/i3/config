@@ -70,10 +70,10 @@ bindsym $mod+comma exec mpc -p 6605 next
 floating_modifier $mod
 
 # start a terminal
-#bindsym $mod+Return exec --no-startup-id alacritty
-#bindsym $mod+Shift+Return exec --no-startup-id alacritty --class floating -d 80 35 
-bindsym $mod+Return exec --no-startup-id termite --title=termite
-bindsym $mod+Shift+Return exec --no-startup-id termite --class=floating 
+bindsym $mod+Return exec --no-startup-id alacritty
+bindsym $mod+Shift+Return exec --no-startup-id alacritty --class floating # -d 80 35 
+#bindsym $mod+Return exec --no-startup-id termite --title=termite
+#bindsym $mod+Shift+Return exec --no-startup-id termite --class=floating 
 #--position 3000 450 
 #i3-sensible-terminal
 
@@ -335,7 +335,7 @@ client.unfocused        #707070 #707070 #ffffff #292d2e   #707070
 #client.unfocused        #707070 #000000 #ffffff #292d2e   #707070
 
 
-exec --no-startup-id redshift -v -r -t 4000:3000 -l 37.77:-122.42 &!
+# exec --no-startup-id redshift -v -r -t 4000:3000 -l 37.77:-122.42 &!
 
 # 4k
 #bindsym $mod+t exec xrandr --output eDP1 --primary --mode 1920x1080 --pos 1975x2160 --rotate normal --output DP1 --mode 1920x1080 --pos 0x240 --rotate right --output HDMI1 --mode 3840x2160 --pos 1080x0 --rotate normal --output HDMI2 --off --output VIRTUAL1 --off

@@ -16,6 +16,28 @@
 # To add support for TTYs this line can be optionally added.
 source ~/.cache/wal/colors-tty.sh
 
+# https://askubuntu.com/questions/147462/how-can-i-change-the-tty-colors
+if [ "$TERM" = "linux" ]; then
+    echo -en "\e]P0000000" #black
+    echo -en "\e]P1FF8059" #darkred
+    echo -en "\e]P244BC44" #darkgreen
+    echo -en "\e]P3EECC00" #brown
+    echo -en "\e]P42FAFFF" #darkblue
+    echo -en "\e]P5FEACD0" #darkmagenta
+    echo -en "\e]P600D3D0" #darkcyan
+    echo -en "\e]P7BFBFBF" #lightgrey
+    echo -en "\e]P8595959" #darkgrey
+    echo -en "\e]P9F4923B" #red
+    echo -en "\e]PA70C900" #green
+    echo -en "\e]PBCFDF30" #yellow
+    echo -en "\e]PC79A8FF" #blue
+    echo -en "\e]PDB6A0FF" #magenta
+    echo -en "\e]PE6AE4B9" #cyan
+    echo -en "\e]PFFFFFFF" #white
+    clear #for background artifacting
+fi
+
+
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
 # a theme from this variable instead of looking in ~/.oh-my-zsh/themes/
@@ -88,7 +110,7 @@ if [[ -n $SSH_CONNECTION ]]; then
   export EDITOR='emacs'
 else
   export EDITOR=nvim
-  export VISUAL=nvim
+  export VISUAL='emacsclient -nw -c'
 fi
 
 # Compilation flags
@@ -146,6 +168,7 @@ alias up="uptime -p"
 date -I
 
 export PATH="$PATH:/home/jonat/julia-1.6.0/bin"
+export JULIA_NUM_THREADS=4
 
 #function tmr(){
 #   date1=$((`date +%s` + $1)); 
@@ -214,7 +237,7 @@ ZSHDDIR="${HOME}/.config/zsh.d"
 HISTFILE="${ZDOTDIR}/.zsh_history"
 HISTSIZE='64000'
 SAVEHIST="${HISTSIZE}"
-export EDITOR="/usr/bin/vim"
+# export EDITOR="/usr/bin/vim"
 export TMP="$HOME/tmp"
 export TEMP="$TMP"
 export TMPDIR="$TMP"

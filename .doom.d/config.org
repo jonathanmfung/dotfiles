@@ -25,8 +25,11 @@
   - [[#custom-keybinds][Custom Keybinds]]
   - [[#undo-tree][undo-tree]]
   - [[#save-some-buffers][save-some-buffers]]
+  - [[#find-buffer-pdf][find-buffer-pdf]]
+  - [[#eval-last-sexp][eval-last-sexp]]
 - [[#org-mode][Org-Mode]]
   - [[#org][Org]]
+  - [[#org-navigation][Org Navigation]]
   - [[#org-inline-task][Org-Inline Task]]
   - [[#org-agenda--super-agenda][Org Agenda + Super Agenda]]
   - [[#org-capture][Org Capture]]
@@ -41,13 +44,14 @@
   - [[#notmuch---email-client][Notmuch - Email Client]]
   - [[#inkscape][Inkscape]]
   - [[#writer-word-goals][writer-word-goals]]
-- [[#programming][Programming]]
-  - [[#lsp][LSP]]
-  - [[#julia][Julia]]
 - [[#emacsclient--sessions][Emacsclient + Sessions]]
   - [[#workspace--emacsclient][Workspace + emacsclient]]
   - [[#initial-buffer][Initial Buffer]]
   - [[#desktop][Desktop]]
+- [[#programming][Programming]]
+  - [[#formatting][Formatting]]
+  - [[#lsp][LSP]]
+  - [[#julia][Julia]]
 - [[#strt-packages-to-look-at][STRT Packages to Look At]]
   - [[#strt-transclusion][STRT Transclusion]]
   - [[#strt-annotate][STRT Annotate]]
@@ -225,7 +229,11 @@ font string. You generally only need these two:
 (setq doom-font (font-spec :family "JetBrains Mono" :size 16)
       ;; 24
       doom-big-font (font-spec :family "JetBrains Mono" :size 36)
-      doom-variable-pitch-font (font-spec :family "Source Sans Pro" :size 24)
+      ;; doom-variable-pitch-font (font-spec :family "Source Sans Pro" :size 36)
+      ;; doom-variable-pitch-font (font-spec :family "Roboto" :size 24)
+      doom-variable-pitch-font (font-spec :family "IBM Plex Sans" :size 16 :weight 'semibold)
+      ;; doom-variable-pitch-font (font-spec :family "IBM Plex Sans Condensed" :size 24 :weight 'normal)
+      ;; doom-variable-pitch-font (font-spec :family "IBM Plex Serif" :size 24 :weight 'normal)
       doom-serif-font (font-spec :family "IBM Plex Mono" :weight 'light))
 #+END_SRC
 
@@ -243,7 +251,8 @@ so, modus is not in native emacs
 
 #+begin_src elisp :results none
 ;; https://github.com/hlissner/doom-emacs/issues/3967
-(setq doom-theme 'modus-operandi)
+;; (setq doom-theme 'modus-operandi)
+(setq doom-theme 'modus-vivendi)
 
 ;; (require 'modus-themes)                 ; common code
 ;; (require 'modus-operandi-theme)         ; light theme
@@ -252,36 +261,38 @@ so, modus is not in native emacs
 ;; (load-theme 'modus-vivendi)           ; Dark theme
 ;; (load-theme 'modus-operandi)          ; Light theme
 
-;; (global-set-key (kbd "<f5>") (lambda () (interactive) (modus-themes-toggle) (set-face-background 'mode-line "default")))
 
-;; for terminal use, to see window divides
+;;(global-set-key (kbd "<f5>") (lambda () (interactive) (modus-themes-toggle) (set-face-background 'mode-line "default")))
+
 (global-set-key (kbd "<f5>") 'modus-themes-toggle)
 
+(add-hook! 'modus-themes-after-load-theme-hook (set-face-background 'mode-line "default"))
+
+
 ;; Set customization options to values of your choice
-(setq modus-themes-slanted-constructs t
-      modus-themes-bold-constructs t
+(setq modus-themes-bold-constructs t
+      modus-themes-slanted-constructs t
+      modus-themes-syntax nil ; Lots of options---continue reading the manual
+      modus-themes-no-mixed-fonts nil
+      modus-themes-links nil ; Lots of options---continue reading the manual
+      modus-themes-prompts 'subtle-accented ; {nil,'subtle-accented, 'intense-accented, 'subtle-gray, 'intense-gray}
+
+      modus-themes-mode-line 'borderless ; {nil,'3d,'moody, 'borderless, 'borderless-3d, 'borderless-moody}
+      modus-themes-completions 'opinionated ; {nil,'moderate,'opinionated}
       modus-themes-fringes 'intense ; {nil,'subtle,'intense}
 
-      ;; Options for `modus-themes-lang-checkers': nil,
-      ;; 'straight-underline, 'subtle-foreground,
-      ;; 'subtle-foreground-straight-underline, 'intense-foreground,
-      ;; 'intense-foreground-straight-underline, 'colored-background
-      modus-themes-lang-checkers 'colored-background
+      modus-themes-lang-checkers 'colored-background ; Lots of options---continue reading the manual
 
-      modus-themes-mode-line nil ; {nil,'3d,'moody}
+      modus-themes-hl-line 'intense-background ; Lots of options---continue reading the manual
 
-      modus-themes-syntax nil ; Lots of options---continue reading the manual
+      modus-themes-subtle-line-numbers t ; {nil, t}
+      modus-themes-paren-match nil ; {nil,'subtle-bold,'intense,'intense-bold}
+      modus-themes-region 'no-extend ; Lots of options
 
-      modus-themes-intense-hl-line t
-      modus-themes-paren-match 'intense ; {nil,'subtle-bold,'intense,'intense-bold}
-
-      modus-themes-links nil ; Lots of options---continue reading the manual
-      modus-themes-no-mixed-fonts nil
-      modus-themes-prompts 'subtle ; {nil,'subtle,'intense}
-      modus-themes-completions 'opinionated ; {nil,'moderate,'opinionated}
-      modus-themes-region 'no-extend ; {nil,'no-extend,'bg-only,'bg-only-no-extend}
       modus-themes-diffs nil ; {nil,'desaturated,'fg-only,'bg-only}
+
       modus-themes-org-blocks 'grayscale ; {nil,'grayscale,'rainbow}
+      modus-themes-org-habit nil
 
       modus-themes-headings ; Lots of options---continue reading the manual
       '((1 . rainbow-section)
@@ -292,23 +303,26 @@ so, modus is not in native emacs
         (t . rainbow-line-no-bold)
         ;; (t . highlight-no-bold)
         )
-      modus-themes-variable-pitch-headings nil
+
       modus-themes-scale-headings nil
       modus-themes-scale-1 1.1
       modus-themes-scale-2 1.15
       modus-themes-scale-3 1.21
       modus-themes-scale-4 1.27
-      modus-themes-scale-5 1.33)
+      modus-themes-scale-5 1.33
+
+      modus-themes-variable-pitch-ui nil
+      modus-themes-variable-pitch-headings nil)
 
 ;; with Emacs 28, default seems to have a gray background for everything, this turns that to white
-(setq modus-themes-operandi-color-overrides
-      '(
-        (bg-alt . "#ffffff")
-        ))
-(setq modus-themes-vivendi-color-overrides
-      '(
-        (bg-alt . "#000000")
-        ))
+;; (setq modus-themes-operandi-color-overrides
+;;       '(
+;;         (bg-alt . "#ffffff")
+;;         ))
+;; (setq modus-themes-vivendi-color-overrides
+;;       '(
+;;         (bg-alt . "#000000")
+;;         ))
 
 ;; only for "packaged variants" (?)
 ;; (modus-themes-load-themes)
@@ -385,30 +399,9 @@ Version 2017-06-02"
 #+RESULTS:
 
 ** evil-mode terminal cursors
-https://github.com/7696122/evil-terminal-cursor-changer
+https://github.com/h0d/term-cursor.el
 
 #+begin_src elisp :results none
-                                        ; breaks gui with error 'device X is not a termcap terminal device'
-;;(add-hook 'evil-insert-state-entry-hook  (lambda () (send-string-to-terminal "\033[6 q")))
-;;(add-hook 'evil-normal-state-entry-hook  (lambda () (send-string-to-terminal "\033[0 q")))
-
-;; (unless (display-graphic-p)
-;;   (evil-terminal-cursor-changer-activate) ; or (etcc-on)
-;;   )
-
-;; (defun jf/evil-cursor-box
-;;     (unless (display-graphic-p)
-;;       (lambda () (send-string-to-terminal "\033[6 q"))))
-
-;; (defun jf/evil-cursor-bar
-;;     (unless (display-graphic-p)
-;;       (lambda () (send-string-to-terminal "\033[0 q"))))
-
-(global-term-cursor-mode)
-#+end_src
-
-https://github.com/h0d/term-cursor.el
-#+begin_src elisp
 ;;; term-cursor.el --- Change cursor shape in terminal -*- lexical-binding: t; coding: utf-8; -*-
 
 ;; Version: 0.4
@@ -542,12 +535,13 @@ Waits for OPERATION to be 'set."
 (provide 'term-cursor)
 
 ;;; term-cursor.el ends here
-#+end_src
 
+(global-term-cursor-mode)
+#+end_src
 * Usability
 ** Navigation
 #+BEGIN_SRC elisp :results none
-; Bind Zooms??
+                                        ; Bind Zooms??
 (map! :n "C-_" #'er/contract-region
       :n "C-+" #'er/expand-region)
 
@@ -556,6 +550,8 @@ Waits for OPERATION to be 'set."
       "K" nil)
 (map! :map evil-motion-state-map "M" nil
       "K" nil)
+
+(map! :n "V" #'evil-visual-line)
 
 ;; ; rebind J,K for scrolling
 (map! :n "J" #'evil-scroll-line-up)
@@ -586,7 +582,7 @@ Saves to a temp file and puts the filename in the kill ring."
 #+END_SRC
 ** pdf-tools
 #+begin_src elisp :results none
-(add-hook 'pdf-tools-enabled-hook 'pdf-view-midnight-minor-mode)
+;; (add-hook 'pdf-tools-enabled-hook 'pdf-view-midnight-minor-mode)
 #+end_src
 ** Custom Keybinds
 #+BEGIN_SRC elisp :results none
@@ -594,25 +590,26 @@ Saves to a temp file and puts the filename in the kill ring."
 (global-set-key (kbd "<f2>") 'mixed-pitch-mode)
 (global-set-key (kbd "<f3>") 'olivetti-mode)
 (global-set-key (kbd "<f4>") 'toggle-rot13-mode)
-(setq olivetti-body-width 90)
-; ;; (global-set-key (kbd "U") 'undo-tree-redo)
+(setq olivetti-body-width 110)
+;; (global-set-key (kbd "U") 'undo-tree-redo)
 
-; Unbind language input switcher
+;; Unbind language input switcher
 (map! :map global-map "C-\\" nil)
-; Bind toggle for 80-char limit, buffer-wide
+
+;; Bind toggle for 80-char limit, buffer-wide
 (map! :n "SPC t c" 'display-fill-column-indicator-mode)
 (map! :n "C-\\" 'display-fill-column-indicator-mode)
 
-;; ; currently do not use org-roam, need to delete
+;; currently do not use org-roam, need to delete
 ;; (setq org-roam-directory "~/emacs/org-roam")
 ;; (setq org-roam-index-file "index.org")
-;(define-key org-roam-mode-map (kbd "C-c n l") #'org-roam)
-;(define-key org-roam-mode-map (kbd "C-c n f") #'org-roam-find-file)
-;(define-key org-roam-mode-map (kbd "C-c n j") #'org-roam-jump-to-index)
-;(define-key org-roam-mode-map (kbd "C-c n b") #'org-roam-switch-to-buffer)
-;(define-key org-roam-mode-map (kbd "C-c n g") #'org-roam-graph)
-;(define-key org-mode-map (kbd "C-c n i") #'org-roam-insert)
-;(require 'org-roam-protocol)
+;; (define-key org-roam-mode-map (kbd "C-c n l") #'org-roam)
+;; (define-key org-roam-mode-map (kbd "C-c n f") #'org-roam-find-file)
+;; (define-key org-roam-mode-map (kbd "C-c n j") #'org-roam-jump-to-index)
+;; (define-key org-roam-mode-map (kbd "C-c n b") #'org-roam-switch-to-buffer)
+;; (define-key org-roam-mode-map (kbd "C-c n g") #'org-roam-graph)
+;; (define-key org-mode-map (kbd "C-c n i") #'org-roam-insert)
+;; (require 'org-roam-protocol)
 #+END_SRC
 ** undo-tree
 #+begin_src elisp
@@ -628,6 +625,27 @@ Saves to a temp file and puts the filename in the kill ring."
 ;; (map! :map org-agenda-mode-map "SPC f a" 'save-some-buffers)
 
 (map! :map doom-leader-map "f a" 'save-some-buffers)
+#+end_src
+** find-buffer-pdf
+https://www.reddit.com/r/emacs/comments/mzuaf6/how_open_a_pdf_file_with_pdftools_when_you_are/
+
+My own function
+#+begin_src elisp :results none
+(defun jf/find-buffer-pdf ()
+  (interactive)
+  (find-file (concat
+              "./"
+              (car (split-string
+                    (file-name-nondirectory (buffer-name))
+                    "\\."))
+              ".pdf")))
+
+(map! :n "SPC o p" 'jf/find-buffer-pdf)
+#+end_src
+
+** eval-last-sexp
+#+begin_src elisp :results none
+(map! :n "SPC e" 'eval-last-sexp)
 #+end_src
 
 * Org-Mode
@@ -645,17 +663,18 @@ Saves to a temp file and puts the filename in the kill ring."
 ;; https://www.reddit.com/r/emacs/comments/lapujj/weekly_tipstricketc_thread/glvoifj/
 (setq org-superstar-headline-bullets-list '("☰" "☷" "▶" "●" "✱" "✲" "✸" "⦿" "⌾" "◦"))
 
+(setq org-highlight-latex-and-related '(native script))
+
 (map! :n "SPC o l" 'link-hint-open-link-at-point)
 #+END_SRC
-*** a
-**** b
-***** c
-****** d
-******* e
-******** f
-********* g
-********** h
-*********** i
+** Org Navigation
+#+BEGIN_SRC elisp :results none
+(map! :map org-mode-map "C-j" nil
+      "C-k" nil)
+
+(map! :map org-mode-map "C-j" 'org-next-visible-heading
+      "C-k" 'org-previous-visible-heading)
+#+END_SRC
 ** TODO Org-Inline Task
 https://mattduck.github.io/generic-css/demo/org-demo.html
 https://www.reddit.com/r/emacs/comments/3tpd5z/a_different_way_to_use_org_xpost_rorgmode/
@@ -972,8 +991,19 @@ _s_: scheduled
   \\usepackage{amsmath}
   \\usepackage{amssymb}
   \\usepackage{hyperref}
+  \\usepackage{tcolorbox}
+% http://tug.ctan.org/macros/latex/contrib/minted/minted.pdf
   \\usepackage[cache=false]{minted}
-  \\usemintedstyle{paraiso-light} % pygmentize -L styles
+  \\setminted{breaklines=true, breakanywhere=true}
+% \\usemintedstyle{paraiso-light} % pygmentize -L styles
+% \\usemintedstyle{emacs} % pygmentize -L styles
+% \\usemintedstyle{colorful} % pygmentize -L styles
+% \\usemintedstyle{rainbow_dash} % pygmentize -L styles
+  \\usemintedstyle{tango} % pygmentize -L styles
+% https://tex.stackexchange.com/questions/112559/box-around-minted-environment
+% https://ctan.math.utah.edu/ctan/tex-archive/macros/latex/contrib/tcolorbox/tcolorbox.pdf
+  \\BeforeBeginEnvironment{minted}{\\begin{tcolorbox}[colframe=black!85!white, colback=black!5!white, boxrule=0.3mm]}
+  \\AfterEndEnvironment{minted}{\\end{tcolorbox}}
   \\usepackage{enumitem}
   \\setitemize{itemsep=0.5pt}
   \\usepackage{lastpage}
@@ -1439,58 +1469,6 @@ https://github.com/ag91/writer-word-goals
 #+RESULTS:
 : wwg
 
-* Programming
-** TODO LSP
-#+BEGIN_SRC elisp :results none
-                                        ; Rust
-;; (setq lsp-rust-server 'rust-analyzer)
-(map! :n "SPC t u" #'lsp-ui-doc-mode)
-
-;; (after! rustic
-;; (setq rustic-lsp-server 'rust-analyzer))
-
-;; (after! lsp-rust
-;;   (setq lsp-rust-server 'rust-analyzer))
-
-;; (setq lsp-disabled-clients '(rls))
-
-#+END_SRC
-** Julia
-#+begin_src elisp
-;; used when using Pkg.add("LanguageServer")
-(setq lsp-julia-package-dir nil)
-
-                                        ; for some reason emacs can't find the julia bin in PATH
-(setq julia-repl-executable-records
-      '((default "~/julia-1.6.0/bin/julia")
-        ))
-
-(after! julia-repl
-  (julia-repl-set-terminal-backend 'vterm)
-  )
-
-(org-babel-do-load-languages
- 'org-babel-load-languages
- '((emacs-lisp . t)
-   (julia . t)
-   (python . t)
-   (jupyter . t)))
-
-(setq org-babel-default-header-args:jupyter-julia '((:async . "no")
-                                                    (:session . "jl")
-                                                    (:kernel . "julia-1.6")))
-;; just using a snippet instead
-;; (add-to-list 'org-structure-template-alist
-;; '("j" . "src jupyter-julia :session jl :results graphics"))
-
-;; required to get lsp to work
-;; https://github.com/non-Jedi/lsp-julia/issues/35
-(setq lsp-enable-folding t)
-#+end_src
-
-#+RESULTS:
-: t
-
 * Emacsclient + Sessions
 ** Workspace + emacsclient
 Stops new emacsclient frames from creating new workspaces
@@ -1515,7 +1493,77 @@ Stops new emacsclient frames from creating new workspaces
 #+end_src
 
 #+RESULTS:
+* Programming
+** Formatting
+#+begin_src elisp
+(setq +format-on-save-enabled-modes
+      '(not emacs-lisp-mode sql-mode tex-mode latex-mode julia-mode))
+#+end_src
 
+#+RESULTS:
+| not | emacs-lisp-mode | sql-mode | tex-mode | latex-mode | julia-mode |
+
+** TODO LSP
+#+BEGIN_SRC elisp :results none
+                                        ; Rust
+;; (setq lsp-rust-server 'rust-analyzer)
+(map! :n "SPC t u" #'lsp-ui-doc-mode)
+
+;; (after! rustic
+;; (setq rustic-lsp-server 'rust-analyzer))
+
+;; (after! lsp-rust
+;;   (setq lsp-rust-server 'rust-analyzer))
+
+;; (setq lsp-disabled-clients '(rls))
+
+#+END_SRC
+** Julia
+https://github.com/julia-vscode/LanguageServer.jl/issues/651
+
+#+begin_src elisp :results none
+;; https://github.com/nnicandro/emacs-jupyter/issues/306
+(require 'ob-jupyter)
+
+;; used when using Pkg.add("LanguageServer")
+(setq lsp-julia-package-dir nil)
+
+                                        ; for some reason emacs can't find the julia bin in PATH
+(setq julia-repl-executable-records
+      '((default "~/julia-1.6.0/bin/julia")
+        ))
+
+(after! julia-repl
+  (julia-repl-set-terminal-backend 'vterm)
+  )
+
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((emacs-lisp . t)
+   (julia . t)
+   (python . t)
+   (jupyter . t)))
+
+(setq org-babel-default-header-args:jupyter-julia '((:async . "yes")
+                                                    (:session . "jl")
+                                                    (:kernel . "julia-1.6")))
+;; just using a snippet instead
+;; (add-to-list 'org-structure-template-alist
+;; '("j" . "src jupyter-julia :session jl :results graphics"))
+;; https://github.com/nnicandro/emacs-jupyter#jupyter-eval-use-overlays
+
+(setq jupyter-eval-use-overlays t)
+(set-face-attribute 'jupyter-eval-overlay nil
+                    :underline t)
+
+;; required to get lsp to work
+;; https://github.com/non-Jedi/lsp-julia/issues/35
+(setq lsp-enable-folding t)
+
+(setq ob-async-no-async-languages-alist '("jupyter-python" "jupyter-julia"))
+
+(map! :map julia-repl-mode-map "M-RET" 'julia-repl-send-region-or-line)
+#+end_src
 * STRT Packages to Look At
 ** STRT Transclusion
 https://github.com/nobiot/org-transclusion
@@ -1550,7 +1598,7 @@ https://github.com/nobiot/org-transclusion
 ** HOLD Pandoc
 Bind pdf-export in pandoc
 
-Note: Deprecated in favor of [[Org Export - Latex]]
+Note: Deprecated in favor of Org Export - Latex
 #+BEGIN_SRC elisp :results none
 ;(map! :n "SPC r r" #'pandoc-convert-to-pdf)
 #+END_SRC

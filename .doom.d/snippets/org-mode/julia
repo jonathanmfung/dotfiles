@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: julia
+# uuid: <j
+# key: <j
+# condition: t
+# --
+#+begin_src jupyter-julia :session jl :results graphics :exports both
+`%`$0
+#+end_src
