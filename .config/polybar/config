@@ -368,7 +368,7 @@ exec = ~/.config/polybar/battery-time.sh
 ; Conditional command that, if defined, needs to exit successfully
 ; before the main exec command is invoked.
 ; Default: ""
-exec-if = status=$(cat /sys/class/power_supply/CMB0/status); if [ $status == "Discharging" ];then echo "Dis";elif [ $status == "Charging" ];then echo "Charg";else :;fi
+;exec-if = status=$(cat /sys/class/power_supply/CMB0/status); if [ $status == "Discharging" ];then echo "Dis";elif [ $status == "Charging" ];then echo "Charg";else :;fi
 
 ; Will the script output continous content?
 ; Default: false
