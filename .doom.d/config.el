@@ -94,25 +94,13 @@ CURRENT-NAME, if it does not already have them:
 (setq user-full-name  "Jonathan Fung"
       user-mail-address "jonathanfung2000@gmail.com")
 
-;; (setq doom-font (font-spec :family "Source Code Pro" :size 24))
-;; (setq doom-big-font (font-spec :family "Source Code Pro" :size 36))
+;; "Source Code Pro", "Roboto Mono", "IBM Plex Mono", "JetBrains Mono"
+;; doom-font (font-spec :family "JetBrains Mono" :size 16)
+;; https://typeof.net/Iosevka/
 
-;; (setq doom-font (font-spec :family "JetBrains Mono" :weight 'light :size 24))
-;; (setq doom-big-font (font-spec :family "JetBrains Mono" :weight 'light :size 36))
-;; (setq doom-variable-pitch-font (font-spec :family "Overpass" :weight 'bold :size 24))
-
-;; (setq doom-variable-pitch-font (font-spec :family "Roboto" :size 24))
-
-;; variable-pitch et al seems to inherit ":weight 'light" from doom-font
-(setq doom-font (font-spec :family "JetBrains Mono" :size 16)
-      ;; 24
-      doom-big-font (font-spec :family "JetBrains Mono" :size 36)
-      ;; doom-variable-pitch-font (font-spec :family "Source Sans Pro" :size 36)
-      ;; doom-variable-pitch-font (font-spec :family "Roboto" :size 24)
-      doom-variable-pitch-font (font-spec :family "IBM Plex Sans" :size 16 :weight 'semibold)
-      ;; doom-variable-pitch-font (font-spec :family "IBM Plex Sans Condensed" :size 24 :weight 'normal)
-      ;; doom-variable-pitch-font (font-spec :family "IBM Plex Serif" :size 24 :weight 'normal)
-      doom-serif-font (font-spec :family "IBM Plex Mono" :weight 'light))
+(setq doom-font (font-spec :family "Iosevka SS14" :size 16 :weight 'semi-light)
+      doom-big-font (font-spec :family "Iosevka SS14" :size 24)
+      doom-variable-pitch-font (font-spec :family "Iosevka Aile" :size 16 :weight 'semi-light))
 
 ;; https://github.com/hlissner/doom-emacs/issues/3967
 ;; (setq doom-theme 'modus-operandi)
@@ -213,10 +201,10 @@ CURRENT-NAME, if it does not already have them:
 ;; (setq display-battery-mode t)
 
 ;; (setq display-time-mode t)
-(display-time-mode)
+(display-time-mode nil)
 (setq display-time-default-load-average nil)
-(setq line-number-mode nil
-      column-number-mode nil)
+(setq line-number-mode t
+      column-number-mode t)
 (set-face-background 'mode-line "default")
 
 (setq doom-modeline-buffer-encoding nil)
@@ -385,6 +373,106 @@ Waits for OPERATION to be 'set."
 
 (global-term-cursor-mode)
 
+;; AUTHOR:  Nikolaj Schumacher -- https://github.com/nschum/fringe-helper.el
+;;
+(defun fringe-helper-convert (&rest strings)
+  "Convert STRINGS into a vector usable for `define-fringe-bitmap'.
+Each string in STRINGS represents a line of the fringe bitmap.
+Periods (.) are background-colored pixel; Xs are foreground-colored. The
+fringe bitmap always is aligned to the right. If the fringe has half
+width, only the left 4 pixels of an 8 pixel bitmap will be shown.
+For example, the following code defines a diagonal line.
+\(fringe-helper-convert
+\"XX......\"
+\"..XX....\"
+\"....XX..\"
+\"......XX\"\)"
+  (unless (cdr strings)
+    ;; only one string, probably with newlines
+    (setq strings (split-string (car strings) "\n")))
+  (apply 'vector
+         (mapcar
+          (lambda (str)
+            (let ((num 0))
+              (dolist (c (string-to-list str))
+                (setq num (+ (* num 2) (if (eq c ?.) 0 1))))
+              num))
+          strings)))
+
+;; this is default, a tilde
+;; (setq vi-tilde-fringe-bitmap-array '[0 0 0 113 219 142 0 0])
+
+(setq fringe-mode 8)
+
+;; for some reason, my fringe is default to 4 pixels wide (defined in fringe-mode), but need the full 8
+;; 23 is the max height
+;; (setq vi-tilde-fringe-bitmap-array (fringe-helper-convert
+;;                                     "xx......"
+;;                                     ".xx....."
+;;                                     "..xx...."
+;;                                     "..xx...."
+;;                                     ".xx....."
+;;                                     "xx......"
+;;                                     ))
+(setq vi-tilde-fringe-bitmap-array (fringe-helper-convert
+                                    "xxxx...."
+                                    "...x...."
+                                    "...x...."
+                                    "...x...."
+                                    "...x...."
+                                    "...x...."
+                                    "...x...."
+                                    "...x...."
+                                    "...x...."
+                                    "...x...."
+                                    "...x...."
+                                    "xxxx...."
+                                    "...x...."
+                                    "...x...."
+                                    "...x...."
+                                    "...x...."
+                                    "...x...."
+                                    "...x...."
+                                    "...x...."
+                                    "...x...."
+                                    "...x...."
+                                    "...x...."
+                                    "...x...."
+                                    ))
+
+(setq vi-tilde-fringe-bitmap-array (fringe-helper-convert
+                                    ".x.xx..."
+                                    "..x.xx.."
+                                    "x..x.xx."
+                                    "xx..x.xx"
+                                    "x..x.xx."
+                                    "..x.xx.."
+                                    ".x.xx..."
+                                    ))
+
+;; (setq vi-tilde-fringe-bitmap-array (fringe-helper-convert
+;;                                     ".x..x..."
+;;                                     "..x..x.."
+;;                                     "x..x..x."
+;;                                     ".x..x..x"
+;;                                     "x..x..x."
+;;                                     "..x..x.."
+;;                                     ".x..x..."
+;;                                     ))
+
+;; (setq vi-tilde-fringe-bitmap-array (fringe-helper-convert
+;;                                     "xxxxxxxx"
+;;                                     "x..xx..x"
+;;                                     "x..xx..x"
+;;                                     "xxxxxxxx"
+;;                                     "x..xx..x"
+;;                                     "x..xx..x"
+;;                                     "xxxxxxxx"
+;;                                     "x..xx..x"
+;;                                     "x..xx..x"
+;;                                     "xxxxxxxx"
+;;                                     ))
+
                                         ; Bind Zooms??
 (map! :n "C-_" #'er/contract-region
       :n "C-+" #'er/expand-region)
@@ -431,11 +519,12 @@ Saves to a temp file and puts the filename in the kill ring."
 (setq olivetti-body-width 110)
 ;; (global-set-key (kbd "U") 'undo-tree-redo)
 
+(setq fill-column 100)
+
 ;; Unbind language input switcher
 (map! :map global-map "C-\\" nil)
 
 ;; Bind toggle for 80-char limit, buffer-wide
-(map! :n "SPC t c" 'display-fill-column-indicator-mode)
 (map! :n "C-\\" 'display-fill-column-indicator-mode)
 
 ;; currently do not use org-roam, need to delete
@@ -458,17 +547,33 @@ Saves to a temp file and puts the filename in the kill ring."
 (map! :map doom-leader-map "f a" 'save-some-buffers)
 
 (defun jf/find-buffer-pdf ()
+  "Takes the current buffer's FILE-NAME and opens up FILE-NAME.pdf
+Defaults to pdf-tools, or native doc-view."
   (interactive)
-  (find-file (concat
-              "./"
-              (car (split-string
-                    (file-name-nondirectory (buffer-name))
-                    "\\."))
-              ".pdf")))
+  (find-file
+   (concat
+    "./"
+    (car (split-string (file-name-nondirectory (buffer-name)) "\\."))
+    ".pdf")))
 
 (map! :n "SPC o p" 'jf/find-buffer-pdf)
 
 (map! :n "SPC e" 'eval-last-sexp)
+
+(defun jf/org-latex-preview-scale (scale bool)
+  (interactive (list (read-number "Scale: ") (y-or-n-p "Day Mode? ")))
+  (setq org-format-latex-options `(
+                                   :foreground ,(if bool (format "Black") (format "White"))
+                                   :background default
+                                   :scale ,scale
+                                   :html-foreground "Black"
+                                   :html-background "Transparent"
+                                   :html-scale 1.0
+                                   :matchers '("begin" "$1" "$" "$$" "\\(" "\\["))
+        )
+  )
+
+(map! :n "SPC t c" 'transpose-chars)
 
 (setq org-directory "~/org/")
 
@@ -504,6 +609,8 @@ Saves to a temp file and puts the filename in the kill ring."
 ;;                   directory org-agenda-file-regexp))
 ;;                    '("~/School/W21/" "~/org/"))))
 
+
+;; (directory-files-recursively "~/org" (rx ".org" eos))
 ;; Need to manually update based on school term
 (setq org-agenda-files '("~/org"
                          "~/org/blog"
@@ -1231,17 +1338,16 @@ Here are two examples:
 (setq +format-on-save-enabled-modes
       '(not emacs-lisp-mode sql-mode tex-mode latex-mode julia-mode))
 
-                                        ; Rust
-;; (setq lsp-rust-server 'rust-analyzer)
+;; forces errors to show only when hover on symbol, not on sideline
+(setq lsp-ui-sideline-show-diagnostics nil)
+
 (map! :n "SPC t u" #'lsp-ui-doc-mode)
+(setq lsp-ui-doc-max-height 24)
+(setq lsp-ui-doc-max-width 80)
+(setq lsp-ui-doc-delay 0.01)
 
-;; (after! rustic
-;; (setq rustic-lsp-server 'rust-analyzer))
-
-;; (after! lsp-rust
-;;   (setq lsp-rust-server 'rust-analyzer))
-
-;; (setq lsp-disabled-clients '(rls))
+;; this one is for testing, doesn't seem to work 5/26/21
+(map! :n "SPC t y" #'lsp-ui-doc-focus-frame)
 
 ;; https://github.com/nnicandro/emacs-jupyter/issues/306
 (require 'ob-jupyter)
@@ -1283,7 +1389,10 @@ Here are two examples:
 
 (setq ob-async-no-async-languages-alist '("jupyter-python" "jupyter-julia"))
 
-(map! :map julia-repl-mode-map "M-RET" 'julia-repl-send-region-or-line)
+;; (map! :map julia-repl-mode-map "M-RET" 'julia-repl-send-region-or-line)
+(map! :map jupyter-repl-interaction-mode-map "M-RET" 'jupyter-eval-line-or-region)
+
+(add-hook 'emacs-lisp-mode-hook (lambda () (lispy-mode 1)))
 
 ;(annotate-mode)
 
@@ -1306,10 +1415,6 @@ Here are two examples:
 ;(map! :map doom-leader-map "p F" nil)
 ; rebind SPC p F to search all projects' files
 ;(map! :n "SPC p F" #'projectile-find-file-in-known-projects)
-
-;; (use-package! org-krita
-;;   :config
-;;   (add-hook 'org-mode-hook 'org-krita-mode))
 
 ;; (add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e")
 ;; ;; Each path is relative to `+mu4e-mu4e-mail-path', which is ~/.mail by default

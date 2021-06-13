@@ -70,10 +70,10 @@ bindsym $mod+comma exec mpc -p 6605 next
 floating_modifier $mod
 
 # start a terminal
-bindsym $mod+Return exec --no-startup-id alacritty
-bindsym $mod+Shift+Return exec --no-startup-id alacritty --class floating # -d 80 35 
-#bindsym $mod+Return exec --no-startup-id termite --title=termite
-#bindsym $mod+Shift+Return exec --no-startup-id termite --class=floating 
+# bindsym $mod+Return exec --no-startup-id alacritty
+# bindsym $mod+Shift+Return exec --no-startup-id alacritty --class floating # -d 80 35 
+bindsym $mod+Return exec --no-startup-id termite --title=termite
+bindsym $mod+Shift+Return exec --no-startup-id termite --class=floating 
 #--position 3000 450 
 #i3-sensible-terminal
 

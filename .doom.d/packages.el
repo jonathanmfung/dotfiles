@@ -37,15 +37,15 @@
 ;; look at undo-fu ? in doom-emacs with soon update (- jan 16, 21)
 (package! undo-tree)
 
-;; (package! org-krita
-;;   :recipe (:host github
-;;            :repo "lepisma/org-krita"
-;;            :files ("resources" "resources" "*.el" "*.el")))
-
 (package! vterm)
 
 (package! jupyter)
 (package! lsp-julia :recipe (:host github :repo "non-jedi/lsp-julia"))
+
+(package! lispy)
+
+
+
 
 ;; (package! evil-terminal-cursor-changer)
 

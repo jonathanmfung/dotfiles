@@ -96,10 +96,11 @@ font:
     #   - (macOS) Menlo
     #   - (Linux/BSD) monospace
     #   - (Windows) Consolas
-    family: JetBrainsMono
+    #family: JetBrainsMono
+    family: Iosevka Term SS14 
 
     # The `style` can be specified to pick a specific face.
-    style: Regular
+    style: Normal
 
   # Bold font face
   bold:
@@ -108,7 +109,8 @@ font:
     # If the bold family is not specified, it will fall back to the
     # value specified for the normal font.
     #family: monospace
-    family: JetBrainsMono
+    #family: JetBrainsMono
+    family: Iosevka Term SS14 
 
     # The `style` can be specified to pick a specific face.
     style: Bold
@@ -119,7 +121,8 @@ font:
     #
     # If the italic family is not specified, it will fall back to the
     # value specified for the normal font.
-    family: JetBrainsMono
+    #family: JetBrainsMono
+    family: Iosevka Term SS14 
 
     # The `style` can be specified to pick a specific face.
     style: Italic
@@ -130,7 +133,8 @@ font:
     #
     # If the bold italic family is not specified, it will fall back to the
     # value specified for the normal font.
-    family: JetBrainsMono
+    #family: JetBrainsMono
+    family: Iosevka Term SS14 
 
     # The `style` can be specified to pick a specific face.
     style: Bold Italic
@@ -162,10 +166,11 @@ font:
 # If `true`, bold text is drawn using the bright color variants.
 #draw_bold_text_with_bright_colors: false
 
-# Colors (Modus-Vivendi)
-# Author: Protesilaos Stavrou, protesilaos.com
+# https://gitlab.com/protesilaos/dotfiles/-/blob/master/emacs/.emacs.d/prot-lisp/modus-themes-exporter.el
+# Theme: modus-vivendi
+# Description: Alacritty port of modus-vivendi (Modus themes for Emacs)
+# Author: Protesilaos Stavrou, <https://protesilaos.com>
 colors:
-  # Default colors
   primary:
     background: '#000000'
     foreground: '#ffffff'
@@ -223,7 +228,6 @@ colors:
   #    background: CellForeground
   #    foreground: CellBackground
 
-  # Normal colors
   normal:
     black:   '#000000'
     red:     '#ff8059'
@@ -233,8 +237,6 @@ colors:
     magenta: '#feacd0'
     cyan:    '#00d3d0'
     white:   '#bfbfbf'
-
-  # Bright colors
   bright:
     black:   '#595959'
     red:     '#f4923b'

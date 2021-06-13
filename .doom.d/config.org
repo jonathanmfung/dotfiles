@@ -18,6 +18,7 @@
   - [[#hl-line-mode][hl-line mode]]
   - [[#line-spacing][Line Spacing]]
   - [[#evil-mode-terminal-cursors][evil-mode terminal cursors]]
+  - [[#fringe][fringe]]
 - [[#usability][Usability]]
   - [[#navigation][Navigation]]
   - [[#screenshots][Screenshots]]
@@ -27,6 +28,8 @@
   - [[#save-some-buffers][save-some-buffers]]
   - [[#find-buffer-pdf][find-buffer-pdf]]
   - [[#eval-last-sexp][eval-last-sexp]]
+  - [[#interactive-org-latex-format-options][interactive org-latex-format-options]]
+  - [[#transpose-chars][transpose-chars]]
 - [[#org-mode][Org-Mode]]
   - [[#org][Org]]
   - [[#org-navigation][Org Navigation]]
@@ -52,16 +55,17 @@
   - [[#formatting][Formatting]]
   - [[#lsp][LSP]]
   - [[#julia][Julia]]
+  - [[#lispy-mode][lispy-mode]]
 - [[#strt-packages-to-look-at][STRT Packages to Look At]]
   - [[#strt-transclusion][STRT Transclusion]]
   - [[#strt-annotate][STRT Annotate]]
   - [[#strt-elgantt][STRT Elgantt]]
+  - [[#strt-director][STRT Director]]
 - [[#hold-packages-not-used-right-now][HOLD Packages Not Used Right Now]]
   - [[#hold-header-line][HOLD header-line]]
   - [[#hold-pandoc][HOLD Pandoc]]
   - [[#hold-projectile][HOLD Projectile]]
   - [[#hold-mu4e][HOLD mu4e]]
-  - [[#hold-org-krita][HOLD Org-Krita]]
 
 * Resources
 ** 444 Days of Literate Configuration
@@ -205,36 +209,20 @@ they are implemented.
 
 * Visual Interface
 ** Fonts
-Doom exposes five (optional) variables for controlling fonts in Doom. Here
-are the three important ones:
+Reference (set-face-attribute) for options
 
-+ `doom-font'
-+ `doom-variable-pitch-font'
-+ `doom-big-font' -- used for `doom-big-font-mode'; use this for
-  presentations or streaming.
+https://typeof.net/Iosevka/
 
-They all accept either a font-spec, font string ("Input Mono-12"), or xlfd
-font string. You generally only need these two:
+=yay ttc-iosevka=
+
 #+BEGIN_SRC elisp :results none
-;; (setq doom-font (font-spec :family "Source Code Pro" :size 24))
-;; (setq doom-big-font (font-spec :family "Source Code Pro" :size 36))
+;; "Source Code Pro", "Roboto Mono", "IBM Plex Mono", "JetBrains Mono"
+;; doom-font (font-spec :family "JetBrains Mono" :size 16)
+;; https://typeof.net/Iosevka/
 
-;; (setq doom-font (font-spec :family "JetBrains Mono" :weight 'light :size 24))
-;; (setq doom-big-font (font-spec :family "JetBrains Mono" :weight 'light :size 36))
-;; (setq doom-variable-pitch-font (font-spec :family "Overpass" :weight 'bold :size 24))
-
-;; (setq doom-variable-pitch-font (font-spec :family "Roboto" :size 24))
-
-;; variable-pitch et al seems to inherit ":weight 'light" from doom-font
-(setq doom-font (font-spec :family "JetBrains Mono" :size 16)
-      ;; 24
-      doom-big-font (font-spec :family "JetBrains Mono" :size 36)
-      ;; doom-variable-pitch-font (font-spec :family "Source Sans Pro" :size 36)
-      ;; doom-variable-pitch-font (font-spec :family "Roboto" :size 24)
-      doom-variable-pitch-font (font-spec :family "IBM Plex Sans" :size 16 :weight 'semibold)
-      ;; doom-variable-pitch-font (font-spec :family "IBM Plex Sans Condensed" :size 24 :weight 'normal)
-      ;; doom-variable-pitch-font (font-spec :family "IBM Plex Serif" :size 24 :weight 'normal)
-      doom-serif-font (font-spec :family "IBM Plex Mono" :weight 'light))
+(setq doom-font (font-spec :family "Iosevka SS14" :size 16 :weight 'semi-light)
+      doom-big-font (font-spec :family "Iosevka SS14" :size 24)
+      doom-variable-pitch-font (font-spec :family "Iosevka Aile" :size 16 :weight 'semi-light))
 #+END_SRC
 
 ** Theme
@@ -353,10 +341,10 @@ so, modus is not in native emacs
 ;; (setq display-battery-mode t)
 
 ;; (setq display-time-mode t)
-(display-time-mode)
+(display-time-mode nil)
 (setq display-time-default-load-average nil)
-(setq line-number-mode nil
-      column-number-mode nil)
+(setq line-number-mode t
+      column-number-mode t)
 (set-face-background 'mode-line "default")
 
 (setq doom-modeline-buffer-encoding nil)
@@ -382,7 +370,7 @@ so, modus is not in native emacs
 #+END_SRC
 
 ** Line Spacing
-#+begin_src elisp
+#+begin_src elisp :results none
 (defun jf/toggle-line-spacing ()
   "Toggle line spacing between no extra space to extra half line height.
 URL `http://ergoemacs.org/emacs/emacs_toggle_line_spacing.html'
@@ -395,9 +383,6 @@ Version 2017-06-02"
 
 (map! :n "SPC t v" 'jf/toggle-line-spacing)
 #+end_src
-
-#+RESULTS:
-
 ** evil-mode terminal cursors
 https://github.com/h0d/term-cursor.el
 
@@ -538,6 +523,117 @@ Waits for OPERATION to be 'set."
 
 (global-term-cursor-mode)
 #+end_src
+** fringe
+https://www.reddit.com/r/emacs/comments/7fidel/looking_for_some_cool_fringe_bitmaps/
+
+https://emacs.stackexchange.com/questions/12240/using-the-built-in-backslash-fringe-bitmap
+#+begin_src elisp :results none
+;; AUTHOR:  Nikolaj Schumacher -- https://github.com/nschum/fringe-helper.el
+;;
+(defun fringe-helper-convert (&rest strings)
+  "Convert STRINGS into a vector usable for `define-fringe-bitmap'.
+Each string in STRINGS represents a line of the fringe bitmap.
+Periods (.) are background-colored pixel; Xs are foreground-colored. The
+fringe bitmap always is aligned to the right. If the fringe has half
+width, only the left 4 pixels of an 8 pixel bitmap will be shown.
+For example, the following code defines a diagonal line.
+\(fringe-helper-convert
+\"XX......\"
+\"..XX....\"
+\"....XX..\"
+\"......XX\"\)"
+  (unless (cdr strings)
+    ;; only one string, probably with newlines
+    (setq strings (split-string (car strings) "\n")))
+  (apply 'vector
+         (mapcar
+          (lambda (str)
+            (let ((num 0))
+              (dolist (c (string-to-list str))
+                (setq num (+ (* num 2) (if (eq c ?.) 0 1))))
+              num))
+          strings)))
+
+;; this is default, a tilde
+;; (setq vi-tilde-fringe-bitmap-array '[0 0 0 113 219 142 0 0])
+
+(setq fringe-mode 8)
+
+;; for some reason, my fringe is default to 4 pixels wide (defined in fringe-mode), but need the full 8
+;; 23 is the max height
+;; (setq vi-tilde-fringe-bitmap-array (fringe-helper-convert
+;;                                     "xx......"
+;;                                     ".xx....."
+;;                                     "..xx...."
+;;                                     "..xx...."
+;;                                     ".xx....."
+;;                                     "xx......"
+;;                                     ))
+(setq vi-tilde-fringe-bitmap-array (fringe-helper-convert
+                                    "xxxx...."
+                                    "...x...."
+                                    "...x...."
+                                    "...x...."
+                                    "...x...."
+                                    "...x...."
+                                    "...x...."
+                                    "...x...."
+                                    "...x...."
+                                    "...x...."
+                                    "...x...."
+                                    "xxxx...."
+                                    "...x...."
+                                    "...x...."
+                                    "...x...."
+                                    "...x...."
+                                    "...x...."
+                                    "...x...."
+                                    "...x...."
+                                    "...x...."
+                                    "...x...."
+                                    "...x...."
+                                    "...x...."
+                                    ))
+#+end_src
+#+begin_src elisp :results none
+
+(setq vi-tilde-fringe-bitmap-array (fringe-helper-convert
+                                    ".x.xx..."
+                                    "..x.xx.."
+                                    "x..x.xx."
+                                    "xx..x.xx"
+                                    "x..x.xx."
+                                    "..x.xx.."
+                                    ".x.xx..."
+                                    ))
+#+end_src
+
+#+begin_src elisp :results none
+;; (setq vi-tilde-fringe-bitmap-array (fringe-helper-convert
+;;                                     ".x..x..."
+;;                                     "..x..x.."
+;;                                     "x..x..x."
+;;                                     ".x..x..x"
+;;                                     "x..x..x."
+;;                                     "..x..x.."
+;;                                     ".x..x..."
+;;                                     ))
+#+end_src
+
+#+begin_src elisp :results none
+;; (setq vi-tilde-fringe-bitmap-array (fringe-helper-convert
+;;                                     "xxxxxxxx"
+;;                                     "x..xx..x"
+;;                                     "x..xx..x"
+;;                                     "xxxxxxxx"
+;;                                     "x..xx..x"
+;;                                     "x..xx..x"
+;;                                     "xxxxxxxx"
+;;                                     "x..xx..x"
+;;                                     "x..xx..x"
+;;                                     "xxxxxxxx"
+;;                                     ))
+#+end_src
 * Usability
 ** Navigation
 #+BEGIN_SRC elisp :results none
@@ -584,7 +680,7 @@ Saves to a temp file and puts the filename in the kill ring."
 #+begin_src elisp :results none
 ;; (add-hook 'pdf-tools-enabled-hook 'pdf-view-midnight-minor-mode)
 #+end_src
-** Custom Keybinds
+** TODO Custom Keybinds
 #+BEGIN_SRC elisp :results none
 ;; Bind toggles
 (global-set-key (kbd "<f2>") 'mixed-pitch-mode)
@@ -593,11 +689,12 @@ Saves to a temp file and puts the filename in the kill ring."
 (setq olivetti-body-width 110)
 ;; (global-set-key (kbd "U") 'undo-tree-redo)
 
+(setq fill-column 100)
+
 ;; Unbind language input switcher
 (map! :map global-map "C-\\" nil)
 
 ;; Bind toggle for 80-char limit, buffer-wide
-(map! :n "SPC t c" 'display-fill-column-indicator-mode)
 (map! :n "C-\\" 'display-fill-column-indicator-mode)
 
 ;; currently do not use org-roam, need to delete
@@ -629,25 +726,43 @@ Saves to a temp file and puts the filename in the kill ring."
 ** find-buffer-pdf
 https://www.reddit.com/r/emacs/comments/mzuaf6/how_open_a_pdf_file_with_pdftools_when_you_are/
 
-My own function
 #+begin_src elisp :results none
 (defun jf/find-buffer-pdf ()
+  "Takes the current buffer's FILE-NAME and opens up FILE-NAME.pdf
+Defaults to pdf-tools, or native doc-view."
   (interactive)
-  (find-file (concat
-              "./"
-              (car (split-string
-                    (file-name-nondirectory (buffer-name))
-                    "\\."))
-              ".pdf")))
+  (find-file
+   (concat
+    "./"
+    (car (split-string (file-name-nondirectory (buffer-name)) "\\."))
+    ".pdf")))
 
 (map! :n "SPC o p" 'jf/find-buffer-pdf)
 #+end_src
-
 ** eval-last-sexp
 #+begin_src elisp :results none
 (map! :n "SPC e" 'eval-last-sexp)
 #+end_src
-
+** interactive org-latex-format-options
+https://stackoverflow.com/questions/4497073/elisp-asking-yes-or-no-in-interactive-commands
+#+begin_src elisp :results none
+(defun jf/org-latex-preview-scale (scale bool)
+  (interactive (list (read-number "Scale: ") (y-or-n-p "Day Mode? ")))
+  (setq org-format-latex-options `(
+                                   :foreground ,(if bool (format "Black") (format "White"))
+                                   :background default
+                                   :scale ,scale
+                                   :html-foreground "Black"
+                                   :html-background "Transparent"
+                                   :html-scale 1.0
+                                   :matchers '("begin" "$1" "$" "$$" "\\(" "\\["))
+        )
+  )
+#+end_src
+** transpose-chars
+#+begin_src elisp :results none
+(map! :n "SPC t c" 'transpose-chars)
+#+end_src
 * Org-Mode
 ** Org
 #+BEGIN_SRC elisp :results none
@@ -700,6 +815,8 @@ https://irreal.org/blog/?p=8418
 ;;                   directory org-agenda-file-regexp))
 ;;                    '("~/School/W21/" "~/org/"))))
 
+
+;; (directory-files-recursively "~/org" (rx ".org" eos))
 ;; Need to manually update based on school term
 (setq org-agenda-files '("~/org"
                          "~/org/blog"
@@ -1503,20 +1620,18 @@ Stops new emacsclient frames from creating new workspaces
 #+RESULTS:
 | not | emacs-lisp-mode | sql-mode | tex-mode | latex-mode | julia-mode |
 
-** TODO LSP
+** LSP
 #+BEGIN_SRC elisp :results none
-                                        ; Rust
-;; (setq lsp-rust-server 'rust-analyzer)
+;; forces errors to show only when hover on symbol, not on sideline
+(setq lsp-ui-sideline-show-diagnostics nil)
+
 (map! :n "SPC t u" #'lsp-ui-doc-mode)
+(setq lsp-ui-doc-max-height 24)
+(setq lsp-ui-doc-max-width 80)
+(setq lsp-ui-doc-delay 0.01)
 
-;; (after! rustic
-;; (setq rustic-lsp-server 'rust-analyzer))
-
-;; (after! lsp-rust
-;;   (setq lsp-rust-server 'rust-analyzer))
-
-;; (setq lsp-disabled-clients '(rls))
-
+;; this one is for testing, doesn't seem to work 5/26/21
+(map! :n "SPC t y" #'lsp-ui-doc-focus-frame)
 #+END_SRC
 ** Julia
 https://github.com/julia-vscode/LanguageServer.jl/issues/651
@@ -1562,7 +1677,12 @@ https://github.com/julia-vscode/LanguageServer.jl/issues/651
 
 (setq ob-async-no-async-languages-alist '("jupyter-python" "jupyter-julia"))
 
-(map! :map julia-repl-mode-map "M-RET" 'julia-repl-send-region-or-line)
+;; (map! :map julia-repl-mode-map "M-RET" 'julia-repl-send-region-or-line)
+(map! :map jupyter-repl-interaction-mode-map "M-RET" 'jupyter-eval-line-or-region)
+#+end_src
+** lispy-mode
+#+begin_src elisp :results none
+(add-hook 'emacs-lisp-mode-hook (lambda () (lispy-mode 1)))
 #+end_src
 * STRT Packages to Look At
 ** STRT Transclusion
@@ -1580,6 +1700,8 @@ https://github.com/nobiot/org-transclusion
 ;; (add-to-list 'load-path (concat user-emacs-directory "elgantt/")) ;; Or wherever it is located
 ;; (require 'elgantt)
 #+END_SRC
+** STRT Director
+https://github.com/bard/emacs-director
 * HOLD Packages Not Used Right Now
 ** HOLD header-line
 #+BEGIN_SRC elisp
@@ -1634,11 +1756,3 @@ Note: Deprecated in favor of Org Export - Latex
 ;;   t)
 #+END_SRC
 
-** HOLD Org-Krita
-#+begin_src elisp
-;; (use-package! org-krita
-;;   :config
-;;   (add-hook 'org-mode-hook 'org-krita-mode))
-#+end_src
-
-#+RESULTS:

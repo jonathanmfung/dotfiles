@@ -158,6 +158,7 @@ modules-right = pulseaudio battery memory cpu wlan powermenu
 
 wm-restack = i3
 
+
 scroll-up = i3wm-wsnext
 scroll-down = i3wm-wsprev
 
@@ -215,16 +216,16 @@ label-urgent-padding = 2
 
 [module/spotify]
 type = custom/script
-;exec = python .config/polybar/spotify_status.py -f '{icon} {artist} - {title}'
-exec = echo "$(playerctl -p spotify metadata --format "{{ artist }}"| sed -e "s/[[(]....*[])]*//g" | sed "s/ *$//"| sed "s/^\(.\{20\}[^ ]*\)\(.*\)$/\1[\2]/"| sed "s/\[ *\]$//"| sed "s/\[.*\]$/.../")" "- $(playerctl -p spotify metadata --format "{{title}}" | sed 's/'\''/\\'\''/g')"
-; tail = true
-interval = 3
+exec = echo "$(playerctl -p spotify metadata artist) - $(playerctl -p spotify metadata title)"
+interval = 5
 format-underline = #1db954
+
+click-left = dunstify "Album: $(playerctl -p spotify metadata album)"
 
 [module/cpu]
 type = internal/cpu
 interval = 2
-format-prefix = "C: "
+format-prefix = "C: "
 format-prefix-foreground =
 format-underline = #e02200
 label = %percentage:2%%
@@ -232,7 +233,7 @@ label = %percentage:2%%
 [module/memory]
 type = internal/memory
 interval = 2
-format-prefix = "M: "
+format-prefix = "M: "
 # format-prefix-foreground = ${colors.foreground-alt}
 format-underline = #00bee0
 label = %percentage_used%%
@@ -257,7 +258,7 @@ date-alt = " %Y-%m-%d"
 time = %l:%M %P
 time-alt = %H:%M:%S
 
-format-prefix = 
+format-prefix =  
 format-prefix-foreground = ${colors.foreground-alt}
 format-underline = #00bee0
 
@@ -372,7 +373,7 @@ exec = ~/.config/polybar/battery-time.sh
 
 ; Will the script output continous content?
 ; Default: false
-tail = true
+; tail = true
 
 ; Seconds to sleep between updates
 ; Default: 5 (0 if `tail = true`)
@@ -397,7 +398,7 @@ format-spacing = 1
 
 label-open = 
 label-open-foreground = ${colors.secondary}
-label-close =  cancel
+label-close = cancel
 label-close-foreground = ${colors.secondary}
 label-separator = |
 label-separator-foreground = ${colors.foreground-alt}

@@ -1,0 +1,171 @@
+#+TITLE: Date
+#+DATE:
+#+LaTeX_CLASS: notes
+#+OPTIONS: toc:nil tex:verbatim
+
+#+begin_src bash :session date :results output :exports both
+duration=$(date +%k:%M)
+current=$(date +%l:%M\ %P)
+
+echo $duration 
+echo $current
+#+end_src
+
+#+RESULTS:
+: 
+: [00m [01;32m[jonat@hush[01;37m tmp[01;32m]$[00m [01;32m[jonat@hush[01;37m tmp[01;32m]$[00m 19:07
+: [00m 7:07 pm
+
+#+begin_src bash :session date :results output
+date -d "$duration + $current"
+#+end_src
+
+#+RESULTS:
+: date: invalid date ‘19:09 +  7:07 pm’
+
+#+begin_src bash :session date :results output :exports both
+duration=$(date +%k:%M)
+new=$(date +%k:%M)
+
+echo $duration 
+echo $new
+#+end_src
+
+#+RESULTS:
+:
+: [00m [01;32m[jonat@hush[01;37m tmp[01;32m]$[00m [01;32m[jonat@hush[01;37m tmp[01;32m]$[00m 19:09
+: [00m 19:09
+
+#+begin_src bash :session date :results output :exports both
+date -d "$duration + $new"
+#+end_src
+
+#+RESULTS:
+: Sun May  9 05:00:00 PM PDT 2021
+
+#+begin_src bash :session date :results output :exports both
+default=$(date +%H:%M)
+full=$(date +%R)
+echo $default
+echo $full
+date -d "$default + $full"
+#+end_src
+
+#+RESULTS:
+: 
+: [00m [01;32m[jonat@hush[01;37m tmp[01;32m]$[00m 19:15
+: [00m 19:15
+: [00m Sun May  9 05:00:00 PM PDT 2021
+
+#+begin_src bash :session date :results output :exports both
+fuller=$(date +%T)
+date -d "${fuller}+${fuller}"
+#+end_src
+
+#+RESULTS:
+: 
+: [00m date: invalid date ‘19:19:19+19:19:19’
+ 
+#+begin_src bash :session date :results output :exports both
+eggs="2020/07/29"
+days="20 days"
+echo "Eggs expiry date $(date -d "${eggs}+${days}")"
+#+end_src
+
+#+RESULTS:
+: 
+: [00m [01;32m[jonat@hush[01;37m tmp[01;32m]$[00m Eggs expiry date Tue Aug 18 12:00:00 AM PDT 2020
+
+
+#+begin_src bash :session date :results output :exports both
+date "+%F %T"
+date -d '+1 minute' "+%F %T"
+#+end_src
+
+#+RESULTS:
+: 2021-05-10 19:22:04
+: [00m 2021-05-10 19:23:04
+
+#+begin_src bash :session date :results output :exports both
+hour=$(date +%H)
+echo $hour
+min=$(date +%M)
+echo $min
+
+date "+%F %T"
+date -d '+2 hour +1 minute' "+%F %T"
+date -d "+$hour hour +$min minute" "+%F %T"
+#+end_src
+
+#+RESULTS:
+:
+: [00m 19
+: [00m [01;32m[jonat@hush[01;37m tmp[01;32m]$[00m 28
+: [00m [01;32m[jonat@hush[01;37m tmp[01;32m]$[00m 2021-05-10 19:28:14
+: [00m 2021-05-10 21:29:14
+: [00m 2021-05-11 14:56:14
+
+#+begin_src bash :session date :results output :exports both
+date "+%F %T"
+date -d '+2 hour +2 minute' "+%l:%M"
+date -d "+$hour hour +$min minute" "+%l:%M"
+#+end_src
+
+#+RESULTS:
+: 2021-05-10 19:35:17
+: [00m  9:37
+: [00m  3:09
+
+#+begin_src bash :session date :results output :exports both
+date -d '+06 hour +25 minute' "+%l:%M %P"
+#+end_src
+
+#+RESULTS:
+: 2:41 am
+
+#+begin_src bash :session date :results output :exports both
+hour=$(date +%H);min=$(date +%M);date -d "+$hour hour +$min minute" "+%l:%M %P"
+
+date -d "+$(date +%H) hour +$(date +%M) minute" "+%l:%M %P" 
+#+end_src
+
+#+RESULTS:
+: 3:56 pm
+: [00m [01;32m[jonat@hush[01;37m tmp[01;32m]$[00m  3:56 pm
+
+
+#+begin_src bash :results output
+remain=$(acpi | head -n 1 | cut -d ' ' -f 5 | cut -d ':' -f -2)
+first=$(echo $remain | cut -d ':' -f 1)
+second=$(echo $remain | cut -d ':' -f 2)
+
+echo $first
+echo $second
+
+date -d "+$first hour +$second minute" "+%l:%M %P" 
+#+end_src
+
+#+RESULTS:
+: 01
+: 18
+: 11:29 pm
+
+#+begin_src bash
+status=$(cat /sys/class/power_supply/CMB0/status)
+
+if [ $status == "Discharging" ]
+then
+    echo "Dis"
+elif [ $status == "Charging" ]
+then
+    echo "Charg"
+else
+    :
+fi
+
+status=$(cat /sys/class/power_supply/CMB0/status); if [ $status == "Discharging" ];then echo "Dis";elif [ $status == "Charging" ];then echo "Charg";else :;fi
+#+end_src
+
+#+RESULTS:
+| Charg |
+| Charg |
