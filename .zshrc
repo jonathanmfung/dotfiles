@@ -37,6 +37,19 @@ if [ "$TERM" = "linux" ]; then
     clear #for background artifacting
 fi
 
+mode () {
+# toggles termite color scheme, ARGS = light, dark
+termite_config_dir="/home/jonat/.config/termite"
+if [[ $1 == "light" ]]
+then echo "light mode"
+     cat $termite_config_dir/config_light > $termite_config_dir/config
+elif [[ $1 == "dark" ]]
+then echo "dark mode"
+     cat $termite_config_dir/config_dark > $termite_config_dir/config
+else
+    echo "No mode selected"
+fi
+}
 
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
@@ -160,15 +173,18 @@ alias tt="grep -v '^#' $HOME/.config/dracula_theme.vt | setvtrgb -"
 
 # doom emacs bin
 alias doom="~/.emacs.d/bin/doom"
-
 alias red="redshift -v -r -t 4000:3000 -l 37.77:122.42 &"
-
 alias up="uptime -p"
 
-date -I
+# locales in /usr/share/zoneinfo
+alias kdate="TZ=Asia/Seoul date +'%b %d %l:%M %P %Z'"
+
+# opening splash
+# date -I
 
 export PATH="$PATH:/home/jonat/julia-1.6.0/bin"
 export JULIA_NUM_THREADS=4
+source ~/.zshrc_keys
 
 #function tmr(){
 #   date1=$((`date +%s` + $1)); 

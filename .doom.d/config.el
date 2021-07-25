@@ -98,13 +98,14 @@ CURRENT-NAME, if it does not already have them:
 ;; doom-font (font-spec :family "JetBrains Mono" :size 16)
 ;; https://typeof.net/Iosevka/
 
-(setq doom-font (font-spec :family "Iosevka SS14" :size 16 :weight 'semi-light)
+; thin, extralight, light, regular/normal, medium, semibold, bold, extrabold
+(setq doom-font (font-spec :family "Iosevka SS14" :size 16 :weight 'normal)
       doom-big-font (font-spec :family "Iosevka SS14" :size 24)
-      doom-variable-pitch-font (font-spec :family "Iosevka Aile" :size 16 :weight 'semi-light))
+      doom-variable-pitch-font (font-spec :family "Iosevka Aile" :size 16 :weight 'normal))
 
 ;; https://github.com/hlissner/doom-emacs/issues/3967
-;; (setq doom-theme 'modus-operandi)
-(setq doom-theme 'modus-vivendi)
+(setq doom-theme 'modus-operandi)
+;; (setq doom-theme 'modus-vivendi)
 
 ;; (require 'modus-themes)                 ; common code
 ;; (require 'modus-operandi-theme)         ; light theme
@@ -120,68 +121,47 @@ CURRENT-NAME, if it does not already have them:
 
 (add-hook! 'modus-themes-after-load-theme-hook (set-face-background 'mode-line "default"))
 
-
 ;; Set customization options to values of your choice
-(setq modus-themes-bold-constructs t
+(setq modus-themes-success-deuteranopia nil ; default
+      modus-themes-bold-constructs t
       modus-themes-slanted-constructs t
-      modus-themes-syntax nil ; Lots of options---continue reading the manual
-      modus-themes-no-mixed-fonts nil
-      modus-themes-links nil ; Lots of options---continue reading the manual
-      modus-themes-prompts 'subtle-accented ; {nil,'subtle-accented, 'intense-accented, 'subtle-gray, 'intense-gray}
+      modus-themes-syntax nil           ; default
+      modus-themes-no-mixed-fonts nil   ; default
+      modus-themes-links nil            ; default
+      modus-themes-prompts '(intense bold)
 
-      modus-themes-mode-line 'borderless ; {nil,'3d,'moody, 'borderless, 'borderless-3d, 'borderless-moody}
-      modus-themes-completions 'opinionated ; {nil,'moderate,'opinionated}
-      modus-themes-fringes 'intense ; {nil,'subtle,'intense}
+      modus-themes-mode-line '(borderless)
+      modus-themes-completions 'opinionated
+      modus-themes-mail-citations nil   ; default
+      modus-themes-fringes 'intense
+      modus-themes-lang-checkers '(text-also background)
 
-      modus-themes-lang-checkers 'colored-background ; Lots of options---continue reading the manual
+      modus-themes-hl-line '(intense)
+      modus-themes-subtle-line-numbers t
+      modus-themes-paren-match '(intense)
+      ;; change to just no-extend if not enough contrast in vivendi
+      modus-themes-region '(accented bg-only no-extend)
 
-      modus-themes-hl-line 'intense-background ; Lots of options---continue reading the manual
+      modus-themes-diffs nil            ; default
 
-      modus-themes-subtle-line-numbers t ; {nil, t}
-      modus-themes-paren-match nil ; {nil,'subtle-bold,'intense,'intense-bold}
-      modus-themes-region 'no-extend ; Lots of options
+      modus-themes-org-blocks 'gray-background
+      modus-themes-org-agenda nil       ; view docs for all info on (key . value)
 
-      modus-themes-diffs nil ; {nil,'desaturated,'fg-only,'bg-only}
-
-      modus-themes-org-blocks 'grayscale ; {nil,'grayscale,'rainbow}
-      modus-themes-org-habit nil
-
-      modus-themes-headings ; Lots of options---continue reading the manual
-      '((1 . rainbow-section)
-        ;; (2 . rainbow-line-no-bold)
-        ;; (3 . no-bold)
-        ;; (t . rainbow)
-        ;; (t . rainbow-line)
-        (t . rainbow-line-no-bold)
-        ;; (t . highlight-no-bold)
+      modus-themes-headings
+      '((1 . (rainbow overline background))
+        (t . (rainbow overline no-bold))
         )
 
-      modus-themes-scale-headings nil
+      modus-themes-scale-headings nil            ; default
       modus-themes-scale-1 1.1
       modus-themes-scale-2 1.15
       modus-themes-scale-3 1.21
       modus-themes-scale-4 1.27
-      modus-themes-scale-5 1.33
+      modus-themes-scale-title 1.33
 
-      modus-themes-variable-pitch-ui nil
-      modus-themes-variable-pitch-headings nil)
-
-;; with Emacs 28, default seems to have a gray background for everything, this turns that to white
-;; (setq modus-themes-operandi-color-overrides
-;;       '(
-;;         (bg-alt . "#ffffff")
-;;         ))
-;; (setq modus-themes-vivendi-color-overrides
-;;       '(
-;;         (bg-alt . "#000000")
-;;         ))
-
-;; only for "packaged variants" (?)
-;; (modus-themes-load-themes)
-;; (modus-themes-load-operandi)
-
-;; Or load via a hook
-;; (add-hook! 'after-init-hook #'modus-themes-load-operandi)
+      modus-themes-variable-pitch-ui nil             ; default
+      modus-themes-variable-pitch-headings nil
+      )
 
                                         ;includes part of the file's directory name at the beginning of the shared buffer name to make unique
 (setq uniquify-buffer-name-style 'forward)
@@ -512,6 +492,21 @@ Saves to a temp file and puts the filename in the kill ring."
 
 ;; (add-hook 'pdf-tools-enabled-hook 'pdf-view-midnight-minor-mode)
 
+(defun my-pdf-tools-backdrop ()
+  (face-remap-add-relative
+   'default
+   `(:background ,(modus-themes-color 'bg-alt))))
+
+(defun my-pdf-tools-midnight-mode-toggle ()
+  (when (derived-mode-p 'pdf-view-mode)
+    (if (eq (car custom-enabled-themes) 'modus-vivendi)
+        (pdf-view-midnight-minor-mode 1)
+      (pdf-view-midnight-minor-mode -1))
+    (my-pdf-tools-backdrop)))
+
+(add-hook 'pdf-tools-enabled-hook #'my-pdf-tools-midnight-mode-toggle)
+(add-hook 'modus-themes-after-load-theme-hook #'my-pdf-tools-midnight-mode-toggle)
+
 ;; Bind toggles
 (global-set-key (kbd "<f2>") 'mixed-pitch-mode)
 (global-set-key (kbd "<f3>") 'olivetti-mode)
@@ -709,7 +704,7 @@ Defaults to pdf-tools, or native doc-view."
 (defun jf/org-agenda-regular-view ()
   (interactive)
   (org-agenda nil "a"))
-(map! :n "SPC o c" 'jf/org-agenda-regular-view)
+;; (map! :n "SPC o c" 'jf/org-agenda-regular-view)
 
 ;; from https://github.com/alphapapa/org-super-agenda/issues/59
 ;; function is needed to always eval relative dates
@@ -1322,6 +1317,16 @@ Here are two examples:
 ;; Local Variables:
 ;; time-stamp-pattern: "10/Version:\\?[ \t]+1.%02y%02m%02d\\?\n"
 ;; End:
+
+(setq world-clock-list '(("America/Los_Angeles" "LA")
+                         ("Asia/Seoul" "Seoul")
+                         ("Asia/Calcutta" "Bangalore")))
+
+(map! :n "SPC o c" 'world-clock)
+
+(map! :n "S-<return>" 'burly-bookmark-windows)
+
+(setq mixed-pitch-variable-pitch-cursor 'box)
 
 (after! persp-mode
 (setq persp-emacsclient-init-frame-behaviour-override "main"))

@@ -112,10 +112,10 @@ bindsym $mod+Up focus up
 bindsym $mod+Right focus right
 
 # move focused window
-bindsym $mod+Shift+h move left
-bindsym $mod+Shift+j move down
-bindsym $mod+Shift+k move up
-bindsym $mod+Shift+l move right
+bindsym $mod+Shift+h move left 25 px
+bindsym $mod+Shift+j move down 25 px
+bindsym $mod+Shift+k move up 25 px
+bindsym $mod+Shift+l move right 25 px
 
 # alternatively, you can use the cursor keys:
 bindsym $mod+Shift+Left move left
@@ -228,7 +228,9 @@ bindsym $mod+i exec emacsclient -c -F '((name . "floating"))' -e "(dired nil)"
 # --position 2800 400 
 #bindsym $mod+o exec --no-startup-id alacritty --class floating -d 22 25 --hold -e cal -3
 #bindsym $mod+o exec emacsclient -c -F '((name . "floating"))' -e "(calendar)"
-bindsym $mod+o exec notify-send "$(cal)"
+#bindsym $mod+o exec notify-send "$(cal)"
+bindsym $mod+o exec zenity --calendar --text="========================"
+
 # --position 3500 400 
 bindsym $mod+p exec --no-startup-id alacritty --class floating -d 80 40 --hold -e nmtui
 # --position 3200 400 
@@ -251,10 +253,10 @@ mode "resize" {
         # Pressing right will grow the window’s width.
         # Pressing up will shrink the window’s height.
         # Pressing down will grow the window’s height.
-        bindsym h resize shrink width 5 px or 5 ppt
-        bindsym j resize grow height 5 px or 5 ppt
-        bindsym k resize shrink height 5 px or 5 ppt
-        bindsym l resize grow width 5 px or 5 ppt
+        bindsym h resize shrink width 25 px or 2 ppt
+        bindsym j resize grow height 25 px or 2 ppt
+        bindsym k resize shrink height 25 px or 2 ppt
+        bindsym l resize grow width 25 px or 2 ppt
 
         # same bindings, but for the arrow keys
         bindsym Left resize shrink width 10 px or 10 ppt
@@ -340,8 +342,13 @@ client.unfocused        #707070 #707070 #ffffff #292d2e   #707070
 # 4k
 #bindsym $mod+t exec xrandr --output eDP1 --primary --mode 1920x1080 --pos 1975x2160 --rotate normal --output DP1 --mode 1920x1080 --pos 0x240 --rotate right --output HDMI1 --mode 3840x2160 --pos 1080x0 --rotate normal --output HDMI2 --off --output VIRTUAL1 --off
 # 1440p
-bindsym $mod+t exec xrandr --output eDP1 --primary --mode 1920x1080 --pos 1400x1623 --rotate normal --output DP1 --mode 1920x1080 --pos 0x0 --rotate right --output HDMI1 --mode 2560x1440 --pos 1080x183 --rotate normal --output HDMI2 --off --output VIRTUAL1 --off
-bindsym $mod+y exec xrandr --output HDMI1 --off  --output DP1 --off
+bindsym $mod+t exec xrandr --output eDP1 --primary --mode 1920x1080 --pos 1400x1623 --rotate normal --output DP1 --mode 1920x1080 --pos 0x0 --rotate right --output HDMI1 --mode 2560x1440 --pos 1080x183 --rotate normal --output HDMI2 --off --output VIRTUAL1 --off && ~/.config/polybar/launch.sh
+# laptop + HDMI1 (big)
+bindsym $mod+shift+t exec xrandr --output eDP1 --primary --mode 1920x1080 --pos 320x1440 --rotate normal --output DP1 --off --output HDMI1 --mode 2560x1440 --pos 0x0 --rotate normal --output HDMI2 --off --output VIRTUAL1 --off && ~/.config/polybar/launch.sh
+# only laptop
+bindsym $mod+y exec xrandr --output eDP1 --primary --mode 1920x1080 --pos 0x0 --rotate normal --output HDMI1 --off --output DP1 --off && ~/.config/polybar/launch.sh
+# only HDMI1 (big monitor)
+bindsym $mod+shift+y exec xrandr --output eDP1 --off --output DP1 --off --output HDMI1 --mode 2560x1440 --pos 0x0 --rotate normal --output HDMI2 --off --output VIRTUAL1 --off && ~/.config/polybar/launch.sh
 
 workspace 1 output HDMI1
 workspace 2 output HDMI1
@@ -365,11 +372,6 @@ bindsym $mod+z exec flameshot gui
 bindsym $mod+shift+z exec i3lock -c 707070 
 bindsym $mod+shift+f exec firefox -new-window
 #bindsym $mod+shift+d fullscreen toggle global # fullscreens across whole virtual x display
-
-
-#toggle light and dark terminal scheme
-bindsym $mod+shift+t exec wal -n --saturate 0.8 -i ~/Downloads/walls/Jack_Vanzet_68.jpg -l -e
-bindsym $mod+shift+y exec wal -n --saturate 0.8 -i ~/Downloads/walls/waitme.jpg -e
 
 exec_always --no-startup-id $HOME/.config/polybar/launch.sh
 exec_always --no-startup-id picom -b 

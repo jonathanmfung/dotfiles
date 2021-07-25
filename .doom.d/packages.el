@@ -43,7 +43,13 @@
 (package! lsp-julia :recipe (:host github :repo "non-jedi/lsp-julia"))
 
 (package! lispy)
+(package! burly)
 
+;; doom upgrade required to update even github packages
+;; It works to: delete line and sync then repaste and sync
+;; to circumvent upgrading all of doom and packages
+(package! MetAPI
+  :recipe (:host github :repo "jonathanmfung/MetAPI.el"))
 
 
 
