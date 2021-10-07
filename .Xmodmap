@@ -1,0 +1,6 @@
+! https://superuser.com/a/678742
+! this remaps right Alt to Control
+! for use in vanilla/non-evil emacs
+remove Mod1 = Alt_R
+keycode 108 = Control_R
+add Control = Control_R

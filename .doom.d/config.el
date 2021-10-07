@@ -103,19 +103,7 @@ CURRENT-NAME, if it does not already have them:
       doom-big-font (font-spec :family "Iosevka SS14" :size 24)
       doom-variable-pitch-font (font-spec :family "Iosevka Aile" :size 16 :weight 'normal))
 
-;; https://github.com/hlissner/doom-emacs/issues/3967
-(setq doom-theme 'modus-operandi)
-;; (setq doom-theme 'modus-vivendi)
-
-;; (require 'modus-themes)                 ; common code
-;; (require 'modus-operandi-theme)         ; light theme
-;; (require 'modus-vivendi-theme)          ; dark theme
-
-;; (load-theme 'modus-vivendi)           ; Dark theme
-;; (load-theme 'modus-operandi)          ; Light theme
-
-
-;;(global-set-key (kbd "<f5>") (lambda () (interactive) (modus-themes-toggle) (set-face-background 'mode-line "default")))
+(require 'modus-themes)                 ; common code
 
 (global-set-key (kbd "<f5>") 'modus-themes-toggle)
 
@@ -162,6 +150,14 @@ CURRENT-NAME, if it does not already have them:
       modus-themes-variable-pitch-ui nil             ; default
       modus-themes-variable-pitch-headings nil
       )
+
+;; Load the theme files before enabling a theme (else you get an error).
+(modus-themes-load-themes)
+(modus-themes-load-operandi)
+
+;; https://github.com/hlissner/doom-emacs/issues/3967
+;; don't think this is needed with load-operandi 210805
+;; (setq doom-theme 'modus-operandi)
 
                                         ;includes part of the file's directory name at the beginning of the shared buffer name to make unique
 (setq uniquify-buffer-name-style 'forward)
@@ -453,7 +449,45 @@ For example, the following code defines a diagonal line.
 ;;                                     "xxxxxxxx"
 ;;                                     ))
 
-                                        ; Bind Zooms??
+(ligature-set-ligatures 'prog-mode '("<---" "<--"  "<<-" "<-" "->" "-->" "--->" "<->" "<-->" "<--->" "<---->" "<!--"
+                                     "<==" "<===" "<=" "=>" "=>>" "==>" "===>" ">=" "<=>" "<==>" "<===>" "<====>" "<!---"
+                                     "<~~" "<~" "~>" "~~>" "::" ":::" "==" "!=" "===" "!=="
+                                     ":=" ":-" ":+" "<*" "<*>" "*>" "<|" "<|>" "|>" "+:" "-:" "=:" "<******>" "++" "+++"
+                                     ">>="))
+(global-ligature-mode t)
+
+(setq prism-num-faces 16)
+
+;; Required to autoload prism-set-colors
+;; 210808 this also triggers bug below
+;; (prism-mode -1)
+
+;;; 210808 this errrors as
+;;; Eager macro-expansion failure: (void-variable hydra-ivy/params)
+;; (prism-set-colors
+;;   :desaturations '(0) ; do not change---may lower the contrast ratio
+;;   :lightens '(0)      ; same
+;;   :colors (modus-themes-with-colors
+;;             (list fg-main
+;;                   magenta
+;;                   cyan-alt-other
+;;                   magenta-alt-other
+;;                   blue
+;;                   magenta-alt
+;;                   cyan-alt
+;;                   red-alt-other
+;;                   green
+;;                   fg-main
+;;                   cyan
+;;                   yellow
+;;                   blue-alt
+;;                   red-alt
+;;                   green-alt-other
+;;                   fg-special-warm)))
+
+(map! :n "SPC t p" 'prism-mode)
+(map! :n "SPC t P" 'prism-whitespace-mode)
+
 (map! :n "C-_" #'er/contract-region
       :n "C-+" #'er/expand-region)
 
@@ -478,6 +512,9 @@ For example, the following code defines a diagonal line.
 ;; ;; Also in visual mode
 (define-key evil-visual-state-map "j" 'evil-next-visual-line)
 (define-key evil-visual-state-map "k" 'evil-previous-visual-line)
+
+(map! :map evil-org-mode-map "<normal-state> z o" 'org-show-subtree
+      "<normal-state> z O" '+org/open-fold)
 
 (defun screenshot-svg ()
   "Save a screenshot of the current frame as an SVG image.
@@ -510,11 +547,10 @@ Saves to a temp file and puts the filename in the kill ring."
 ;; Bind toggles
 (global-set-key (kbd "<f2>") 'mixed-pitch-mode)
 (global-set-key (kbd "<f3>") 'olivetti-mode)
-(global-set-key (kbd "<f4>") 'toggle-rot13-mode)
 (setq olivetti-body-width 110)
 ;; (global-set-key (kbd "U") 'undo-tree-redo)
 
-(setq fill-column 100)
+(setq-default fill-column 80)
 
 ;; Unbind language input switcher
 (map! :map global-map "C-\\" nil)
@@ -570,6 +606,31 @@ Defaults to pdf-tools, or native doc-view."
 
 (map! :n "SPC t c" 'transpose-chars)
 
+(setq evil-want-fine-undo t)
+
+(setq shell-command-switch "-ic")
+
+(defconst secret-mode-table
+  (let ((disptbl (make-display-table)))
+    (dotimes (i 1024)
+      (aset disptbl i
+            (pcase (get-char-code-property i 'general-category)
+              ((or 'Cc 'Cf 'Zs 'Zl 'Zp) nil)
+              ('Lu (vector (make-glyph-code ?▆)))
+              (_   (vector (make-glyph-code ?▃))))))
+    disptbl)
+  "Display table for the command `secret-mode'.")
+
+;;;###autoload
+(define-minor-mode secret-mode
+  "Hide text."
+  :lighter " Secret"
+  (if secret-mode
+      (setq buffer-display-table secret-mode-table)
+    (setq buffer-display-table nil)))
+
+(map! :n "<f4>" #'secret-mode)
+
 (setq org-directory "~/org/")
 
 (setq org-ellipsis " ▾")
@@ -592,9 +653,6 @@ Defaults to pdf-tools, or native doc-view."
 (map! :map org-mode-map "C-j" 'org-next-visible-heading
       "C-k" 'org-previous-visible-heading)
 
-;; seems to break doom config ?
-;; (require 'org-inlinetask)
-
 ;; https://www.reddit.com/r/orgmode/comments/6q6cdk/adding_files_to_the_agenda_list_recursively/
 ;; doom doctor: org-agenda-file-regexp seems to be void
 ;; (setq org-agenda-files (apply 'append
@@ -609,20 +667,16 @@ Defaults to pdf-tools, or native doc-view."
 ;; Need to manually update based on school term
 (setq org-agenda-files '("~/org"
                          "~/org/blog"
-                         "~/org/voxpop"
                          "~/org/resources"
-                         "~/School/S21/ENGR_165_Manuf"
-                         "~/School/S21/MSE_165C_Phase"
-                         "~/School/S21/MSE_189C_Snr"
-                         "~/School/S21/STATS_120C_Prob"
-                         "~/rust/effex"
+                         "~/School/F21/BME_120_SensMotSys"
+                         "~/School/F21/ENGR_190W_CommWorld"
+                         "~/School/F21/Soc_1_Intro"
                          ))
 
 (setq org-tag-faces
-      '(("Phase" . "gold2")
-        ("Nano" . "lime green")
-        ("Manuf" . "red2")
-        ("Snr" . "medium orchid")
+      '(("Write" . "red2")
+        ("Motor" . "dark green")
+        ("Soc" . "dark orchid")
         ("Stats" . "dodger blue")))
 
 (setq org-agenda-start-day "+0"
@@ -1398,6 +1452,14 @@ Here are two examples:
 (map! :map jupyter-repl-interaction-mode-map "M-RET" 'jupyter-eval-line-or-region)
 
 (add-hook 'emacs-lisp-mode-hook (lambda () (lispy-mode 1)))
+
+;; haskell-stylish-on-save
+;; haskell-mode-stylish-haskell-path
+(setq lsp-haskell-formatting-provider "brittany")
+
+
+(map! :map haskell-mode-map "<normal-state> SPC c h" nil)
+(map! :map haskell-mode-map "<normal-state> SPC c h" 'haskell-compile)
 
 ;(annotate-mode)
 

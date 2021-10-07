@@ -19,6 +19,8 @@
   - [[#line-spacing][Line Spacing]]
   - [[#evil-mode-terminal-cursors][evil-mode terminal cursors]]
   - [[#fringe][fringe]]
+  - [[#ligatureel][ligature.el]]
+  - [[#prismel][prism.el]]
 - [[#usability][Usability]]
   - [[#navigation][Navigation]]
   - [[#screenshots][Screenshots]]
@@ -30,10 +32,12 @@
   - [[#eval-last-sexp][eval-last-sexp]]
   - [[#interactive-org-latex-format-options][interactive org-latex-format-options]]
   - [[#transpose-chars][transpose-chars]]
+  - [[#evil-want-fine-undo][evil-want-fine-undo]]
+  - [[#make-emacs-recognize-aliases][Make Emacs recognize aliases]]
+  - [[#secret-mode][secret-mode]]
 - [[#org-mode][Org-Mode]]
   - [[#org][Org]]
   - [[#org-navigation][Org Navigation]]
-  - [[#org-inline-task][Org-Inline Task]]
   - [[#org-agenda--super-agenda][Org Agenda + Super Agenda]]
   - [[#org-capture][Org Capture]]
   - [[#org-export---latex][Org Export - Latex]]
@@ -60,6 +64,7 @@
   - [[#julia][Julia]]
   - [[#lispy-mode][lispy-mode]]
   - [[#r][R]]
+  - [[#haskell][Haskell]]
 - [[#strt-packages-to-look-at][STRT Packages to Look At]]
   - [[#strt-transclusion][STRT Transclusion]]
   - [[#strt-annotate][STRT Annotate]]
@@ -242,19 +247,7 @@ GNU Emacs 28.0.50 (build 2, x86_64-pc-linux-gnu, GTK+ Version 3.24.24, cairo ver
 so, modus is not in native emacs
 
 #+begin_src elisp :results none
-;; https://github.com/hlissner/doom-emacs/issues/3967
-(setq doom-theme 'modus-operandi)
-;; (setq doom-theme 'modus-vivendi)
-
-;; (require 'modus-themes)                 ; common code
-;; (require 'modus-operandi-theme)         ; light theme
-;; (require 'modus-vivendi-theme)          ; dark theme
-
-;; (load-theme 'modus-vivendi)           ; Dark theme
-;; (load-theme 'modus-operandi)          ; Light theme
-
-
-;;(global-set-key (kbd "<f5>") (lambda () (interactive) (modus-themes-toggle) (set-face-background 'mode-line "default")))
+(require 'modus-themes)                 ; common code
 
 (global-set-key (kbd "<f5>") 'modus-themes-toggle)
 
@@ -301,6 +294,14 @@ so, modus is not in native emacs
       modus-themes-variable-pitch-ui nil             ; default
       modus-themes-variable-pitch-headings nil
       )
+
+;; Load the theme files before enabling a theme (else you get an error).
+(modus-themes-load-themes)
+(modus-themes-load-operandi)
+
+;; https://github.com/hlissner/doom-emacs/issues/3967
+;; don't think this is needed with load-operandi 210805
+;; (setq doom-theme 'modus-operandi)
 #+end_src
 ** TODO Display
 #+BEGIN_SRC elisp :results none
@@ -617,10 +618,57 @@ For example, the following code defines a diagonal line.
 ;;                                     "xxxxxxxx"
 ;;                                     ))
 #+end_src
+** ligature.el
+https://github.com/mickeynp/ligature.el/wiki#iosevka
+#+begin_src elisp
+(ligature-set-ligatures 'prog-mode '("<---" "<--"  "<<-" "<-" "->" "-->" "--->" "<->" "<-->" "<--->" "<---->" "<!--"
+                                     "<==" "<===" "<=" "=>" "=>>" "==>" "===>" ">=" "<=>" "<==>" "<===>" "<====>" "<!---"
+                                     "<~~" "<~" "~>" "~~>" "::" ":::" "==" "!=" "===" "!=="
+                                     ":=" ":-" ":+" "<*" "<*>" "*>" "<|" "<|>" "|>" "+:" "-:" "=:" "<******>" "++" "+++"
+                                     ">>="))
+(global-ligature-mode t)
+#+end_src
+
+#+RESULTS:
+: t
+** prism.el
+https://protesilaos.com/modus-themes/#h:a94272e0-99da-4149-9e80-11a7e67a2cf2
+#+begin_src elisp :results none
+(setq prism-num-faces 16)
+
+;; Required to autoload prism-set-colors
+;; 210808 this also triggers bug below
+;; (prism-mode -1)
+
+;;; 210808 this errrors as
+;;; Eager macro-expansion failure: (void-variable hydra-ivy/params)
+;; (prism-set-colors
+;;   :desaturations '(0) ; do not change---may lower the contrast ratio
+;;   :lightens '(0)      ; same
+;;   :colors (modus-themes-with-colors
+;;             (list fg-main
+;;                   magenta
+;;                   cyan-alt-other
+;;                   magenta-alt-other
+;;                   blue
+;;                   magenta-alt
+;;                   cyan-alt
+;;                   red-alt-other
+;;                   green
+;;                   fg-main
+;;                   cyan
+;;                   yellow
+;;                   blue-alt
+;;                   red-alt
+;;                   green-alt-other
+;;                   fg-special-warm)))
+
+(map! :n "SPC t p" 'prism-mode)
+(map! :n "SPC t P" 'prism-whitespace-mode)
+#+end_src
 * Usability
 ** Navigation
 #+BEGIN_SRC elisp :results none
-                                        ; Bind Zooms??
 (map! :n "C-_" #'er/contract-region
       :n "C-+" #'er/expand-region)
 
@@ -645,6 +693,9 @@ For example, the following code defines a diagonal line.
 ;; ;; Also in visual mode
 (define-key evil-visual-state-map "j" 'evil-next-visual-line)
 (define-key evil-visual-state-map "k" 'evil-previous-visual-line)
+
+(map! :map evil-org-mode-map "<normal-state> z o" 'org-show-subtree
+      "<normal-state> z O" '+org/open-fold)
 #+END_SRC
 ** Screenshots
 #+BEGIN_SRC elisp :results none
@@ -686,11 +737,10 @@ https://protesilaos.com/modus-themes/#h:ff69dfe1-29c0-447a-915c-b5ff7c5509cd
 ;; Bind toggles
 (global-set-key (kbd "<f2>") 'mixed-pitch-mode)
 (global-set-key (kbd "<f3>") 'olivetti-mode)
-(global-set-key (kbd "<f4>") 'toggle-rot13-mode)
 (setq olivetti-body-width 110)
 ;; (global-set-key (kbd "U") 'undo-tree-redo)
 
-(setq fill-column 100)
+(setq-default fill-column 80)
 
 ;; Unbind language input switcher
 (map! :map global-map "C-\\" nil)
@@ -764,6 +814,44 @@ https://stackoverflow.com/questions/4497073/elisp-asking-yes-or-no-in-interactiv
 #+begin_src elisp :results none
 (map! :n "SPC t c" 'transpose-chars)
 #+end_src
+** evil-want-fine-undo
+#+begin_src elisp
+(setq evil-want-fine-undo t)
+#+end_src
+
+#+RESULTS:
+: t
+** Make Emacs recognize aliases
+https://stackoverflow.com/a/12229404
+#+begin_src elisp :results none
+(setq shell-command-switch "-ic")
+#+end_src
+** secret-mode
+https://www.reddit.com/r/emacs/comments/pyg33z/secretmodeel_display_your_text_as_unicode_block/
+https://github.com/bkaestner/secret-mode.el
+#+begin_src elisp :results none
+(defconst secret-mode-table
+  (let ((disptbl (make-display-table)))
+    (dotimes (i 1024)
+      (aset disptbl i
+            (pcase (get-char-code-property i 'general-category)
+              ((or 'Cc 'Cf 'Zs 'Zl 'Zp) nil)
+              ('Lu (vector (make-glyph-code ?▆)))
+              (_   (vector (make-glyph-code ?▃))))))
+    disptbl)
+  "Display table for the command `secret-mode'.")
+
+;;;###autoload
+(define-minor-mode secret-mode
+  "Hide text."
+  :lighter " Secret"
+  (if secret-mode
+      (setq buffer-display-table secret-mode-table)
+    (setq buffer-display-table nil)))
+
+(map! :n "<f4>" #'secret-mode)
+#+end_src
+
 * Org-Mode
 ** Org
 #+BEGIN_SRC elisp :results none
@@ -791,19 +879,6 @@ https://stackoverflow.com/questions/4497073/elisp-asking-yes-or-no-in-interactiv
 (map! :map org-mode-map "C-j" 'org-next-visible-heading
       "C-k" 'org-previous-visible-heading)
 #+END_SRC
-** TODO Org-Inline Task
-https://mattduck.github.io/generic-css/demo/org-demo.html
-https://www.reddit.com/r/emacs/comments/3tpd5z/a_different_way_to_use_org_xpost_rorgmode/
-https://github.com/amluto/org-mode/blob/master/lisp/org-inlinetask.el
-https://irreal.org/blog/?p=8418
-#+begin_src elisp :results none
-;; seems to break doom config ?
-;; (require 'org-inlinetask)
-#+end_src
-
-#+RESULTS:
-: org-inlinetask
-
 ** Org Agenda + Super Agenda
 *** Setup (Super) Agenda
 #+BEGIN_SRC elisp :results none
@@ -821,20 +896,16 @@ https://irreal.org/blog/?p=8418
 ;; Need to manually update based on school term
 (setq org-agenda-files '("~/org"
                          "~/org/blog"
-                         "~/org/voxpop"
                          "~/org/resources"
-                         "~/School/S21/ENGR_165_Manuf"
-                         "~/School/S21/MSE_165C_Phase"
-                         "~/School/S21/MSE_189C_Snr"
-                         "~/School/S21/STATS_120C_Prob"
-                         "~/rust/effex"
+                         "~/School/F21/BME_120_SensMotSys"
+                         "~/School/F21/ENGR_190W_CommWorld"
+                         "~/School/F21/Soc_1_Intro"
                          ))
 
 (setq org-tag-faces
-      '(("Phase" . "gold2")
-        ("Nano" . "lime green")
-        ("Manuf" . "red2")
-        ("Snr" . "medium orchid")
+      '(("Write" . "red2")
+        ("Motor" . "dark green")
+        ("Soc" . "dark orchid")
         ("Stats" . "dodger blue")))
 
 (setq org-agenda-start-day "+0"
@@ -1710,6 +1781,16 @@ https://github.com/julia-vscode/LanguageServer.jl/issues/651
 - then just use =emacs-jupyter=
   + overlays don't work 100%
 - also ESS mode as default
+** Haskell
+#+begin_src elisp :results none
+;; haskell-stylish-on-save
+;; haskell-mode-stylish-haskell-path
+(setq lsp-haskell-formatting-provider "brittany")
+
+
+(map! :map haskell-mode-map "<normal-state> SPC c h" nil)
+(map! :map haskell-mode-map "<normal-state> SPC c h" 'haskell-compile)
+#+end_src
 * STRT Packages to Look At
 ** STRT Transclusion
 https://github.com/nobiot/org-transclusion

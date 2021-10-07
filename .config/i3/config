@@ -237,6 +237,7 @@ bindsym $mod+p exec --no-startup-id alacritty --class floating -d 80 40 --hold -
 
 # floating pavucontrol to fix audio configurations
 bindsym $mod+u exec --no-startup-id pavucontrol --class floating
+bindsym $mod+Shift+u exec --no-startup-id ~/.config/i3/toggle_audio_profile.sh && easyeffects -l senn-autoeq
 
 bindsym $mod+Shift+s exec --no-startup-id spotify --disable-gpu 
 
@@ -323,7 +324,7 @@ exec nitrogen --restore &
 exec sudo ntpdate -s time.nist.gov
 exec mpd
 #exec anki
-exec pulseeffects --gapplication-service
+exec easyeffects --gapplication-service
 
 # class                 border  backgr. text    indicator child_border
 #client.focused          #ffffff #ffffff #000000 #2e9ef4   #00BFE0
@@ -339,16 +340,12 @@ client.unfocused        #707070 #707070 #ffffff #292d2e   #707070
 
 # exec --no-startup-id redshift -v -r -t 4000:3000 -l 37.77:-122.42 &!
 
-# 4k
-#bindsym $mod+t exec xrandr --output eDP1 --primary --mode 1920x1080 --pos 1975x2160 --rotate normal --output DP1 --mode 1920x1080 --pos 0x240 --rotate right --output HDMI1 --mode 3840x2160 --pos 1080x0 --rotate normal --output HDMI2 --off --output VIRTUAL1 --off
-# 1440p
-bindsym $mod+t exec xrandr --output eDP1 --primary --mode 1920x1080 --pos 1400x1623 --rotate normal --output DP1 --mode 1920x1080 --pos 0x0 --rotate right --output HDMI1 --mode 2560x1440 --pos 1080x183 --rotate normal --output HDMI2 --off --output VIRTUAL1 --off && ~/.config/polybar/launch.sh
-# laptop + HDMI1 (big)
-bindsym $mod+shift+t exec xrandr --output eDP1 --primary --mode 1920x1080 --pos 320x1440 --rotate normal --output DP1 --off --output HDMI1 --mode 2560x1440 --pos 0x0 --rotate normal --output HDMI2 --off --output VIRTUAL1 --off && ~/.config/polybar/launch.sh
-# only laptop
-bindsym $mod+y exec xrandr --output eDP1 --primary --mode 1920x1080 --pos 0x0 --rotate normal --output HDMI1 --off --output DP1 --off && ~/.config/polybar/launch.sh
-# only HDMI1 (big monitor)
-bindsym $mod+shift+y exec xrandr --output eDP1 --off --output DP1 --off --output HDMI1 --mode 2560x1440 --pos 0x0 --rotate normal --output HDMI2 --off --output VIRTUAL1 --off && ~/.config/polybar/launch.sh
+## Verious monitor configurations
+bindsym $mod+t            exec ~/.config/i3/display.sh --laptop --big --vert && ~/.config/polybar/launch.sh
+bindsym $mod+shift+t      exec ~/.config/i3/display.sh --laptop --big        && ~/.config/polybar/launch.sh
+bindsym $mod+shift+ctrl+t exec ~/.config/i3/display.sh          --big --vert && ~/.config/polybar/launch.sh
+bindsym $mod+y            exec ~/.config/i3/display.sh --laptop              && ~/.config/polybar/launch.sh
+bindsym $mod+shift+y      exec ~/.config/i3/display.sh          --big        && ~/.config/polybar/launch.sh
 
 workspace 1 output HDMI1
 workspace 2 output HDMI1

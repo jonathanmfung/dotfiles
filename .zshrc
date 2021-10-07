@@ -51,6 +51,19 @@ else
 fi
 }
 
+bright () {
+if [ -z "$1" ]
+then echo "Input a Percentage"
+elif ! [[ "$1" =~ ^[0-9]+$ ]]
+then echo "Error: arg is not an integer"
+elif (( $1 >= 1 && $1 <= 100 ))
+then echo "in range"
+	echo $(($1 * 75)) | sudo tee /sys/class/backlight/intel_backlight/brightness
+elif (( $1 < 1 || $1 > 100 ))
+then echo "out of range"
+fi
+}
+
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
 # a theme from this variable instead of looking in ~/.oh-my-zsh/themes/
@@ -164,6 +177,7 @@ alias config='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
 alias configp='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME push git@github.com:jonathanmfung/dotfiles.git'
 
 alias ee='emacsclient -nw -c'
+alias emacsv='emacs --with-profile=vanilla'
 # set dracula color scheme in TTY
 alias tt="grep -v '^#' $HOME/.config/dracula_theme.vt | setvtrgb -"
 
@@ -172,7 +186,7 @@ alias tt="grep -v '^#' $HOME/.config/dracula_theme.vt | setvtrgb -"
 # Update 1/20/21, AUR package seems to work now, forgot rust-analyzer requires a cargo structure, which rustlings doesn't have
 
 # doom emacs bin
-alias doom="~/.emacs.d/bin/doom"
+alias doom="~/.config/emacs-configs/emacs.d-doom/bin/doom"
 alias red="redshift -v -r -t 4000:3000 -l 37.77:122.42 &"
 alias up="uptime -p"
 
@@ -761,3 +775,4 @@ bindkey "^R" history-incremental-pattern-search-backward
 bindkey "^S" history-incremental-pattern-search-forward
 
 if [ -f ~/.alert ]; then echo '>>> Check ~/.alert'; fi
+[ -f "/home/jonat/.ghcup/env" ] && source "/home/jonat/.ghcup/env" # ghcup-env

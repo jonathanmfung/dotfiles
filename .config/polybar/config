@@ -57,7 +57,7 @@ module-margin-right = 2
 
 font-0 = SourceSansPro:size=10;2
 
-modules-left = i3 backlight spotify mpd
+modules-left = i3 backlight spotify mpd org-clock
 modules-center = date
 modules-right = pulseaudio battery battery-time memory cpu wlan powermenu
 
@@ -74,7 +74,7 @@ cursor-click = pointer
 cursor-scroll = ns-resize
 
 [bar/HDMI1]
-monitor = HDMI1
+monitor = "HDMI1"
 width = 85%
 ; height = 30
 height = 24
@@ -103,7 +103,7 @@ module-margin-right = 2
 
 font-0 = SourceSansPro:size=12;2
 
-modules-left = i3 spotify mpd
+modules-left = i3 spotify mpd org-clock
 modules-center = date
 modules-right = pulseaudio battery battery-time memory cpu wlan powermenu
 
@@ -148,7 +148,7 @@ module-margin-right = 2
 
 font-0 = SourceSansPro:size=10;2
 
-modules-left = i3 spotify mpd
+modules-left = i3 spotify mpd org-clock
 modules-center = date
 modules-right = pulseaudio battery memory cpu wlan powermenu
 
@@ -460,6 +460,11 @@ bar-progress-indicator = |
 bar-progress-fill = =
 bar-progress-empty = -
 
+
+[module/org-clock]
+type = custom/script
+exec = ~/.config/polybar/org-clock.sh
+interval = 15
 
 [settings]
 screenchange-reload = true

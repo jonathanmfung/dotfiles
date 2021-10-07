@@ -3,8 +3,8 @@ set -euo pipefail
 
 remain=$(acpi | head -n 1 | cut -d ' ' -f 5 | cut -d ':' -f -2)
 
-first=$(echo $remain | cut -d ':' -f 1)
-second=$(echo $remain | cut -d ':' -f 2)
+first=$(echo "$remain" | cut -d ':' -f 1)
+second=$(echo "$remain" | cut -d ':' -f 2)
 
 status=$(cat /sys/class/power_supply/CMB0/status);
 # if [[ $status == "Full"]];
