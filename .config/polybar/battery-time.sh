@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# can also just go through /sys/class/power_supply/CMB0
+# for direct info rather than extracting from acpi
+
 remain=$(acpi | head -n 1 | cut -d ' ' -f 5 | cut -d ':' -f -2)
 
 first=$(echo "$remain" | cut -d ':' -f 1)
@@ -26,7 +29,8 @@ then
     #echo "Charg";
     echo "till $d";
 else
-    :;
+    echo "";
+    #:;
 fi
 
 

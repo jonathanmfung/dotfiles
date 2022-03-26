@@ -168,8 +168,8 @@ alias yew="wasm-pack build --target web --out-name wasm --out-dir ./static && py
 
 alias audio="youtube-dl -x --audio-format mp3 -o '%(title)s.%(ext)s'"
 
-alias gmpv="mpv --hwdec=vaapi --vo=gpu"
 alias gmpv4k="mpv --hwdec=vaapi --vo=gpu --ytdl-format=315+249"
+alias gmpv2k="mpv --ytdl-format=271+249"
 
 alias tuir1="tuir -s linuxquestions+linux4noobs"
 
@@ -192,6 +192,13 @@ alias up="uptime -p"
 
 # locales in /usr/share/zoneinfo
 alias kdate="TZ=Asia/Seoul date +'%b %d %l:%M %P %Z'"
+alias ctrl="setxkbmap -option ctrl:ralt_rctrl"
+alias rate="xset r rate 250 25"
+
+# using a feh option group (~/.config/feh/themes)
+alias feh="feh -Tmine"
+
+alias z="zathura"
 
 # opening splash
 # date -I
@@ -644,7 +651,7 @@ _append_path_to_buffer() {
     zle reset-prompt
 }
 zle -N _append_path_to_buffer
-bindkey "^F" _append_path_to_buffer
+# bindkey "^F" _append_path_to_buffer
 
 _history_search_with_fzy() {
     local selected_history_entry
@@ -774,5 +781,6 @@ esac
 bindkey "^R" history-incremental-pattern-search-backward
 bindkey "^S" history-incremental-pattern-search-forward
 
+bindkey "^A" beginning-of-line
 if [ -f ~/.alert ]; then echo '>>> Check ~/.alert'; fi
 [ -f "/home/jonat/.ghcup/env" ] && source "/home/jonat/.ghcup/env" # ghcup-env

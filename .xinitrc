@@ -66,3 +66,10 @@ get_session(){
 }
 exec dbus-launch --autolaunch=$(cat /var/lib/dbus/machine-id) i3
 exec $(get_session)
+
+# https://unix.stackexchange.com/a/353699
+# remaps right alt to ctrl
+setxkbmap -option ctrl:ralt_rctrl
+
+# default: xset r rate 660 25
+xset r rate 250 25

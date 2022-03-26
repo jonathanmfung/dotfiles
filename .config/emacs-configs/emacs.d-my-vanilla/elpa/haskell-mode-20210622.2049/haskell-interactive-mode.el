@@ -309,6 +309,8 @@ SESSION, otherwise operate on the current buffer."
                                 'font-lock-face 'haskell-interactive-face-prompt
                                 'prompt t
                                 'read-only haskell-interactive-prompt-read-only
+				'cursor-intangible t
+				'intangible t
                                 'rear-nonsticky t)))
         ;; At the time of writing, front-stickying the first char gives an error
         ;; Has unfortunate side-effect of being able to insert before the prompt

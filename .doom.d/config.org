@@ -830,14 +830,29 @@ https://stackoverflow.com/a/12229404
 https://www.reddit.com/r/emacs/comments/pyg33z/secretmodeel_display_your_text_as_unicode_block/
 https://github.com/bkaestner/secret-mode.el
 #+begin_src elisp :results none
+(defcustom secret-mode-uppercase ?▆
+  "The char used by secret-mode for Lu Unicode Category."
+  :group 'secret-mode
+  :type 'char)
+(defcustom secret-mode-lowercase ?▃
+  "The char used by secret-mode for unspecified Unicode Category."
+  :group 'secret-mode
+  :type 'char)
+
+(setq secret-mode-uppercase ?░)
+(setq secret-mode-lowercase ?░)
+
 (defconst secret-mode-table
   (let ((disptbl (make-display-table)))
     (dotimes (i 1024)
       (aset disptbl i
             (pcase (get-char-code-property i 'general-category)
               ((or 'Cc 'Cf 'Zs 'Zl 'Zp) nil)
-              ('Lu (vector (make-glyph-code ?▆)))
-              (_   (vector (make-glyph-code ?▃))))))
+              ;; ('Lu (vector (make-glyph-code ?▆)))
+              ;; (_   (vector (make-glyph-code ?▃)))
+              ('Lu (vector (make-glyph-code secret-mode-uppercase)))
+              (_   (vector (make-glyph-code secret-mode-lowercase)))
+              )))
     disptbl)
   "Display table for the command `secret-mode'.")
 
@@ -900,6 +915,7 @@ https://github.com/bkaestner/secret-mode.el
                          "~/School/F21/BME_120_SensMotSys"
                          "~/School/F21/ENGR_190W_CommWorld"
                          "~/School/F21/Soc_1_Intro"
+                         "~/tutoring/sahit"
                          ))
 
 (setq org-tag-faces
@@ -1007,7 +1023,8 @@ https://github.com/bkaestner/secret-mode.el
             :todo "NOTE")
            (:name "Today's Time Blocks"
             :and (:todo "BLOCK"
-                  :date today))
+                 ;; :date today
+                  ))
            (:name "Today"
             :deadline today)
            (:name "Tomorrow (+1)"

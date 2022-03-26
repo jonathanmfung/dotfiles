@@ -671,6 +671,7 @@ Defaults to pdf-tools, or native doc-view."
                          "~/School/F21/BME_120_SensMotSys"
                          "~/School/F21/ENGR_190W_CommWorld"
                          "~/School/F21/Soc_1_Intro"
+                         "~/tutoring/sahit"
                          ))
 
 (setq org-tag-faces

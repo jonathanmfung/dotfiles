@@ -1,0 +1,2 @@
+;; Generated package description from modus-themes.el  -*- no-byte-compile: t -*-
+(define-package "modus-themes" "2.0.0" "Highly accessible themes (WCAG AAA)" '((emacs "27.1")) :commit "f03d0de26fc718058567951ed46dc6772638928c" :authors '(("Protesilaos Stavrou" . "info@protesilaos.com")) :maintainer '("Protesilaos Stavrou" . "info@protesilaos.com") :keywords '("faces" "theme" "accessibility") :url "https://gitlab.com/protesilaos/modus-themes")
