@@ -435,6 +435,7 @@ Discovered window-parameter from https://oremacs.com/2015/03/12/ace-window-displ
   ;; this breaks org-cycle on bullet lists
   ;; (add-hook 'org-mode-hook #'org-no-ellipsis-in-headlines)
   :config (setq org-ellipsis "﻿")
+  (setq org-edit-src-content-indentation 0)
   (plist-put org-format-latex-options :scale 3)
   (plist-put org-format-latex-options :foreground 'auto)
   (plist-put org-format-latex-options :background 'auto)
